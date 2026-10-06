@@ -1,4 +1,31 @@
 /* ==========================================================================
    06-sections.css — hero, pillars, solutions-grid, architecture, cta-band.
-   Layer: sections. Built in Phase 3 (TODO.md).
+   Layer: sections. The hero, pillars, solutions grid and architecture
+   diagram arrive in Phase 3 (TODO.md).
    ========================================================================== */
+
+/* --- Closing CTA band ------------------------------------------------------
+   The second dark surface of the sandwich: hero (dark) -> content (light) ->
+   CTA band (dark) -> footer (dark). DESIGN.md §2. */
+
+.cta-band {
+  background-color: var(--navy-700);
+}
+
+.cta-band__inner {
+  --flow-space: var(--space-24);
+}
+
+.cta-band__title {
+  max-width: 20ch;
+}
+
+.cta-band__sub {
+  color: var(--navy-300);
+  font-size: var(--step-1);
+  max-width: var(--measure-lead);
+}
+
+.cta-band p {
+  max-width: none;
+}

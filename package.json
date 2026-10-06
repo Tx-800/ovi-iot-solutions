@@ -1,0 +1,19 @@
+{
+  "name": "ovi-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static marketing website for OVI IoT Solutions. No build step: the site is plain HTML, CSS and ES modules, and runs with node_modules deleted.",
+  "scripts": {
+    "serve": "serve . -l 4321",
+    "sync": "node tools/sync-partials.js",
+    "check": "node tools/check-links.js",
+    "measure": "node tools/measure.js",
+    "shot": "node tools/shot.js",
+    "sitemap": "node tools/build-sitemap.js"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.2",
+    "lighthouse": "^12.2.1"
+  }
+}

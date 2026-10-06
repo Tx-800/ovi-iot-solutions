@@ -1,4 +1,610 @@
 /* ==========================================================================
-   05-components.css — buttons, cards, chips, forms, nav, footer, toast.
-   Layer: components. Built in Phase 2 (TODO.md).
+   05-components.css — buttons, icons, header, nav, mega-menu, drawer,
+   footer, toast, FAB, back-to-top.
+   Layer: components.
+
+   Progressive enhancement, stated once so the rest of the file reads clearly:
+   the base styles below are the no-JavaScript site. js/modules/nav.js sets
+   `data-nav-enhanced` on the header, and only then does the drawer exist.
+   Nothing is hidden behind a control that cannot work (PRD N5).
    ========================================================================== */
+
+/* --- Icons ---------------------------------------------------------------- */
+
+.icon {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: var(--icon-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+.icon--sm {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  padding: var(--btn-pad-block) var(--btn-pad-inline);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--r-md);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-ui);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-hover) linear,
+    border-color var(--dur-hover) linear,
+    color var(--dur-hover) linear;
+}
+
+.btn--primary {
+  background-color: var(--ovi-blue);
+  color: var(--white);
+}
+
+.btn--primary:hover {
+  background-color: var(--blue-600);
+}
+
+.btn--secondary {
+  color: var(--navy-700);
+  border-color: var(--navy-700);
+}
+
+.btn--secondary:hover {
+  background-color: var(--navy-700);
+  color: var(--white);
+}
+
+.btn--on-dark {
+  background-color: var(--white);
+  color: var(--navy-900);
+}
+
+.btn--on-dark:hover {
+  background-color: var(--blue-100);
+}
+
+.btn--ghost {
+  color: var(--blue-600);
+}
+
+.btn--ghost:hover {
+  background-color: var(--blue-100);
+}
+
+/* --- The logo on a dark surface -------------------------------------------
+   DESIGN.md §7: never invent a knockout logo. Place the supplied full-colour
+   file on a white panel instead. */
+
+.logo-panel {
+  display: inline-block;
+  padding: var(--space-12);
+  background-color: var(--white);
+  border-radius: var(--r-md);
+}
+
+/* --- Site header ---------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 50;
+  background-color: var(--white);
+  border-block-end: var(--border-width) solid var(--hairline);
+}
+
+/* Condense on scroll: the only thing that changes is vertical padding. */
+.site-header[data-scrolled] {
+  box-shadow: var(--shadow-header);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding-block: var(--space-16);
+  transition: padding-block var(--dur-hover) linear;
+}
+
+.site-header[data-scrolled] .site-header__inner {
+  padding-block: var(--space-8);
+}
+
+.site-header__brand {
+  display: block;
+  flex: none;
+  text-decoration: none;
+}
+
+.site-header__brand img {
+  width: var(--logo-width-header);
+  height: auto;
+}
+
+/* --- Drawer toggle --------------------------------------------------------
+   Ships `hidden`; nav.js reveals it. Without JavaScript it never appears, so
+   the plain nav list below stays visible instead. */
+
+.site-header__toggle {
+  display: none;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: var(--tap-min);
+  padding-inline: var(--space-12);
+  border-radius: var(--r-md);
+  color: var(--navy-700);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-ui);
+}
+
+.site-header__toggle-icon--close { display: none; }
+
+.site-header__toggle[aria-expanded="true"] .site-header__toggle-icon--open { display: none; }
+.site-header__toggle[aria-expanded="true"] .site-header__toggle-icon--close { display: block; }
+
+/* --- Primary nav ----------------------------------------------------------
+   Base case: a plain, always-visible list. This is what a visitor with
+   JavaScript disabled gets, at every width. */
+
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.site-nav__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav__list li + li { margin-block-start: 0; }
+
+.site-nav__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.site-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--navy-700);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-ui);
+  text-decoration: none;
+  border-block-end: 2px solid transparent;
+  transition: color var(--dur-hover) linear, border-color var(--dur-hover) linear;
+}
+
+.site-nav__link:hover {
+  color: var(--blue-600);
+}
+
+.site-nav__link[aria-current="page"] {
+  color: var(--blue-600);
+  border-block-end-color: var(--ovi-blue);
+}
+
+.site-nav__disclosure {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  color: var(--navy-500);
+  border-radius: var(--r-sm);
+}
+
+.site-nav__disclosure:hover { color: var(--blue-600); }
+
+.site-nav__disclosure .icon {
+  transition: transform var(--dur-menu) var(--ease-menu);
+}
+
+.site-nav__disclosure[aria-expanded="true"] .icon {
+  transform: rotate(180deg);
+}
+
+/* --- Mega-menu ------------------------------------------------------------
+   Base case: a plain nested list, always readable. */
+
+.mega__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mega__list a,
+.mega__all a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  color: var(--navy-500);
+  text-decoration: none;
+  transition: color var(--dur-hover) linear;
+}
+
+.mega__list a:hover,
+.mega__all a:hover {
+  color: var(--blue-600);
+}
+
+.mega__all {
+  margin-block-start: var(--space-8);
+  padding-block-start: var(--space-8);
+  border-block-start: var(--border-width) solid var(--hairline);
+  max-width: none;
+}
+
+.mega__all a { font-weight: var(--weight-ui); color: var(--blue-600); }
+
+/* --- Enhanced: the Solutions accordion below --bp-lg ---------------------- */
+
+@media (max-width: 1023.98px) {   /* below --bp-lg */
+  [data-nav-enhanced] .site-nav__disclosure { display: inline-flex; }
+  [data-nav-enhanced] .mega { display: none; }
+  [data-nav-enhanced] .mega[data-open] { display: block; }
+}
+
+/* --- Enhanced: the drawer below --bp-md ----------------------------------- */
+
+@media (max-width: 767.98px) {   /* below --bp-md */
+  [data-nav-enhanced] .site-header__toggle:not([hidden]) { display: inline-flex; }
+
+  [data-nav-enhanced] .site-nav {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: 2;
+    width: min(22rem, 86vw);
+    padding: var(--space-64) var(--space-24) var(--space-32);
+    background-color: var(--white);
+    box-shadow: var(--shadow-overlay);
+    overflow-y: auto;
+    align-content: start;
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--space-24);
+    visibility: hidden;
+    transform: translateX(100%);
+    transition:
+      transform var(--dur-menu) var(--ease-menu),
+      visibility var(--dur-menu) var(--ease-menu);
+  }
+
+  [data-nav-enhanced][data-drawer-open] .site-nav {
+    visibility: visible;
+    transform: translateX(0);
+  }
+
+  [data-nav-enhanced] .site-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+  }
+
+  [data-nav-enhanced] .site-nav__item {
+    justify-content: space-between;
+    border-block-end: var(--border-width) solid var(--hairline);
+  }
+
+  [data-nav-enhanced] .site-nav__cta { width: 100%; }
+
+  [data-nav-enhanced] .mega {
+    width: 100%;
+    padding-block-end: var(--space-12);
+    padding-inline-start: var(--space-12);
+  }
+
+  /* Backdrop. Sits under the panel, inside the header's stacking context. */
+  [data-nav-enhanced][data-drawer-open]::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background-color: rgb(17 27 46 / 0.5);
+  }
+}
+
+/* Body scroll lock while the drawer is open. */
+.is-scroll-locked {
+  overflow: hidden;
+}
+
+/* --- --bp-lg and up: the dropdown mega-menu ------------------------------- */
+
+@media (min-width: 1024px) {   /* --bp-lg */
+  .site-nav__item--has-menu { position: relative; }
+
+  .site-nav__disclosure { display: inline-flex; }
+
+  .mega {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: calc(var(--space-16) * -1);
+    z-index: 10;
+    min-width: 19rem;
+    padding: var(--space-24);
+    background-color: var(--white);
+    border: var(--border-width) solid var(--hairline);
+    border-radius: var(--r-md);
+    box-shadow: var(--shadow-overlay);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--dur-menu) var(--ease-menu),
+      visibility var(--dur-menu) var(--ease-menu);
+  }
+
+  /* :focus-within is what makes this keyboard-operable with no JavaScript. */
+  .site-nav__item--has-menu:hover > .mega,
+  .site-nav__item--has-menu:focus-within > .mega,
+  .mega[data-open] {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mega__list a,
+  .mega__all a { min-height: auto; padding-block: var(--space-8); }
+}
+
+/* --- Site footer ---------------------------------------------------------- */
+
+.site-footer {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--navy-900);
+  color: var(--text);
+}
+
+/* DESIGN.md §6.3 — one large dashed contour ring, clipped by the top edge.
+   It closes the loop with the hero. One ring, not a field of them. */
+.site-footer__contour {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 50%;
+  translate: -50% -72%;
+  color: var(--hairline-dk);
+  pointer-events: none;
+}
+
+.site-footer__contour svg {
+  width: clamp(28rem, 60vw, 56rem);
+  height: auto;
+}
+
+.site-footer__inner {
+  position: relative;
+  display: grid;
+  gap: var(--space-48);
+  padding-block: var(--space-64);
+}
+
+.site-footer__tagline {
+  margin-block-start: var(--space-16);
+  color: var(--navy-300);
+  max-width: var(--measure-lead);
+}
+
+.site-footer__logo img {
+  width: var(--logo-width-footer);
+  height: auto;
+}
+
+.site-footer__nav {
+  display: grid;
+  gap: var(--space-32);
+}
+
+.site-footer__heading {
+  font-size: var(--step-0);
+  font-weight: var(--weight-display);
+  color: var(--white);
+  margin-block-end: var(--space-16);
+}
+
+.site-footer__nav ul,
+.site-footer__contact-list,
+.site-footer__social {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer a {
+  color: var(--navy-300);
+  text-decoration: none;
+  transition: color var(--dur-hover) linear;
+}
+
+.site-footer a:hover {
+  color: var(--white);
+  text-decoration: underline;
+}
+
+.site-footer__nav li,
+.site-footer__contact-list li {
+  margin-block-start: 0;
+  padding-block: var(--space-4);
+  max-width: none;
+}
+
+.site-footer__nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+}
+
+.site-footer__email {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.copy-email {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: var(--r-sm);
+  color: var(--navy-300);
+  transition: color var(--dur-hover) linear;
+}
+
+.copy-email:hover { color: var(--white); }
+
+.site-footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+  margin-block-start: var(--space-24);
+}
+
+.site-footer__legal {
+  position: relative;
+  border-block-start: var(--border-width) solid var(--hairline-dk);
+  padding-block: var(--space-24);
+}
+
+.site-footer__legal p {
+  color: var(--navy-300);
+  font-size: var(--step--1);
+  max-width: none;
+}
+
+@media (min-width: 768px) {   /* --bp-md */
+  .site-footer__nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {   /* --bp-lg */
+  .site-footer__inner {
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    gap: var(--grid-gap);
+  }
+
+  .site-footer__brand   { grid-column: 1 / span 3; }
+  .site-footer__nav     { grid-column: 4 / span 6; }
+  .site-footer__contact { grid-column: 10 / span 3; }
+}
+
+/* --- Floating controls ---------------------------------------------------- */
+
+/* The WhatsApp FAB is the one fully rounded thing on this site (DESIGN.md §4). */
+.fab {
+  position: fixed;
+  inset-block-end: calc(var(--space-16) + env(safe-area-inset-bottom));
+  inset-inline-end: var(--space-16);
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-48);
+  height: var(--space-48);
+  border-radius: 50%;
+  background-color: var(--ovi-blue);
+  color: var(--white);
+  text-decoration: none;
+  box-shadow: var(--shadow-overlay);
+  transition: background-color var(--dur-hover) linear;
+}
+
+.fab:hover { background-color: var(--blue-600); }
+
+.back-to-top {
+  position: fixed;
+  inset-block-end: calc(var(--space-16) + env(safe-area-inset-bottom));
+  inset-inline-end: calc(var(--space-16) + var(--space-48) + var(--space-12));
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-48);
+  height: var(--space-48);
+  border: var(--border-width) solid var(--hairline);
+  border-radius: var(--r-md);
+  background-color: var(--white);
+  color: var(--navy-700);
+  box-shadow: var(--shadow-overlay);
+  transition: border-color var(--dur-hover) linear, color var(--dur-hover) linear;
+}
+
+.back-to-top:hover {
+  border-color: var(--ovi-blue);
+  color: var(--blue-600);
+}
+
+/* --- Toast ---------------------------------------------------------------- */
+
+.toast {
+  position: fixed;
+  inset-block-end: calc(var(--space-16) + env(safe-area-inset-bottom));
+  inset-inline-start: var(--space-16);
+  z-index: 60;
+  max-width: calc(100vw - var(--space-32));
+  padding: var(--space-12) var(--space-16);
+  background-color: var(--navy-900);
+  color: var(--white);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-overlay);
+  font-size: var(--step--1);
+  opacity: 0;
+  transform: translateY(var(--space-8));
+  visibility: hidden;
+  transition:
+    opacity var(--dur-toast) linear,
+    transform var(--dur-toast) var(--ease-out-expo),
+    visibility var(--dur-toast) linear;
+}
+
+.toast[data-visible] {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+/* --- Page head ------------------------------------------------------------
+   The slim dark page header of the inner-page sandwich (DESIGN.md §2).
+   Its dark token values are restated in 02-tokens.css. */
+
+.page-head {
+  background-color: var(--navy-900);
+}
+
+.eyebrow {
+  color: var(--blue-200);
+  font-size: var(--step--1);
+  max-width: none;
+}
+
+.page-head__family {
+  color: var(--navy-300);
+  font-size: var(--step-0);
+}
+
+.lead {
+  font-size: var(--step-1);
+  line-height: var(--leading-body);
+  max-width: var(--measure-lead);
+  color: var(--text);
+}

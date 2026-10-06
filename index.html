@@ -6,11 +6,7 @@
   <title>Smart IoT solutions for connected infrastructure | OVI</title>
   <meta name="description" content="OVI IoT Solutions designs, deploys and supports end-to-end IoT built on LoRaWAN and NB-IoT connectivity for cities, utilities and industries.">
 
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Smart IoT solutions for connected infrastructure">
-  <meta property="og:description" content="End-to-end IoT built on LoRaWAN and NB-IoT connectivity for cities, utilities and industries.">
-  <meta name="twitter:card" content="summary_large_image">
-
+  <!-- @include head -->
   <link rel="icon" href="/assets/brand/favicon.ico" sizes="any">
   <link rel="icon" href="/assets/brand/favicon-32.png" type="image/png">
   <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
@@ -21,31 +17,171 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/main.css">
+    <!-- /@include head -->
+
+  <!-- @generated meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="OVI IoT Solutions">
+  <meta property="og:title" content="Smart IoT solutions for connected infrastructure | OVI">
+  <meta property="og:description" content="OVI IoT Solutions designs, deploys and supports end-to-end IoT built on LoRaWAN and NB-IoT connectivity for cities, utilities and industries.">
+  <meta name="twitter:card" content="summary_large_image">
+    <!-- /@generated meta -->
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- @include header -->
-  <!-- /@include header -->
+  <svg class="icon-sprite" aria-hidden="true" focusable="false" hidden>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="13" height="13" x="9" y="9" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  </svg>
+
+  <header class="site-header" data-header>
+    <div class="site-header__inner container">
+      <a class="site-header__brand" href="/">
+        <img src="/assets/brand/ovi-logo-320.png"
+             srcset="/assets/brand/ovi-logo-160.png 160w, /assets/brand/ovi-logo-320.png 320w, /assets/brand/ovi-logo-600.png 600w"
+             sizes="132px" width="320" height="139" alt="OVI IoT Solutions" fetchpriority="high">
+      </a>
+
+      <button class="site-header__toggle" type="button"
+              data-drawer-toggle aria-expanded="false" aria-controls="site-nav" hidden>
+        <svg class="icon site-header__toggle-icon site-header__toggle-icon--open" aria-hidden="true" focusable="false"><use href="#i-menu"></use></svg>
+        <svg class="icon site-header__toggle-icon site-header__toggle-icon--close" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+        <span class="site-header__toggle-label">Menu</span>
+      </button>
+
+      <div class="site-nav" id="site-nav" data-drawer>
+        <nav aria-label="Primary">
+          <ul class="site-nav__list" role="list">
+            <li class="site-nav__item site-nav__item--has-menu">
+              <a class="site-nav__link" href="/solutions.html">Solutions</a>
+              <button class="site-nav__disclosure" type="button"
+                      data-disclosure aria-expanded="false" aria-controls="menu-solutions">
+                <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="#i-chevron-down"></use></svg>
+                <span class="visually-hidden">Show solutions</span>
+              </button>
+
+              <div class="mega" id="menu-solutions" data-mega>
+                <ul class="mega__list" role="list">
+                  <li><a href="/solutions/smart-water-metering.html">Smart water metering</a></li>
+                  <li><a href="/solutions/smart-street-lighting.html">Smart street lighting</a></li>
+                  <li><a href="/solutions/water-leak-detection.html">Water leak detection</a></li>
+                  <li><a href="/solutions/water-quality-monitoring.html">Water quality monitoring</a></li>
+                  <li><a href="/solutions/water-level-monitoring.html">Water level monitoring</a></li>
+                  <li><a href="/solutions/people-asset-tracking.html">People &amp; asset tracking</a></li>
+                  <li><a href="/solutions/atex-zone-sensors.html">ATEX zone sensors</a></li>
+                </ul>
+                <p class="mega__all"><a href="/solutions.html">All solutions</a></p>
+              </div>
+            </li>
+
+            <li class="site-nav__item"><a class="site-nav__link" href="/services.html">Services</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/technology.html">Technology</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/about.html">About</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/contact.html">Contact</a></li>
+          </ul>
+        </nav>
+
+        <a class="btn btn--primary site-nav__cta" href="/contact.html">Request a consultation</a>
+      </div>
+    </div>
+  </header>
+    <!-- /@include header -->
 
   <main id="main">
-    <section class="section" aria-labelledby="hero-title">
+    <section class="section section--tight page-head" aria-labelledby="page-title">
       <div class="container">
         <div class="flow">
-          <h1 id="hero-title">Smart IoT solutions for connected infrastructure</h1>
-          <p>OVI IoT Solutions designs, deploys, and supports end-to-end Internet of Things
-            solutions built on LoRaWAN and NB-IoT connectivity — helping cities, utilities, and
-            industries turn physical infrastructure into connected, data-driven assets.</p>
+          <h1 id="page-title">Smart IoT solutions for connected infrastructure</h1>
+          <p class="lead">OVI IoT Solutions designs, deploys, and supports end-to-end Internet of Things solutions built on LoRaWAN and NB-IoT connectivity — helping cities, utilities, and industries turn physical infrastructure into connected, data-driven assets.</p>
         </div>
       </div>
     </section>
   </main>
 
   <!-- @include cta-band -->
-  <!-- /@include cta-band -->
+  <section class="section cta-band on-dark" aria-labelledby="cta-band-title">
+    <div class="container cta-band__inner flow">
+      <h2 class="cta-band__title" id="cta-band-title">Let&rsquo;s build smarter infrastructure together</h2>
+      <p class="cta-band__sub">LoRaWAN &amp; NB-IoT solutions &middot; Consultancy &middot; RF planning</p>
+      <p><a class="btn btn--on-dark" href="/contact.html">Request a consultation</a></p>
+    </div>
+  </section>
+    <!-- /@include cta-band -->
 
   <!-- @include footer -->
-  <!-- /@include footer -->
+  <footer class="site-footer on-dark">
+    <div class="site-footer__contour" aria-hidden="true">
+      <svg viewBox="0 0 900 900" width="900" height="900" focusable="false">
+        <circle cx="450" cy="450" r="449" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 6"/>
+      </svg>
+    </div>
+
+    <div class="container site-footer__inner">
+      <div class="site-footer__brand">
+        <a class="site-footer__logo logo-panel" href="/">
+          <img src="/assets/brand/ovi-logo-320.png"
+               srcset="/assets/brand/ovi-logo-160.png 160w, /assets/brand/ovi-logo-320.png 320w"
+               sizes="148px" width="320" height="139" alt="OVI IoT Solutions" loading="lazy" decoding="async">
+        </a>
+        <p class="site-footer__tagline">Smart IoT solutions for connected infrastructure.</p>
+      </div>
+
+      <nav class="site-footer__nav" aria-label="Footer">
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Solutions</h2>
+          <ul role="list">
+            <li><a href="/solutions/smart-water-metering.html">Smart water metering</a></li>
+            <li><a href="/solutions/smart-street-lighting.html">Smart street lighting</a></li>
+            <li><a href="/solutions/water-leak-detection.html">Water leak detection</a></li>
+            <li><a href="/solutions/water-quality-monitoring.html">Water quality monitoring</a></li>
+            <li><a href="/solutions/water-level-monitoring.html">Water level monitoring</a></li>
+            <li><a href="/solutions/people-asset-tracking.html">People &amp; asset tracking</a></li>
+            <li><a href="/solutions/atex-zone-sensors.html">ATEX zone sensors</a></li>
+          </ul>
+        </div>
+
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Services</h2>
+          <ul role="list">
+            <li><a href="/services/consultancy-tender-preparation.html">Consultancy &amp; tender preparation</a></li>
+            <li><a href="/services/rf-planning-site-survey.html">RF planning &amp; site survey</a></li>
+            <li><a href="/services.html">All services</a></li>
+          </ul>
+        </div>
+
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Company</h2>
+          <ul role="list">
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/technology.html">Technology</a></li>
+            <li><a href="/solutions.html">Solutions</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="site-footer__legal">
+      <div class="container">
+        <p>&copy; 2026 OVI IoT Solutions</p>
+      </div>
+    </div>
+  </footer>
+
+  <button class="back-to-top" type="button" data-back-to-top hidden>
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-arrow-up"></use></svg>
+    <span class="visually-hidden">Back to top</span>
+  </button>
+
+  <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <!-- /@include footer -->
 
   <script type="module" src="/js/main.js"></script>
 </body>

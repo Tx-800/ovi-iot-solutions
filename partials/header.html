@@ -1,1 +1,73 @@
-<!-- partials/header.html — the source of truth for this block. Edit here, then run: node tools/sync-partials.js -->
+<!-- partials/header.html — the source of truth for the site header. Edit here, then run: node tools/sync-partials.js
+
+     No-JS behaviour is the default, not a fallback:
+     - the nav list is plain visible markup and needs no script;
+     - "Solutions" is a real link to /solutions.html, so the mega-menu is pure
+       enhancement, and CSS :focus-within opens it for keyboard users even
+       with scripting off;
+     - the drawer toggle ships `hidden` and is revealed by nav.js, so a
+       browser without JS never sees a control that cannot work.
+     js/modules/nav.js then adds explicit open/close, Esc, focus trapping and
+     accurate aria-expanded on top. -->
+
+  <svg class="icon-sprite" aria-hidden="true" focusable="false" hidden>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="13" height="13" x="9" y="9" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  </svg>
+
+  <header class="site-header" data-header>
+    <div class="site-header__inner container">
+      <a class="site-header__brand" href="/">
+        <img src="/assets/brand/ovi-logo-320.png"
+             srcset="/assets/brand/ovi-logo-160.png 160w, /assets/brand/ovi-logo-320.png 320w, /assets/brand/ovi-logo-600.png 600w"
+             sizes="132px" width="320" height="139" alt="OVI IoT Solutions" fetchpriority="high">
+      </a>
+
+      <button class="site-header__toggle" type="button"
+              data-drawer-toggle aria-expanded="false" aria-controls="site-nav" hidden>
+        <svg class="icon site-header__toggle-icon site-header__toggle-icon--open" aria-hidden="true" focusable="false"><use href="#i-menu"></use></svg>
+        <svg class="icon site-header__toggle-icon site-header__toggle-icon--close" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+        <span class="site-header__toggle-label">Menu</span>
+      </button>
+
+      <div class="site-nav" id="site-nav" data-drawer>
+        <nav aria-label="Primary">
+          <ul class="site-nav__list" role="list">
+            <li class="site-nav__item site-nav__item--has-menu">
+              <a class="site-nav__link" href="/solutions.html">Solutions</a>
+              <button class="site-nav__disclosure" type="button"
+                      data-disclosure aria-expanded="false" aria-controls="menu-solutions">
+                <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="#i-chevron-down"></use></svg>
+                <span class="visually-hidden">Show solutions</span>
+              </button>
+
+              <div class="mega" id="menu-solutions" data-mega>
+                <ul class="mega__list" role="list">
+                  <li><a href="/solutions/smart-water-metering.html">Smart water metering</a></li>
+                  <li><a href="/solutions/smart-street-lighting.html">Smart street lighting</a></li>
+                  <li><a href="/solutions/water-leak-detection.html">Water leak detection</a></li>
+                  <li><a href="/solutions/water-quality-monitoring.html">Water quality monitoring</a></li>
+                  <li><a href="/solutions/water-level-monitoring.html">Water level monitoring</a></li>
+                  <li><a href="/solutions/people-asset-tracking.html">People &amp; asset tracking</a></li>
+                  <li><a href="/solutions/atex-zone-sensors.html">ATEX zone sensors</a></li>
+                </ul>
+                <p class="mega__all"><a href="/solutions.html">All solutions</a></p>
+              </div>
+            </li>
+
+            <li class="site-nav__item"><a class="site-nav__link" href="/services.html">Services</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/technology.html">Technology</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/about.html">About</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/contact.html">Contact</a></li>
+          </ul>
+        </nav>
+
+        <a class="btn btn--primary site-nav__cta" href="/contact.html">Request a consultation</a>
+      </div>
+    </div>
+  </header>
