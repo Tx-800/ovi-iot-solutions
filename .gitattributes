@@ -1,0 +1,9 @@
+# Keep LF in the working tree on every platform. tools/sync-partials.js writes
+# LF, so without this the "run it twice, no diff" check would show line-ending
+# churn instead of real changes.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.webp binary
