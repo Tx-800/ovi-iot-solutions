@@ -48,13 +48,19 @@
     color var(--dur-hover) linear;
 }
 
+/* DESIGN.md §5 specifies --ovi-blue as the primary fill, but white on
+   --ovi-blue measures 3.62:1 — contrast is symmetric, so it fails AA for
+   button text exactly as DESIGN.md §2 says it fails for body text. One step
+   down the existing scale, white on --blue-600, measures 5.49:1 and passes.
+   --ovi-blue keeps every non-text job: focus rings, icons, borders, the
+   signal motif. Flagged for sign-off — see TODO.md Decisions. */
 .btn--primary {
-  background-color: var(--ovi-blue);
+  background-color: var(--blue-600);
   color: var(--white);
 }
 
 .btn--primary:hover {
-  background-color: var(--blue-600);
+  background-color: var(--blue-700);
 }
 
 .btn--secondary {
@@ -287,6 +293,13 @@
     gap: var(--space-24);
     visibility: hidden;
     transform: translateX(100%);
+  }
+
+  /* Transitions are gated on data-nav-ready, which nav.js sets one frame
+     after data-nav-enhanced. Without the gate the drawer animates itself
+     shut on every page load, because enhancement is what first applies
+     `visibility: hidden` to an element that was visible. */
+  [data-nav-ready] .site-nav {
     transition:
       transform var(--dur-menu) var(--ease-menu),
       visibility var(--dur-menu) var(--ease-menu);
@@ -351,6 +364,9 @@
     box-shadow: var(--shadow-overlay);
     opacity: 0;
     visibility: hidden;
+  }
+
+  [data-nav-ready] .mega {
     transition:
       opacity var(--dur-menu) var(--ease-menu),
       visibility var(--dur-menu) var(--ease-menu);
@@ -393,12 +409,20 @@
   height: auto;
 }
 
+/* Flex rather than fixed grid columns: the contact block is removed entirely
+   while its values are unset, and a grid with hard column assignments would
+   leave a dead gap where it used to be. */
 .site-footer__inner {
   position: relative;
-  display: grid;
-  gap: var(--space-48);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-48) var(--grid-gap);
   padding-block: var(--space-64);
 }
+
+.site-footer__brand { flex: 1 1 15rem; }
+.site-footer__nav { flex: 3 1 28rem; }
+.site-footer__contact { flex: 1 1 14rem; }
 
 .site-footer__tagline {
   margin-block-start: var(--space-16);
@@ -449,10 +473,12 @@
   max-width: none;
 }
 
+/* Padding rather than min-height: these labels wrap to two lines, and a
+   min-height on an inline-flex box makes wrapped and unwrapped links sit to
+   different rhythms. Padding keeps the 44px target either way. */
 .site-footer__nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap-min);
+  display: inline-block;
+  padding-block: var(--space-8);
 }
 
 .site-footer__email {
@@ -461,8 +487,14 @@
   gap: var(--space-8);
 }
 
-.copy-email {
+/* An author `display` beats the UA's `[hidden] { display: none }`, so every
+   control that ships `hidden` and is revealed by JavaScript scopes its
+   display to :not([hidden]). Without this they are permanently visible. */
+.copy-email:not([hidden]) {
   display: inline-flex;
+}
+
+.copy-email {
   align-items: center;
   justify-content: center;
   width: var(--tap-min);
@@ -497,17 +529,6 @@
   .site-footer__nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-@media (min-width: 1024px) {   /* --bp-lg */
-  .site-footer__inner {
-    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
-    gap: var(--grid-gap);
-  }
-
-  .site-footer__brand   { grid-column: 1 / span 3; }
-  .site-footer__nav     { grid-column: 4 / span 6; }
-  .site-footer__contact { grid-column: 10 / span 3; }
-}
-
 /* --- Floating controls ---------------------------------------------------- */
 
 /* The WhatsApp FAB is the one fully rounded thing on this site (DESIGN.md §4). */
@@ -531,12 +552,15 @@
 
 .fab:hover { background-color: var(--blue-600); }
 
+.back-to-top:not([hidden]) {
+  display: inline-flex;
+}
+
 .back-to-top {
   position: fixed;
   inset-block-end: calc(var(--space-16) + env(safe-area-inset-bottom));
   inset-inline-end: calc(var(--space-16) + var(--space-48) + var(--space-12));
   z-index: 40;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: var(--space-48);

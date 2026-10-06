@@ -22,6 +22,11 @@
   --navy-300:     #8295B4;   /* captions, disabled, diagram strokes on dark */
 
   /* --- Colour — signal --------------------------------------------------- */
+  --blue-700:     color-mix(in srgb, var(--blue-600) 86%, var(--navy-900));
+                             /* pressed state of a primary button. Derived, not
+                                picked: DESIGN.md §2's scale has no step below
+                                --blue-600, and a hover state must not drop
+                                below the AA gate the resting state meets. */
   --blue-600:     #0269C4;   /* hover / pressed state, and links in body copy */
   --blue-500:     #0387F6;   /* = --ovi-blue. Primary action + "live" signal */
   --blue-200:     #A9D4FD;   /* contour rings on light surfaces */

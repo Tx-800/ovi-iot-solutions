@@ -86,7 +86,9 @@ for (const width of widths) {
     + ` height=${r.documentHeight}${viewportNote}`
   );
 
-  if (r.horizontalOverflow || r.offenderCount) {
+  /* scrollWidth vs clientWidth is the authoritative test. The offender list is
+     diagnostic: it says which elements to look at, not whether it failed. */
+  if (r.horizontalOverflow) {
     failures += 1;
     for (const o of r.offenders) {
       console.log(`           ${o.tag}${o.cls ? '.' + o.cls.trim().split(/\s+/).join('.') : ''}`

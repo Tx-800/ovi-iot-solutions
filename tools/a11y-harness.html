@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>axe harness</title>
+  <style>
+    html, body { margin: 0; background: #fff; }
+    iframe { border: 0; display: block; width: 1280px; height: 1400px; }
+    #out { font: 12px monospace; white-space: pre; }
+  </style>
+</head>
+<body>
+<pre id="out">pending</pre>
+<iframe id="frame" title="axe target"></iframe>
+<script>
+  /* Dev-only accessibility harness — never linked from the site.
+     Loads a page in an iframe, injects axe-core from node_modules into that
+     frame, and runs it against the frame's own document. Driven by
+     tools/check-a11y.js, which reads the JSON from #out.
+
+     Usage: /tools/a11y-harness.html#url=/index.html&w=1280
+  */
+  const params = new URLSearchParams(location.hash.slice(1));
+  const url = params.get('url') || '/index.html';
+  const width = Number(params.get('w') || 1280);
+
+  const out = document.getElementById('out');
+  const frame = document.getElementById('frame');
+  frame.style.width = width + 'px';
+
+  function loadScript(doc, src) {
+    return new Promise((resolve, reject) => {
+      const s = doc.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('could not load ' + src));
+      doc.head.appendChild(s);
+    });
+  }
+
+  frame.addEventListener('load', async () => {
+    const doc = frame.contentDocument;
+    if (!doc || !doc.querySelector('[data-header]')) return;
+
+    try {
+      await loadScript(doc, '/node_modules/axe-core/axe.min.js');
+      const axe = frame.contentWindow.axe;
+
+      const results = await axe.run(doc, {
+        resultTypes: ['violations'],
+        runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] },
+      });
+
+      out.textContent = JSON.stringify({
+        url,
+        width,
+        violationCount: results.violations.length,
+        violations: results.violations.map((v) => ({
+          id: v.id,
+          impact: v.impact,
+          help: v.help,
+          nodes: v.nodes.slice(0, 4).map((n) => ({
+            target: n.target.join(' '),
+            summary: (n.failureSummary || '').split('\n').filter(Boolean).slice(0, 3).join(' | '),
+          })),
+          nodeCount: v.nodes.length,
+        })),
+      }, null, 2);
+    } catch (err) {
+      out.textContent = JSON.stringify({ url, width, error: String(err && err.message || err) }, null, 2);
+    }
+  });
+
+  frame.src = url;
+</script>
+</body>
+</html>

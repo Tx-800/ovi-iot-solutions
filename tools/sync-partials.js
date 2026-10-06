@@ -195,7 +195,9 @@ for (const entry of readdirSync(PARTIALS_DIR)) {
   /* Drop the partial's own explanatory header comment — it documents the
      source file and has no business in 16 shipped pages. */
   body = body.replace(/^\s*<!--[\s\S]*?-->\s*\n/, '');
-  partials.set(name, '\n' + body.replace(/\s*$/, '') + '\n  ');
+  /* The closing marker carries its own indentation, so the body ends with a
+     bare newline — otherwise the marker drifts two spaces right on every run. */
+  partials.set(name, '\n' + body.replace(/\s*$/, '') + '\n');
 }
 
 /* --- Per-page generation --------------------------------------------------- */

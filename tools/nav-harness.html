@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>nav harness</title>
+  <style>
+    html, body { margin: 0; background: #fff; }
+    iframe { border: 0; display: block; }
+    #out { font: 12px monospace; white-space: pre; }
+  </style>
+</head>
+<body>
+<pre id="out">pending</pre>
+<div id="frames"></div>
+<script>
+  /* Dev-only behaviour harness — never linked from the site.
+     Drives the real header in an iframe and asserts the things a screenshot
+     cannot show: drawer state, focus movement, Esc, aria-expanded accuracy,
+     and what the page does with scripting switched off.
+
+     The no-JS frame uses sandbox="allow-same-origin" without allow-scripts:
+     that genuinely disables scripting in the frame while still letting this
+     page read its DOM.
+
+     Driven by tools/check-nav.js, which reads the JSON from #out.
+     Usage: /tools/nav-harness.html#url=/index.html
+  */
+  const params = new URLSearchParams(location.hash.slice(1));
+  const url = params.get('url') || '/index.html';
+  const out = document.getElementById('out');
+  const frames = document.getElementById('frames');
+
+  const results = [];
+  const check = (name, pass, detail) => results.push({ name, pass: !!pass, detail: detail ?? '' });
+
+  function makeFrame(width, { scripts = true } = {}) {
+    return new Promise((resolve, reject) => {
+      const f = document.createElement('iframe');
+      f.style.width = width + 'px';
+      f.style.height = '900px';
+      if (!scripts) f.setAttribute('sandbox', 'allow-same-origin');
+
+      /* Appending an iframe fires a load event for about:blank before the real
+         document arrives. Resolving on that gives every assertion an empty
+         document to inspect, which reads as a page-wide failure. */
+      f.addEventListener('load', () => {
+        const doc = f.contentDocument;
+        if (!doc || !doc.querySelector('[data-header]')) return;
+
+        /* Headless Chrome runs on virtual time, which freezes transitions
+           part-way; computed styles would then report animated values rather
+           than settled state. This harness tests state logic, not animation
+           timing, so transitions are switched off inside the frame. */
+        const style = doc.createElement('style');
+        style.textContent = '*, *::before, *::after { transition-duration: 0s !important; }';
+        doc.head.appendChild(style);
+
+        resolve(f);
+      });
+
+      f.src = url;
+      frames.appendChild(f);
+      setTimeout(() => reject(new Error('frame never loaded: ' + url)), 8000);
+    });
+  }
+
+  const visible = (el) => !!(el && el.offsetParent !== null);
+  const key = (doc, k) => doc.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true }));
+  /* Longer than the 220ms menu transition, so assertions read settled state
+     rather than a frame mid-animation. */
+  const settle = () => new Promise((r) => setTimeout(r, 400));
+
+  (async () => {
+    try {
+      /* ---------------- no JavaScript, mobile width ---------------- */
+      const noJs = await makeFrame(375, { scripts: false });
+      const nd = noJs.contentDocument;
+
+      const noJsLinks = nd.querySelectorAll('.site-nav__link');
+      const noJsToggle = nd.querySelector('[data-drawer-toggle]');
+      const noJsHeader = nd.querySelector('[data-header]');
+
+      check('no-JS: nav links are present', noJsLinks.length === 5, `${noJsLinks.length} links`);
+      check('no-JS: every nav link is visible', [...noJsLinks].every(visible));
+      check('no-JS: header is not marked enhanced',
+        noJsHeader && !noJsHeader.hasAttribute('data-nav-enhanced'));
+      check('no-JS: drawer toggle stays hidden (it could not work)',
+        noJsToggle && noJsToggle.hasAttribute('hidden'));
+      check('no-JS: Solutions is a real link to the index page',
+        nd.querySelector('.site-nav__item--has-menu a')?.getAttribute('href') === '/solutions.html');
+      check('no-JS: mega-menu links are reachable',
+        [...nd.querySelectorAll('.mega__list a')].every(visible),
+        `${nd.querySelectorAll('.mega__list a').length} solution links`);
+      check('no-JS: controls that need script are not shown',
+        !visible(nd.querySelector('[data-back-to-top]')));
+
+      /* ---------------- with JavaScript, mobile width ---------------- */
+      const m = await makeFrame(375);
+      await settle();
+      const md = m.contentDocument;
+      const mw = m.contentWindow;
+      const header = md.querySelector('[data-header]');
+      const toggle = md.querySelector('[data-drawer-toggle]');
+      const drawer = md.querySelector('[data-drawer]');
+
+      check('JS: header is marked enhanced', header?.hasAttribute('data-nav-enhanced'));
+      check('JS: drawer toggle is revealed', toggle && !toggle.hasAttribute('hidden') && visible(toggle));
+      check('JS: drawer starts closed', toggle?.getAttribute('aria-expanded') === 'false');
+      check('JS: drawer panel is not reachable while closed',
+        mw.getComputedStyle(drawer).visibility === 'hidden',
+        `visibility=${mw.getComputedStyle(drawer).visibility} position=${mw.getComputedStyle(drawer).position} innerWidth=${mw.innerWidth}`);
+
+      toggle.click();
+      await settle();
+
+      check('open: aria-expanded becomes true', toggle.getAttribute('aria-expanded') === 'true');
+      check('open: panel becomes visible', mw.getComputedStyle(drawer).visibility === 'visible',
+        `selectorMatches=${drawer.matches('[data-nav-enhanced][data-drawer-open] .site-nav')}`
+        + ` mqDrawer=${mw.matchMedia('(max-width: 767.98px)').matches}`
+        + ` reducedMotion=${mw.matchMedia('(prefers-reduced-motion: reduce)').matches}`
+        + ` visibility=${mw.getComputedStyle(drawer).visibility}`);
+      check('open: panel takes modal semantics',
+        drawer.getAttribute('role') === 'dialog' && drawer.getAttribute('aria-modal') === 'true');
+      check('open: body scroll is locked', md.body.classList.contains('is-scroll-locked'));
+      check('open: focus moves into the drawer', drawer.contains(md.activeElement),
+        md.activeElement?.textContent?.trim().slice(0, 30));
+      check('open: the rest of the page is inert',
+        [...md.body.children].filter((el) => el !== header).every((el) => el.hasAttribute('inert')));
+
+      key(md, 'Escape');
+      await settle();
+
+      check('Esc: drawer closes', toggle.getAttribute('aria-expanded') === 'false');
+      check('Esc: focus returns to the toggle', md.activeElement === toggle);
+      check('Esc: scroll lock is released', !md.body.classList.contains('is-scroll-locked'));
+      check('Esc: inert is removed from the page',
+        [...md.body.children].every((el) => !el.hasAttribute('inert')));
+
+      /* Accordion inside the drawer, below --bp-lg */
+      const mDisc = md.querySelector('[data-disclosure]');
+      const mMega = md.querySelector('[data-mega]');
+      check('mobile: Solutions accordion starts collapsed',
+        mDisc?.getAttribute('aria-expanded') === 'false' && !mMega.hasAttribute('data-open'));
+      mDisc.click();
+      await settle();
+      check('mobile: accordion opens and reports it',
+        mDisc.getAttribute('aria-expanded') === 'true' && mMega.hasAttribute('data-open'));
+
+      /* ---------------- with JavaScript, desktop width ---------------- */
+      const d = await makeFrame(1280);
+      await settle();
+      const dd = d.contentDocument;
+      const dw = d.contentWindow;
+      const disclosure = dd.querySelector('[data-disclosure]');
+      const mega = dd.querySelector('[data-mega]');
+      const dToggle = dd.querySelector('[data-drawer-toggle]');
+
+      check('desktop: drawer toggle is not shown', !visible(dToggle));
+      check('desktop: all five nav links are visible',
+        [...dd.querySelectorAll('.site-nav__link')].every(visible));
+      check('desktop: mega-menu starts closed',
+        dw.getComputedStyle(mega).visibility === 'hidden'
+        && disclosure.getAttribute('aria-expanded') === 'false');
+
+      disclosure.click();
+      await settle();
+      check('desktop: click opens the mega-menu',
+        dw.getComputedStyle(mega).visibility === 'visible'
+        && disclosure.getAttribute('aria-expanded') === 'true',
+        `visibility=${dw.getComputedStyle(mega).visibility} opacity=${dw.getComputedStyle(mega).opacity} aria-expanded=${disclosure.getAttribute('aria-expanded')} data-open=${mega.hasAttribute('data-open')} innerWidth=${dw.innerWidth}`);
+
+      key(dd, 'Escape');
+      await settle();
+      check('desktop: Esc closes the mega-menu',
+        disclosure.getAttribute('aria-expanded') === 'false');
+      check('desktop: Esc returns focus to the disclosure button', dd.activeElement === disclosure);
+
+      /* Keyboard-only: focusing the trigger must open the panel even with no
+         script, which is what :focus-within buys us. */
+      const kb = await makeFrame(1280, { scripts: false });
+      const kd = kb.contentDocument;
+      const kw = kb.contentWindow;
+      kw.focus();   /* :focus-within only matches in the focused document */
+      kd.querySelector('.site-nav__item--has-menu a').focus();
+      await settle();
+      check('no-JS desktop: focusing Solutions opens the mega-menu via :focus-within',
+        kw.getComputedStyle(kd.querySelector('[data-mega]')).visibility === 'visible');
+
+      /* aria-current stamping. A page is allowed to be linked from both the
+         header and the footer, and both links are genuinely "the current
+         page" — so the test is that every marked link points here, not that
+         there is only one. */
+      const marked = [...dd.querySelectorAll('[aria-current="page"]')];
+      check('aria-current marks only links to this page',
+        marked.every((a) => a.getAttribute('href') === url),
+        `${marked.length} marked: ${marked.map((a) => a.getAttribute('href')).join(', ') || 'none'}`);
+      check('aria-current is present on every page except the home page',
+        url === '/index.html' || url === '/' ? marked.length === 0 : marked.length > 0);
+    } catch (err) {
+      check('harness ran to completion', false, String(err && err.message || err));
+    }
+
+    out.textContent = JSON.stringify({
+      url,
+      passed: results.filter((r) => r.pass).length,
+      failed: results.filter((r) => !r.pass).length,
+      results,
+    }, null, 2);
+  })();
+</script>
+</body>
+</html>

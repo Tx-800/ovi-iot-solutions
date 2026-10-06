@@ -39,6 +39,14 @@ export function initNav() {
   header.setAttribute('data-nav-enhanced', '');
   if (toggle) toggle.removeAttribute('hidden');
 
+  /* Enhancement is what first hides the drawer, so transitions have to stay
+     off for that first style change — otherwise the panel animates itself
+     shut in front of the visitor on every page load. One frame later, the
+     closed state is the starting state and motion is safe to switch on. */
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => header.setAttribute('data-nav-ready', ''));
+  });
+
   /* --- Sticky condense --------------------------------------------------- */
 
   let ticking = false;
@@ -57,14 +65,11 @@ export function initNav() {
 
   /* --- Drawer ------------------------------------------------------------ */
 
-  let lastFocused = null;
-
   const outsideElements = () =>
     Array.from(document.body.children).filter((el) => el !== header);
 
   function openDrawer() {
     if (!drawer || !toggle) return;
-    lastFocused = document.activeElement;
 
     header.setAttribute('data-drawer-open', '');
     toggle.setAttribute('aria-expanded', 'true');
@@ -93,10 +98,10 @@ export function initNav() {
     drawer.removeAttribute('aria-label');
     outsideElements().forEach((el) => el.removeAttribute('inert'));
 
-    if (restoreFocus) {
-      (lastFocused instanceof HTMLElement ? lastFocused : toggle).focus();
-    }
-    lastFocused = null;
+    /* ARCHITECTURE.md §8: focus returns to the toggle. Returning it to
+       whatever was focused before is wrong when the drawer was opened by a
+       pointer, which leaves focus on the body. */
+    if (restoreFocus) toggle.focus();
   }
 
   const drawerIsOpen = () => header.hasAttribute('data-drawer-open');

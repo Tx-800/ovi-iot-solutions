@@ -41,6 +41,14 @@ video {
   height: auto;
 }
 
+/* `hidden` must win over the element defaults above. Without this, the inline
+   icon sprite (`<svg hidden>`) renders as a 300x150 block at the top of every
+   page, because `svg { display: block }` outranks the UA's [hidden] rule.
+   Components that set their own display scope it to :not([hidden]). */
+[hidden] {
+  display: none;
+}
+
 /* Form controls do not inherit type by default */
 input,
 button,

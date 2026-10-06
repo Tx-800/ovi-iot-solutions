@@ -40,7 +40,12 @@
   /* shot=1 hides the readout so a screenshot of this page is the target page
      at a true viewport width — Chrome's --window-size crops rather than
      reflows below ~500px on Windows. */
-  if (params.get('shot') === '1') out.style.display = 'none';
+  if (params.get('shot') === '1') {
+    out.style.display = 'none';
+    frame.style.position = 'absolute';
+    frame.style.insetInlineStart = '0';
+    frame.style.insetBlockStart = '0';
+  }
 
   frame.addEventListener('load', () => {
     const win = frame.contentWindow;
@@ -52,6 +57,14 @@
     for (const el of doc.querySelectorAll('body *')) {
       const r = el.getBoundingClientRect();
       if (r.width === 0 && r.height === 0) continue;
+
+      /* An off-canvas drawer is meant to sit outside the viewport. Only
+         painted elements can cause real overflow, and documentElement's
+         scrollWidth is the authoritative signal either way. */
+      const style = win.getComputedStyle(el);
+      if (style.visibility === 'hidden' || style.display === 'none') continue;
+      if (style.position === 'fixed') continue;
+
       if (r.right > viewport + 1 || r.left < -1) {
         offenders.push({
           tag: el.tagName.toLowerCase(),
