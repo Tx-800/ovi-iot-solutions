@@ -1,0 +1,8 @@
+node_modules/
+.DS_Store
+.vscode/
+*.log
+Thumbs.db
+
+# Dev-only screenshot output (tools/shot.js)
+.shots/

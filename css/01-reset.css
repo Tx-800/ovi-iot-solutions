@@ -1,0 +1,111 @@
+/* ==========================================================================
+   01-reset.css — modern reset
+
+   Nothing here is a design decision. Values are structural (0, 100%, inherit)
+   rather than chosen; everything chosen lives in 02-tokens.css.
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Vertical rhythm is owned by .section and .flow, never by default margins. */
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  tab-size: 4;
+}
+
+body {
+  min-height: 100svh;
+}
+
+/* Media defaults */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+/* Form controls do not inherit type by default */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Text wrapping defaults — DESIGN.md §3: never hyphenate headings. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+  hyphens: manual;
+}
+
+p,
+li,
+dd,
+figcaption {
+  text-wrap: pretty;
+}
+
+/* A long URL or part number must not create horizontal scroll — PRD N7. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+dt,
+dd {
+  overflow-wrap: break-word;
+}
+
+/* Lists that are semantic-only opt out of markers. */
+ul[role="list"],
+ol[role="list"] {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/* A scrolled-to target clears the sticky header. */
+:target {
+  scroll-margin-block-start: var(--scroll-offset);
+}

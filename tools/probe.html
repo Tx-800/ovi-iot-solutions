@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>probe</title>
+  <style>
+    html, body { margin: 0; background: #fff; }
+    #frame { border: 0; display: block; }
+    #out { font: 12px monospace; white-space: pre; }
+  </style>
+</head>
+<body>
+<pre id="out">pending</pre>
+<iframe id="frame" title="probe target"></iframe>
+<script>
+  /* Dev-only measurement harness — never linked from the site.
+     Loads a page in an iframe at an exact CSS width and reports layout facts
+     that a cropped screenshot cannot prove: real viewport width, horizontal
+     overflow, and which elements are responsible.
+
+     Usage:
+       node tools/measure.js <path> <width> [height]
+     which drives:
+       /tools/probe.html#url=<path>&w=<width>&h=<height>
+
+     Parameters ride in the hash, not the query: the dev server redirects
+     `.html` to its extensionless form and drops the query string, but a
+     fragment survives a redirect.
+  */
+  const params = new URLSearchParams(location.hash.slice(1));
+  const url = params.get('url') || '/';
+  const w = Number(params.get('w') || 375);
+  const h = Number(params.get('h') || 900);
+
+  const frame = document.getElementById('frame');
+  const out = document.getElementById('out');
+  frame.style.width = w + 'px';
+  frame.style.height = h + 'px';
+
+  /* shot=1 hides the readout so a screenshot of this page is the target page
+     at a true viewport width — Chrome's --window-size crops rather than
+     reflows below ~500px on Windows. */
+  if (params.get('shot') === '1') out.style.display = 'none';
+
+  frame.addEventListener('load', () => {
+    const win = frame.contentWindow;
+    const doc = win.document;
+    const root = doc.documentElement;
+    const viewport = win.innerWidth;
+
+    const offenders = [];
+    for (const el of doc.querySelectorAll('body *')) {
+      const r = el.getBoundingClientRect();
+      if (r.width === 0 && r.height === 0) continue;
+      if (r.right > viewport + 1 || r.left < -1) {
+        offenders.push({
+          tag: el.tagName.toLowerCase(),
+          cls: el.className && typeof el.className === 'string' ? el.className : '',
+          left: Math.round(r.left),
+          right: Math.round(r.right),
+        });
+      }
+    }
+
+    out.textContent = JSON.stringify({
+      url,
+      requestedWidth: w,
+      viewportWidth: viewport,
+      viewportMatches: viewport === w,
+      scrollWidth: root.scrollWidth,
+      clientWidth: root.clientWidth,
+      horizontalOverflow: root.scrollWidth > root.clientWidth,
+      documentHeight: root.scrollHeight,
+      offenders: offenders.slice(0, 12),
+      offenderCount: offenders.length,
+    }, null, 2);
+  });
+
+  frame.src = url;
+</script>
+</body>
+</html>

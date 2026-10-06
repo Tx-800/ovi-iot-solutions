@@ -1,0 +1,180 @@
+/* ==========================================================================
+   03-base.css — element defaults: the type system applied, links, focus,
+   and the reduced-motion guard.
+
+   Only bare element selectors belong here. Anything that needs a class is a
+   component (05) or a section (06).
+   ========================================================================== */
+
+html {
+  /* No smooth scrolling: the motion budget is one orchestrated moment per
+     page (DESIGN.md §8), and scroll-behaviour is not one of them. */
+  background-color: var(--paper);
+}
+
+body {
+  background-color: var(--surface);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  font-weight: var(--weight-body);
+  font-stretch: var(--width-text);
+  line-height: var(--leading-body);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Headings -------------------------------------------------------------
+   Display widths (H1/H2) use the Archivo wdth axis at 112%; H3/H4 sit at the
+   text width. The width contrast is the type system's only contrast device. */
+
+h1,
+h2 {
+  color: var(--text-strong);
+  font-weight: var(--weight-display);
+  font-stretch: var(--width-display);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-display);
+}
+
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-strong);
+  font-weight: var(--weight-display);
+  font-stretch: var(--width-text);
+  letter-spacing: var(--tracking-heading);
+  line-height: var(--leading-heading);
+}
+
+h1 { font-size: var(--step-4); }   /* --step-5 is the home hero only */
+h2 { font-size: var(--step-3); }
+h3 { font-size: var(--step-2); }
+h4 { font-size: var(--step-1); }
+h5 { font-size: var(--step-0); }
+h6 { font-size: var(--step--1); }
+
+/* --- Body copy ------------------------------------------------------------
+   The measure is enforced by default rather than opted into, so a wide
+   section cannot accidentally run body copy past 68ch (DESIGN.md §3).
+   Layout blocks that genuinely need full width set `max-width: none`. */
+
+p,
+li,
+dd,
+blockquote {
+  max-width: var(--measure);
+}
+
+strong,
+b {
+  font-weight: var(--weight-strong);
+  color: var(--text-strong);
+}
+
+small {
+  font-size: var(--step--1);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+ul,
+ol {
+  padding-inline-start: var(--space-24);
+}
+
+li + li {
+  margin-block-start: var(--space-8);
+}
+
+hr {
+  height: 0;
+  border: 0;
+  border-block-start: var(--border-width) solid var(--border);
+}
+
+/* --- Links ----------------------------------------------------------------
+   --ovi-blue on white is 3.6:1 and fails for body text, so links in copy use
+   --blue-600 (5.3:1) and keep it on hover — the underline thickens instead.
+   DESIGN.md §2, contrast gates. */
+
+a {
+  color: var(--link);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-thickness var(--dur-hover) linear;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* --- Focus ----------------------------------------------------------------
+   Never `outline: none` without a replacement (AGENTS.md §4). Inside dark
+   bands .on-dark restates --focus-ring as --white. */
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+/* --- Selection ------------------------------------------------------------ */
+
+::selection {
+  background-color: var(--blue-100);
+  color: var(--navy-900);
+}
+
+/* --- Dark surfaces -------------------------------------------------------- */
+
+.on-dark {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+/* --- Skip link ------------------------------------------------------------ */
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--space-16);
+  inset-block-start: var(--space-16);
+  z-index: 100;
+  padding: var(--space-12) var(--space-16);
+  background-color: var(--white);
+  color: var(--navy-700);
+  border: var(--border-width) solid var(--ovi-blue);
+  border-radius: var(--r-md);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-ui);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--space-32)));
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* --- Reduced motion -------------------------------------------------------
+   The only place `!important` is permitted on this site (ARCHITECTURE.md §5).
+   JS modules check the same query and render final state instead of
+   animating (DESIGN.md §8). */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,161 @@
+/* ==========================================================================
+   02-tokens.css — every design value on this site
+
+   Transcribed from DESIGN.md §2 (colour), §3 (type), §4 (layout), §8 (motion)
+   and §9 (breakpoints). A raw hex, a px font-size or an arbitrary spacing
+   value anywhere outside this file is a bug (ARCHITECTURE.md §5).
+
+   Deliberately NOT in a cascade layer: a token definition should never lose
+   to a layered rule. Unlayered normal declarations outrank layered ones, so
+   leaving :root here keeps tokens authoritative.
+   ========================================================================== */
+
+:root {
+  /* --- Colour — brand. Sampled from the supplied logo file. Do not alter. -- */
+  --ovi-blue:     #0387F6;   /* the infinity mark + wifi arcs */
+  --ovi-navy:     #1C2C45;   /* the "ovi" wordmark */
+
+  /* --- Colour — field ---------------------------------------------------- */
+  --navy-900:     #111B2E;   /* deepest surface: hero, CTA band, footer */
+  --navy-700:     #1C2C45;   /* brand navy: headings on light, second dark surface */
+  --navy-500:     #3A4D6D;   /* muted body text on light */
+  --navy-300:     #8295B4;   /* captions, disabled, diagram strokes on dark */
+
+  /* --- Colour — signal --------------------------------------------------- */
+  --blue-600:     #0269C4;   /* hover / pressed state, and links in body copy */
+  --blue-500:     #0387F6;   /* = --ovi-blue. Primary action + "live" signal */
+  --blue-200:     #A9D4FD;   /* contour rings on light surfaces */
+  --blue-100:     #DCEDFE;   /* signal wash, chip fills, selected rows */
+
+  /* --- Colour — paper ---------------------------------------------------- */
+  --paper:        #F6F8FB;   /* page field. Cool, never warm. */
+  --white:        #FFFFFF;   /* card + panel surfaces */
+  --hairline:     #DFE5EE;   /* every border on light */
+  --hairline-dk:  #27374F;   /* every border on dark */
+
+  /* --- Colour — functional. Semantic only, never decorative. ------------- */
+  --hazard:       #F0A202;   /* ATEX / hazardous-zone content, and form warnings ONLY */
+  --success:      #0E9F6E;   /* form success only */
+  --danger:       #D7263D;   /* form errors only */
+
+  /* --- Semantic assignments ---------------------------------------------
+     Components reference these, not the scale values above, so a surface can
+     be restated once inside .section--dark instead of in every component. */
+  --surface:          var(--paper);
+  --surface-raised:   var(--white);
+  --text:             var(--navy-500);
+  --text-strong:      var(--navy-700);
+  --text-muted:       var(--navy-500);
+  --border:           var(--hairline);
+  --link:             var(--blue-600);
+  --focus-ring:       var(--ovi-blue);
+
+  /* --- Type -------------------------------------------------------------- */
+  --font-sans: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Fluid scale, ratio ~1.25 — DESIGN.md §3 */
+  --step--1: clamp(0.84rem, 0.82rem + 0.10vw, 0.89rem);  /* captions, legal     */
+  --step-0:  clamp(1.00rem, 0.96rem + 0.20vw, 1.13rem);  /* body                */
+  --step-1:  clamp(1.25rem, 1.18rem + 0.35vw, 1.42rem);  /* lead paragraph      */
+  --step-2:  clamp(1.56rem, 1.44rem + 0.60vw, 1.78rem);  /* H3                  */
+  --step-3:  clamp(1.95rem, 1.75rem + 1.00vw, 2.22rem);  /* H2                  */
+  --step-4:  clamp(2.44rem, 2.10rem + 1.70vw, 3.16rem);  /* page H1             */
+  --step-5:  clamp(3.05rem, 2.45rem + 3.00vw, 4.50rem);  /* home hero H1 only   */
+
+  --weight-body:    400;
+  --weight-ui:      500;
+  --weight-display: 600;
+  --weight-strong:  600;
+
+  /* Archivo is variable on the wdth axis — the width contrast does the work a
+     second typeface usually would (DESIGN.md §3). */
+  --width-display: 112%;
+  --width-text:    100%;
+
+  --leading-display: 1.04;
+  --leading-heading: 1.2;
+  --leading-body:    1.65;
+  --leading-ui:      1.2;
+
+  --tracking-display: -0.02em;
+  --tracking-heading: -0.01em;
+  --tracking-body:    0;
+
+  --measure:      68ch;   /* body copy never wider */
+  --measure-lead: 56ch;   /* lead paragraphs never wider */
+
+  /* --- Space. 8px base; these ten values only — DESIGN.md §4. ------------ */
+  --space-4:   0.25rem;
+  --space-8:   0.5rem;
+  --space-12:  0.75rem;
+  --space-16:  1rem;
+  --space-24:  1.5rem;
+  --space-32:  2rem;
+  --space-48:  3rem;
+  --space-64:  4rem;
+  --space-96:  6rem;
+  --space-128: 8rem;
+
+  --flow-space:   var(--space-24);   /* default gap inside .flow */
+  --section-pad:  clamp(4rem, 9vw, 8rem);
+
+  /* --- Layout ------------------------------------------------------------ */
+  --container: 1240px;
+  --gutter:    clamp(1rem, 4vw, 2rem);
+  --columns:   12;
+  --grid-gap:  var(--space-32);
+
+  /* Offset used by :target and scroll-margin so the sticky header never
+     covers a scrolled-to heading. */
+  --scroll-offset: var(--space-96);
+
+  /* --- Radius. Small radii read as datasheet, not as SaaS. --------------- */
+  --r-sm: 2px;   /* chips, inputs */
+  --r-md: 4px;   /* cards, buttons */
+  --r-lg: 8px;   /* modals, drawer */
+
+  /* --- Elevation. There are exactly two shadows on this site. ------------ */
+  --shadow-header:  0 1px 0 var(--hairline), 0 6px 20px -12px rgb(17 27 46 / 0.22);
+  --shadow-overlay: 0 24px 60px -20px rgb(17 27 46 / 0.40);
+
+  /* --- Borders ----------------------------------------------------------- */
+  --border-width: 1px;
+  --dash-wireless: 2 6;   /* stroke-dasharray for radio links — DESIGN.md §1 */
+
+  /* --- Motion — DESIGN.md §8. Every duration on the site is one of these. */
+  --dur-hover:     140ms;
+  --dur-toast:     200ms;
+  --dur-menu:      220ms;
+  --dur-accordion: 240ms;
+  --dur-enter:     320ms;   /* inner-page H1 + lead, together */
+  --dur-hero:      900ms;   /* hero plot entrance, total */
+  --stagger-hero:  90ms;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-menu:     cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* --- Breakpoints -------------------------------------------------------
+     Declared for reference and for JS (matchMedia). Custom properties are not
+     valid inside a media query condition, so media queries below this file
+     repeat the literal value and name the token in a comment. */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+}
+
+/* Dark surfaces restate the semantic tokens once. Every component then works
+   on either field without knowing which it is on (DESIGN.md §2, the
+   dark/light sandwich). */
+.on-dark,
+.section--dark {
+  --surface:        var(--navy-900);
+  --surface-raised: var(--navy-700);
+  --text:           var(--navy-300);
+  --text-strong:    var(--white);
+  --text-muted:     var(--navy-300);
+  --border:         var(--hairline-dk);
+  --link:           var(--blue-200);
+  --focus-ring:     var(--white);
+}

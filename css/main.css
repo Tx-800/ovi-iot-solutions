@@ -1,0 +1,21 @@
+/* ==========================================================================
+   main.css — the only stylesheet linked from a page.
+
+   The @layer statement below fixes the cascade order up front, so a later
+   file can never accidentally lose to an earlier one on specificity.
+   Import order is the cascade — do not reorder (ARCHITECTURE.md §5).
+
+   02-tokens.css is imported unlayered on purpose: a token definition should
+   outrank every layered rule.
+   ========================================================================== */
+
+@layer reset, base, layout, components, sections, pages, utilities;
+
+@import url("01-reset.css") layer(reset);
+@import url("02-tokens.css");
+@import url("03-base.css") layer(base);
+@import url("04-layout.css") layer(layout);
+@import url("05-components.css") layer(components);
+@import url("06-sections.css") layer(sections);
+@import url("07-pages.css") layer(pages);
+@import url("08-utilities.css") layer(utilities);

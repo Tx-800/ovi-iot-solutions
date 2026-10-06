@@ -1,0 +1,98 @@
+/* ==========================================================================
+   04-layout.css — the layout primitives. Five of them, and no more.
+
+   Section spacing lives on .section and nowhere else. Never create section
+   rhythm with a margin on a heading or a last child — that is how padding
+   rules end up cancelling each other (ARCHITECTURE.md §5).
+   ========================================================================== */
+
+/* --- .container -----------------------------------------------------------
+   Caps at 1240px and carries the page gutter. */
+
+.container {
+  width: 100%;
+  max-width: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* The hero plot bleeds slightly past the container's end edge (DESIGN.md
+   §6.1); from --bp-lg up it may escape the gutter without creating scroll. */
+.container--bleed-end {
+  padding-inline-end: 0;
+}
+
+@media (max-width: 1023.98px) {   /* below --bp-lg */
+  .container--bleed-end {
+    padding-inline-end: var(--gutter);
+  }
+}
+
+/* --- .grid ----------------------------------------------------------------
+   The 12-column grid. `minmax(0, 1fr)` rather than `1fr` so a long word in a
+   cell cannot push the track wider than its share. */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+  gap: var(--grid-gap);
+}
+
+/* --- .section -------------------------------------------------------------
+   Owns all vertical rhythm. Variants change surface and scale, nothing else. */
+
+.section {
+  padding-block: var(--section-pad);
+}
+
+.section--tight {
+  padding-block: calc(var(--section-pad) / 2);
+}
+
+.section--dark {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+/* --- .split-7-5 -----------------------------------------------------------
+   The house layout: copy in 7 columns, visual in 5. Not 6/6 — 50/50 reads as
+   a template (DESIGN.md §4). Single column below --bp-lg. */
+
+.split-7-5 {
+  display: grid;
+  gap: var(--grid-gap);
+}
+
+@media (min-width: 1024px) {   /* --bp-lg */
+  .split-7-5 {
+    grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+    align-items: center;
+  }
+
+  .split-7-5 > :first-child {
+    grid-column: 1 / span 7;
+  }
+
+  .split-7-5 > :last-child {
+    grid-column: 8 / span 5;
+  }
+
+  /* Reverse at most once per page, and only to break a run of three
+     identical sections. */
+  .split-7-5--reverse > :first-child {
+    grid-column: 6 / span 7;
+  }
+
+  .split-7-5--reverse > :last-child {
+    grid-column: 1 / span 5;
+    grid-row: 1;
+  }
+}
+
+/* --- .flow ----------------------------------------------------------------
+   Spacing between stacked siblings, set once on the parent. Children can
+   restate --flow-space to tighten or open their own gap. */
+
+.flow > * + * {
+  margin-block-start: var(--flow-space);
+}
