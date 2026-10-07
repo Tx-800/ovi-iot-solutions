@@ -91,17 +91,23 @@
         <p>&copy; {{year}} {{name}}</p>
       </div>
     </div>
+
+    <!-- The floating controls are position:fixed, so where they sit in the
+         DOM does not move them on screen — but it decides their landmark.
+         Outside <footer> they belonged to none, which axe flags (`region`).
+         That stayed invisible until Phase 5, because the FAB only exists once
+         SITE.whatsapp is real and every earlier run used placeholders. The
+         footer has no transform, so it does not trap the fixed positioning. -->
+    <a class="fab" href="{{whatsapp}}" data-site-attr="href:whatsapp" data-requires="whatsapp"
+       rel="noopener noreferrer" target="_blank">
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-message-circle"></use></svg>
+      <span class="visually-hidden">Message us on WhatsApp</span>
+    </a>
+
+    <button class="back-to-top" type="button" data-back-to-top hidden>
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-up"></use></svg>
+      <span class="visually-hidden">Back to top</span>
+    </button>
+
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
   </footer>
-
-  <a class="fab" href="{{whatsapp}}" data-site-attr="href:whatsapp" data-requires="whatsapp"
-     rel="noopener noreferrer" target="_blank">
-    <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-message-circle"></use></svg>
-    <span class="visually-hidden">Message us on WhatsApp</span>
-  </a>
-
-  <button class="back-to-top" type="button" data-back-to-top hidden>
-    <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-up"></use></svg>
-    <span class="visually-hidden">Back to top</span>
-  </button>
-
-  <div class="toast" role="status" aria-live="polite" data-toast></div>
