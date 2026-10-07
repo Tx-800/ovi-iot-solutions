@@ -6,3 +6,8 @@ Thumbs.db
 
 # Dev-only screenshot output (tools/shot.js)
 .shots/
+
+# Photo sources fetched by tools/build-images.js. Only the *.download.* cache is
+# ignored: a source placed by hand as assets/img/_src/<basename>.jpg is
+# committable, and build-images.js always prefers it over a download.
+assets/img/_src/*.download.*

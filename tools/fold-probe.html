@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>fold probe</title>
+<style>html,body{margin:0}iframe{border:0;display:block}#out{font:12px monospace;white-space:pre}</style></head>
+<body><pre id="out">pending</pre><div id="frames"></div><script>
+const pages=['smart-water-metering','smart-street-lighting','water-leak-detection','water-quality-monitoring','water-level-monitoring','people-asset-tracking','atex-zone-sensors'].map(n=>'/solutions/'+n+'.html').concat(['/services/consultancy-tender-preparation.html','/services/rf-planning-site-survey.html']);
+const vps=[[375,812],[412,823],[768,1024],[1024,768],[1440,900]];
+const rows=[];
+(async()=>{
+ for(const p of pages){ const row=[p.split('/').pop()];
+  for(const [w,h] of vps){
+   await new Promise(res=>{const f=document.createElement('iframe');f.style.width=w+'px';f.style.height=h+'px';
+    f.onload=()=>{const d=f.contentDocument;if(!d||!d.querySelector('.media-band__img'))return;
+      const r=d.querySelector('.media-band__img').getBoundingClientRect();
+      row.push(w+'x'+h+': top '+Math.round(r.top)+(r.top<h?' ABOVE':' below'));f.remove();res();};
+    f.src=p;document.getElementById('frames').appendChild(f);});
+  }
+  rows.push(row.join('  |  '));
+ }
+ document.getElementById('out').textContent=rows.join('\n');
+})();
+</script></body></html>
