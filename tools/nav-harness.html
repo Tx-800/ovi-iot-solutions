@@ -60,7 +60,7 @@
 
       f.src = url;
       frames.appendChild(f);
-      setTimeout(() => reject(new Error('frame never loaded: ' + url)), 8000);
+      setTimeout(() => reject(new Error('frame never loaded: ' + url)), 15000);
     });
   }
 
@@ -69,6 +69,23 @@
   /* Longer than the 220ms menu transition, so assertions read settled state
      rather than a frame mid-animation. */
   const settle = () => new Promise((r) => setTimeout(r, 400));
+
+  /* Polls rather than guessing a fixed delay. nav.js sets data-nav-ready two
+     requestAnimationFrame ticks after load, and rAF cadence is unreliable
+     under headless Chrome's --virtual-time-budget — especially for a
+     background iframe, and especially once several iframes are stacked in
+     one harness page. A fixed settle() occasionally outran it; this cannot. */
+  const waitFor = (fn, { timeout = 6000, interval = 50 } = {}) => new Promise((resolve, reject) => {
+    const start = Date.now();
+    const tick = () => {
+      let value;
+      try { value = fn(); } catch { value = false; }
+      if (value) return resolve(value);
+      if (Date.now() - start > timeout) return reject(new Error('waitFor: condition never became true'));
+      setTimeout(tick, interval);
+    };
+    tick();
+  });
 
   (async () => {
     try {
@@ -98,14 +115,21 @@
 
       /* ---------------- with JavaScript, mobile width ---------------- */
       const m = await makeFrame(375);
-      await settle();
       const md = m.contentDocument;
       const mw = m.contentWindow;
       const header = md.querySelector('[data-header]');
       const toggle = md.querySelector('[data-drawer-toggle]');
       const drawer = md.querySelector('[data-drawer]');
 
-      check('JS: header is marked ready, so transitions are on', header?.hasAttribute('data-nav-ready'));
+      let readyInTime = true;
+      try {
+        await waitFor(() => header?.hasAttribute('data-nav-ready'));
+      } catch {
+        readyInTime = false;
+      }
+      await settle();
+
+      check('JS: header is marked ready, so transitions are on', readyInTime);
       check('JS: drawer toggle is shown', toggle && visible(toggle));
       check('JS: the drawer is the default layout, so nothing reflows on boot',
         mw.getComputedStyle(drawer).position === 'fixed');
@@ -190,11 +214,15 @@
       check('no-JS desktop: focusing Solutions opens the mega-menu via :focus-within',
         kw.getComputedStyle(kd.querySelector('[data-mega]')).visibility === 'visible');
 
-      /* aria-current stamping. A page is allowed to be linked from both the
-         header and the footer, and both links are genuinely "the current
-         page" — so the test is that every marked link points here, not that
-         there is only one. */
-      const marked = [...dd.querySelectorAll('[aria-current="page"]')];
+      /* aria-current stamping, nav links only. A page is allowed to be linked
+         from both the header and the footer, and both links are genuinely
+         "the current page" — so the test is that every marked link points
+         here, not that there is only one. The breadcrumb trail's own current
+         item (tools/sync-partials.js's breadcrumbsHTML) also carries
+         aria-current="page", but on a plain <li> with no href by design —
+         that is a different, correct use of the attribute, not a nav link,
+         so it is scoped out here rather than counted as a mismatch. */
+      const marked = [...dd.querySelectorAll('a[aria-current="page"]')];
       check('aria-current marks only links to this page',
         marked.every((a) => a.getAttribute('href') === url),
         `${marked.length} marked: ${marked.map((a) => a.getAttribute('href')).join(', ') || 'none'}`);

@@ -227,6 +227,37 @@ function breadcrumbFor(file, h1) {
   return crumbs;
 }
 
+/** The visible breadcrumb trail, built from the same breadcrumbFor() data as
+ *  the BreadcrumbList JSON-LD, so the two can never drift apart. Root-relative
+ *  hrefs, so — unlike the JSON-LD — it renders correctly even before
+ *  SITE.url is real. Returns '' for pages breadcrumbFor() excludes
+ *  (Home, 404), which is how the marker ends up empty on those two pages. */
+function breadcrumbsHTML(file, html) {
+  const h1 = decode(stripTags((html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || ''));
+  const crumbs = breadcrumbFor(file, h1);
+  if (!crumbs) return '';
+
+  const items = crumbs.map((c, i) => {
+    const last = i === crumbs.length - 1;
+    const label = escapeHtml(c.name);
+    return last
+      ? `      <li class="breadcrumbs__item" aria-current="page">${label}</li>`
+      : `      <li class="breadcrumbs__item"><a href="${c.path}">${label}</a></li>`;
+  });
+
+  return [
+    '',
+    '    <nav class="breadcrumbs" aria-label="Breadcrumb">',
+    '      <ol class="breadcrumbs__list" role="list">',
+    ...items,
+    '      </ol>',
+    '    </nav>',
+    '  ',
+  ].join('\n');
+}
+
+const escapeHtml = (s) => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
 function generatedMeta(file, html) {
   const title = decode((html.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '');
   const desc = decode((html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || '');
@@ -369,6 +400,12 @@ function buildPage(file) {
   /* 5. Canonical, Open Graph, JSON-LD. */
   html = replaceRegion(html, '<!-- @generated meta -->', '  <!-- /@generated meta -->',
     generatedMeta(file, html), { file });
+
+  /* 6. Visible breadcrumb trail — every page except Home and 404 (PRD.md §5).
+     replaceRegion() is a no-op when a page carries no marker, which is how
+     Home and 404 opt out: they simply never include it. */
+  html = replaceRegion(html, '<!-- @breadcrumbs -->', '<!-- /@breadcrumbs -->',
+    breadcrumbsHTML(file, html), { file });
 
   return { original, html };
 }

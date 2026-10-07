@@ -49,8 +49,9 @@
    8rem, leaving a ~256px dead zone between them. The section still owns the
    rhythm; this only stops it being applied twice to the same seam. A section
    following a dark band keeps its full padding, because that seam is a real
-   change of surface. */
-.section:not(.section--dark) + .section:not(.section--dark) {
+   change of surface — .page-head counts as dark here even though it does not
+   carry .section--dark, since every inner page opens with one. */
+.section:not(.section--dark):not(.page-head) + .section:not(.section--dark):not(.page-head) {
   padding-block-start: 0;
 }
 

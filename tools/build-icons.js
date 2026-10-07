@@ -60,6 +60,18 @@ const ICONS = {
   'building-2':         'multi-sector reach pillar',
   'wrench':             'industrial grade',
   'handshake':          'advisory partner',
+  /* Phase 4 — solution and service detail page capability/sensor/service cards */
+  'toggle-right':       'remote control (street lighting)',
+  'zap':                'energy monitoring (street lighting)',
+  'alert-triangle':     'fault detection (street lighting)',
+  'calendar-clock':     'maintenance planning (street lighting)',
+  'thermometer':        'temperature monitoring (ATEX)',
+  'activity':           'vibration monitoring (ATEX)',
+  'sliders-horizontal':  'valve positioning (ATEX)',
+  'clipboard-check':    'feasibility studies (consultancy)',
+  'scale':              'vendor and technology evaluation (consultancy)',
+  'signal':             'on-site signal surveys (RF planning)',
+  'radar':              'coverage simulation (RF planning)',
 };
 
 const missing = [];

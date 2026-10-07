@@ -118,9 +118,76 @@
     <section class="section section--tight page-head" aria-labelledby="page-title">
       <div class="container">
         <div class="flow">
+          <!-- @breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list" role="list">
+      <li class="breadcrumbs__item"><a href="/">Home</a></li>
+      <li class="breadcrumbs__item" aria-current="page">Solution architecture</li>
+      </ol>
+    </nav>
+  <!-- /@breadcrumbs -->
           <h1 id="page-title">Solution architecture</h1>
           <p class="lead">End-to-end data flow — from field devices to the applications you use.</p>
         </div>
+      </div>
+    </section>
+
+    <section class="section architecture section--dark" aria-label="Solution architecture diagram" data-architecture>
+      <div class="container">
+        <ol class="arch">
+          <li class="arch__stage">
+            <span class="arch__step"></span>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-cpu"></use></svg>
+            <h2 class="arch__title">End devices</h2>
+            <p class="arch__desc">Smart meters, sensors and trackers in the field.</p>
+            <p class="arch__protocol"><span class="visually-hidden">Link to the next stage: </span>LoRaWAN</p>
+            <span class="arch__link arch__link--wireless" aria-hidden="true"><span class="arch__packet" data-packet></span></span>
+          </li>
+          <li class="arch__stage">
+            <span class="arch__step"></span>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-radio-tower"></use></svg>
+            <h2 class="arch__title">Gateways</h2>
+            <p class="arch__desc">LoRaWAN gateways and base stations aggregating device traffic.</p>
+            <p class="arch__protocol"><span class="visually-hidden">Link to the next stage: </span>TCP/IP SSL LoRaWAN</p>
+            <span class="arch__link" aria-hidden="true"><span class="arch__packet" data-packet></span></span>
+          </li>
+          <li class="arch__stage">
+            <span class="arch__step"></span>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-server"></use></svg>
+            <h2 class="arch__title">Network server</h2>
+            <p class="arch__desc">Device management, deduplication, security and payload routing.</p>
+            <p class="arch__protocol"><span class="visually-hidden">Link to the next stage: </span>TCP/IP SSL</p>
+            <span class="arch__link" aria-hidden="true"><span class="arch__packet" data-packet></span></span>
+          </li>
+          <li class="arch__stage">
+            <span class="arch__step"></span>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-monitor-smartphone"></use></svg>
+            <h2 class="arch__title">Applications</h2>
+            <p class="arch__desc">Dashboards, mobile, billing and asset systems.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="dual-title">
+      <div class="container">
+        <header class="section-head">
+          <h2 id="dual-title">Dual connectivity: matched to the application</h2>
+          <p class="section-head__sub">Selection criteria, not a spec sheet — the choice depends on the deployment.</p>
+        </header>
+
+        <ul class="compare" role="list">
+          <li class="compare__item">
+            <h3 class="compare__title">LoRaWAN</h3>
+            <p class="compare__text">Unlicensed spectrum, private network you own and operate, long range, very low power; suits campus, plant and citywide rollouts where you control the gateways.</p>
+          </li>
+          <li class="compare__item">
+            <h3 class="compare__title">NB-IoT</h3>
+            <p class="compare__text">Licensed carrier spectrum, no gateway infrastructure to deploy, deep indoor penetration; suits dispersed assets across an operator&rsquo;s existing coverage.</p>
+          </li>
+        </ul>
+
+        <p class="lead">OVI selects the connectivity per application rather than forcing one technology across a programme.</p>
       </div>
     </section>
   </main>

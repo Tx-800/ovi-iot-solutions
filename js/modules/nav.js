@@ -36,12 +36,19 @@ export function initNav() {
   const drawerMedia = window.matchMedia(DRAWER_QUERY);
   const megaMedia = window.matchMedia(MEGA_QUERY);
 
-  /* The drawer layout is already the CSS default; <noscript> is what undoes
-     it. All this marker does is switch transitions on, one frame after load,
-     so nothing animates while the page is still settling. */
-  window.requestAnimationFrame(() => {
-    window.requestAnimationFrame(() => header.setAttribute('data-nav-ready', ''));
-  });
+  /* The drawer layout is already the CSS default — <noscript> is what undoes
+     it — so this is not clearing a JS-driven layout change the way it would
+     if JS applied the enhanced layout itself. [data-nav-ready] only adds a
+     `transition` property to .site-nav/.mega; it changes no value on its
+     own, and a transition rule gaining the property it will later animate is
+     not itself an animation. So this can be set synchronously, and should
+     be: a one- or two-frame requestAnimationFrame delay was tried here and
+     is unreliable for a background iframe under headless Chrome's
+     --virtual-time-budget, where a *nested* rAF call often never fires
+     (confirmed with tools/raf-probe.html) — real browsers are not known to
+     do this, but there is no upside to depending on rAF when the gate does
+     not need to wait for a frame at all. */
+  header.setAttribute('data-nav-ready', '');
 
   /* --- Sticky condense --------------------------------------------------- */
 
