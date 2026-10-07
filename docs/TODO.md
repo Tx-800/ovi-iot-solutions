@@ -191,14 +191,16 @@ Record judgement calls here as you make them, one line each.
 | 2026-10-07 | `.why__title` is `--step-1`, not the card `--step-2` | At four columns "End-to-end expertise" broke across its own hyphen. Smaller also keeps the block subordinate to the solutions grid above it, which is the point of not boxing it. |
 | 2026-10-07 | Back-to-top takes the corner while the WhatsApp FAB is absent | Its offset reserves room for the FAB. The FAB is omitted until `whatsapp` is filled in, so without the rule the button floats in an empty gap. |
 | 2026-10-07 | Added `tools/build-css.js`, `tools/build-icons.js`, `tools/motion-probe.html`, `tools/font-metrics.html`, `tools/box-probe.html` | Build-time generators for committed artefacts, plus probes so the reduced-motion gate, the font metrics and the layout geometry are measured rather than asserted. |
+| 2026-10-07 | **Icon sprite moved from inline (every page) to external** `assets/icons/sprite.svg`. `ARCHITECTURE.md` §1 amended | Inline cost ~6.5 KB of identical markup on all 16 pages; external, the browser fetches and caches it once. `index.html` dropped from 29.3 KB to 23.7 KB raw. Verified before adopting, not assumed: `currentColor` inheritance through the external `<use>` shadow tree confirmed by rendering three icons in different colours and reading painted pixels (a computed-style check on the host element would not have proven the shadow content painted correctly); Lighthouse Performance held at 99 before and after. Both conditions were the ones set for keeping it. |
+| 2026-10-07 | **HTML budget changed from < 30 KB uncompressed to ≤ 12 KB gzipped per page.** `ARCHITECTURE.md` §7 amended | Same basis as the CSS budget — transfer size is what a visitor pays, every host serves compressed, no build step means authored bytes are served bytes. `index.html` measures 5.13 KB gzipped against the new gate. |
 
 ---
 
 ## Open questions for the user
 
-- [ ] **Icon delivery.** `ARCHITECTURE.md` §1 says Lucide via the UMD CDN bundle, but that ships ~1500 icons and breaks the 80 KB JS budget (`PRD.md` N4). Phase 2 uses an inline SVG sprite of the 7 UI icons drawn to Lucide's 24px grid. Phase 3 needs ~12 more for the solution cards. Options: (a) generate a sprite of just the icons we use from a `lucide-static` devDependency, exact artwork, zero runtime cost; (b) keep the CDN and raise the JS budget; (c) keep hand-drawn. **(a) recommended.**
-- [ ] **CSS budget basis.** CSS is 36.1 KB uncompressed against a 35 KB budget — 21.3 KB of rules and 14.8 KB of comments; 9.9 KB gzipped. Phase 3 adds the hero, pillars, solutions grid and architecture diagram. Options: (a) govern on gzipped bytes; (b) raise the uncompressed budget to ~50 KB; (c) strip comments at the cost of the documentation. **(a) or (b) recommended** — there is no build step, so authored bytes are served bytes.
-- [ ] **Primary button colour** — see the sign-off row in *Decisions*.
+- [x] **Icon delivery — resolved.** `lucide-static` devDependency, `tools/build-icons.js` generates the sprite. Moved to an external `assets/icons/sprite.svg` in Phase 4 on your instruction; see Decisions.
+- [x] **CSS budget basis — resolved.** Governed on gzipped bytes, ≤ 18 KB hard gate. HTML given the same treatment in Phase 4, ≤ 12 KB gzipped per page.
+- [x] **Primary button colour — resolved.** `--blue-600` confirmed correct; `DESIGN.md` §2 and §5 amended.
 
 - [ ] Real contact details for `js/site.config.js` — address, phone, WhatsApp number, email, domain, business hours
 - [ ] Web3Forms access key (free, 60 seconds: https://web3forms.com)
