@@ -97,6 +97,14 @@
     grid-column: 1 / span 5;
     grid-row: 1;
   }
+
+  /* When one side is removed (e.g. the contact page's office aside while its
+     values are placeholders), the survivor is both :first-child and
+     :last-child, and the :last-child rule would push it into the narrow
+     5-column slot. A lone child keeps the 7-column copy width. */
+  .split-7-5 > :only-child {
+    grid-column: 1 / span 7;
+  }
 }
 
 /* --- .flow ----------------------------------------------------------------

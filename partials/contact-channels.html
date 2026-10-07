@@ -1,0 +1,37 @@
+<!-- partials/contact-channels.html — WhatsApp, call and email, ahead of the form.
+     Edit here, then run: node tools/sync-partials.js
+     Many enquiries will never touch a form, so these sit first and are
+     buttons, not footnotes. Every link is baked from js/site.config.js; any
+     channel whose value is still a placeholder is removed, and if all three
+     are, the whole section goes rather than showing an empty heading. -->
+
+  <section class="section section--tight contact-channels" aria-labelledby="channels-title"
+           data-requires-any="whatsapp phone email">
+    <div class="container flow">
+      <h2 id="channels-title">Talk to an engineer directly</h2>
+      <p class="section-head__sub">Message, call or email — whichever is quickest for you.</p>
+
+      <ul class="contact-channels__list" role="list">
+        <li data-requires="whatsapp">
+          <a class="btn btn--primary contact-channels__link" href="{{whatsapp}}" target="_blank" rel="noopener noreferrer">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-message-circle"></use></svg>
+            <span>Message us on WhatsApp<span class="visually-hidden"> (opens WhatsApp)</span></span>
+          </a>
+        </li>
+        <li data-requires="phone">
+          <a class="btn btn--secondary contact-channels__link" href="{{tel}}">
+            <span>Call {{phone}}</span>
+          </a>
+        </li>
+        <li class="contact-channels__email" data-requires="email">
+          <a class="btn btn--secondary contact-channels__link" href="{{mailto}}">
+            <span>Email {{email}}</span>
+          </a>
+          <button class="btn btn--ghost contact-channels__copy" type="button" data-copy-email data-copy-value="{{email}}" hidden>
+            <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-copy"></use></svg>
+            <span>Copy email address</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </section>

@@ -135,6 +135,7 @@
   --input-pad-block:  var(--space-12);   /* 12px */
   --input-pad-inline: 0.875rem;          /* 14px */
   --input-min-height: 3rem;              /* 48px */
+  --input-ring:       3px;               /* focus ring around an input — DESIGN.md §5 */
   --chip-pad-block:   var(--space-4);    /* 4px  */
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */

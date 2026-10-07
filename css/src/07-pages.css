@@ -3,3 +3,103 @@
    Layer: pages. Keep this file short; if a rule here is reused twice it
    belongs in 05 or 06.
    ========================================================================== */
+
+/* --- contact.html ------------------------------------------------------------
+   Direct channels first, then the form beside the office details. */
+
+/* No margin reset here: this layer would beat .flow's spacing from the
+   layout layer and pull the buttons flush against the line above. */
+.contact-channels__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+  padding: 0;
+  list-style: none;
+}
+
+/* On a phone, three buttons of three different widths stacked read as
+   untidy; full width reads as a deliberate set. */
+@media (max-width: 639.98px) {
+  .contact-channels__list > li { flex: 1 1 100%; }
+  .contact-channels__link { width: 100%; justify-content: flex-start; }
+}
+
+/* The 7/5 split centres its columns vertically, which suits copy beside a
+   visual. Here both columns start with a heading, so they align to the top. */
+.contact-main .split-7-5 {
+  align-items: start;
+}
+
+.contact-channels__list > li {
+  margin-block-start: 0;
+  max-width: none;
+}
+
+/* A long email address has no spaces to break at; let it wrap anywhere
+   rather than push the page sideways at 320px. */
+.contact-channels__link {
+  gap: var(--space-12);
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+
+.contact-channels__email {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.contact-channels__copy:not([hidden]) {
+  gap: var(--space-8);
+}
+
+.contact-details {
+  --flow-space: var(--space-16);
+}
+
+.contact-details__title {
+  font-size: var(--step-2);
+}
+
+.contact-details__address {
+  display: flex;
+  flex-direction: column;
+  font-style: normal;
+}
+
+.contact-details__label {
+  margin-inline-end: var(--space-8);
+  color: var(--text-strong);
+  font-weight: var(--weight-ui);
+}
+
+.contact-map {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--white);
+  border: var(--border-width) solid var(--hairline);
+  border-radius: var(--r-md);
+}
+
+.contact-map__fallback {
+  padding: var(--space-24);
+  text-align: center;
+}
+
+/* Once Leaflet has mounted, the fallback link sits underneath the tiles;
+   hide it so keyboard focus can never land on something invisible. */
+.contact-map[data-map-ready] .contact-map__fallback {
+  display: none;
+}
+
+/* DESIGN.md §9: the WhatsApp FAB must never cover the submit button on a
+   phone, so the form's section ends with room to scroll past it. */
+@media (max-width: 767.98px) {
+  .contact-main {
+    padding-block-end: max(var(--section-pad), var(--space-96));
+  }
+}

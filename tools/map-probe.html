@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>map probe</title>
+<style>html,body{margin:0}iframe{border:0;display:block;width:1280px;height:800px}#out{font:12px monospace;white-space:pre}</style></head>
+<body><pre id="out">pending</pre><iframe id="f"></iframe><script>
+/* Dev-only. Confirms Leaflet is NOT fetched until the map nears the
+   viewport, then mounts with keyboard access. */
+const f=document.getElementById('f'); const r=[]; const c=(n,p,d)=>r.push((p?'pass':'FAIL')+'  '+n+(d?'  — '+d:''));
+const wait=ms=>new Promise(x=>setTimeout(x,ms));
+f.addEventListener('load',async()=>{
+  const d=f.contentDocument,w=f.contentWindow; if(!d.querySelector('[data-header]'))return;
+  await wait(800);
+  const leafletReq=()=>w.performance.getEntriesByType('resource').filter(e=>/leaflet/.test(e.name)).length;
+  const m=d.querySelector('[data-map]');
+  c('map is below the fold at first',m.getBoundingClientRect().top>800,'top '+Math.round(m.getBoundingClientRect().top));
+  c('Leaflet not requested before scroll-in',leafletReq()===0,leafletReq()+' requests');
+  m.scrollIntoView({block:'center'}); await wait(4000);
+  c('Leaflet requested after scroll-in',leafletReq()>=2,leafletReq()+' requests');
+  c('map mounted',m.hasAttribute('data-map-ready')&&m.classList.contains('leaflet-container'));
+  c('map container is keyboard focusable',m.tabIndex===0);
+  c('fallback link hidden once mounted (cannot take focus)',w.getComputedStyle(d.querySelector('.contact-map__fallback')).display==='none');
+  c('zoom controls are focusable links',d.querySelectorAll('.leaflet-control-zoom a[href]').length===2);
+  const mk=d.querySelector('.leaflet-marker-icon');
+  c('marker has alt text and is focusable',mk&&mk.alt==='OVI IoT Solutions office'&&mk.tabIndex===0,mk?mk.alt:'no marker');
+  c('OSM attribution shown',/OpenStreetMap/.test((d.querySelector('.leaflet-control-attribution')||{}).textContent||''));
+  c('text address sits beside the map',!!d.querySelector('.contact-details__address'));
+  c('directions link works without the map',/openstreetmap\.org\/\?mlat=51\.5202/.test(d.querySelector('.contact-details__directions a').href));
+  const tiles=w.performance.getEntriesByType('resource').filter(e=>/tile\.openstreetmap\.org/.test(e.name)).length;
+  c('OSM tiles requested',tiles>0,tiles+' tiles');
+  document.getElementById('out').textContent=r.join('\n');
+});
+f.src='/contact.html';
+</script></body></html>

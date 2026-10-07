@@ -1,0 +1,38 @@
+<!-- partials/contact-details.html — office address, hours and map, beside the form.
+     Edit here, then run: node tools/sync-partials.js
+     Each line is removed while its value is a placeholder, and the whole
+     aside goes if nothing is left, so the page never shows an empty "Office"
+     heading. The map only exists once SITE.map is a real location — 0,0 is
+     treated as unset — and the address text always sits beside it, so the
+     location is readable without the map, without JavaScript, and without
+     scripting the map at all. -->
+
+  <aside class="contact-details flow" aria-labelledby="office-title" data-requires-any="address hours map">
+    <h2 id="office-title" class="contact-details__title">Office</h2>
+
+    <address class="contact-details__address" data-requires="address">
+      <span data-requires="address.line1">{{address.line1}}</span>
+      <span data-requires="address.line2">{{address.line2}}</span>
+      <span data-requires="address.city">{{address.city}}</span>
+      <span data-requires="address.region">{{address.region}}</span>
+      <span data-requires="address.postal">{{address.postal}}</span>
+      <span data-requires="address.country">{{address.country}}</span>
+    </address>
+
+    <p class="contact-details__hours" data-requires="hours">
+      <span class="contact-details__label">Hours</span> {{hours}}
+    </p>
+
+    <div class="contact-details__map" data-requires="map">
+      <!-- Before Leaflet loads (it waits until this scrolls into view), and
+           with JavaScript off, the box holds a working link rather than
+           sitting empty. map.js hides it once the map is mounted. -->
+      <div class="contact-map" data-map data-lat="{{map.lat}}" data-lng="{{map.lng}}" data-zoom="{{map.zoom}}"
+           role="region" aria-label="Map of the OVI office location">
+        <p class="contact-map__fallback"><a href="{{osmUrl}}" rel="noopener noreferrer" target="_blank">View the office on OpenStreetMap<span class="visually-hidden"> (opens in a new tab)</span></a></p>
+      </div>
+      <p class="contact-details__directions">
+        <a href="{{osmUrl}}" rel="noopener noreferrer" target="_blank">Open in OpenStreetMap for directions<span class="visually-hidden"> (opens in a new tab)</span></a>
+      </p>
+    </div>
+  </aside>

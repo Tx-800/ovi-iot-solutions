@@ -68,6 +68,8 @@ Tooling that measures or checks the site is **not** governed by the list above. 
 | Image crop / treat / encode | **sharp** | `devDependencies` |
 | Solution-page photography | `tools/build-images.js` | `tools/`, writes `assets/img/*.webp`, each page's `<!-- @photo -->` band, and `assets/img/CREDITS.md` |
 | Photo-band fold check | `tools/fold-probe.html` | `tools/`, reports where each band sits against the fold |
+| Contact form behaviour | `tools/check-form.js` + `tools/form-harness.html` | `tools/`, 44 assertions incl. no-JS wiring; fetch mocked, nothing posted |
+| Map lazy-load + keyboard check | `tools/map-probe.html` | `tools/`, needs a populated `SITE.map` to have a map to test |
 | Link + dead-href checking | `tools/check-links.js` | `tools/`, no dependencies |
 | Partial injection and value baking | `tools/sync-partials.js` | `tools/`, no dependencies |
 | Sitemap generation | `tools/build-sitemap.js` | `tools/`, no dependencies |

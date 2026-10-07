@@ -358,6 +358,7 @@
   --input-pad-block:  var(--space-12);   /* 12px */
   --input-pad-inline: 0.875rem;          /* 14px */
   --input-min-height: 3rem;              /* 48px */
+  --input-ring:       3px;               /* focus ring around an input — DESIGN.md §5 */
   --chip-pad-block:   var(--space-4);    /* 4px  */
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */
@@ -700,6 +701,14 @@
       grid-column: 1 / span 5;
       grid-row: 1;
     }
+
+    /* When one side is removed (e.g. the contact page's office aside while its
+       values are placeholders), the survivor is both :first-child and
+       :last-child, and the :last-child rule would push it into the narrow
+       5-column slot. A lone child keeps the 7-column copy width. */
+    .split-7-5 > :only-child {
+      grid-column: 1 / span 7;
+    }
   }
 
   /* --- .flow ----------------------------------------------------------------
@@ -832,6 +841,18 @@
 
   .btn--ghost:hover {
     background-color: var(--blue-100);
+  }
+
+  /* .btn sets display, which would beat the reset's [hidden] rule from a later
+     layer — a button that ships hidden until JavaScript can power it must stay
+     hidden without JavaScript. */
+  .btn[hidden] {
+    display: none;
+  }
+
+  .btn[aria-disabled="true"] {
+    cursor: progress;
+    opacity: 0.75;
   }
 
   /* --- The logo on a dark surface -------------------------------------------
@@ -1551,6 +1572,156 @@
   .related__title {
     margin-block-end: var(--space-24);
   }
+
+  /* --- Forms — DESIGN.md §5 ---------------------------------------------------
+     Labels above, always visible; no placeholder-as-label. Errors are a
+     --danger border plus a message below, tied with aria-describedby and
+     aria-invalid by js/modules/form.js.
+
+     One deliberate departure: DESIGN.md §5 gives inputs a 1px --hairline
+     border, which is ~1.2:1 on white. WCAG 2.2 1.4.11 needs 3:1 for the
+     boundary that identifies a form field, so inputs use --navy-300 (3.04:1).
+     The accessibility gate wins over the design doc (AGENTS.md §2). */
+
+  /* Margins, not grid gap: the live status region is empty until something
+     happens, and an empty grid item still takes two gaps. An empty block's
+     margins collapse through it instead, so it costs no space. */
+  .form > * + * {
+    margin-block-start: var(--space-24);
+  }
+
+  .form__title {
+    font-size: var(--step-2);
+  }
+
+  /* Web3Forms' honeypot. display:none keeps it out of the accessibility tree
+     and the tab order; a person never sees it, a naive bot fills it. */
+  .form__hp {
+    display: none;
+  }
+
+  .form__note {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+
+  .form__grid {
+    display: grid;
+    gap: var(--space-24);
+  }
+
+  @media (min-width: 640px) {
+    .form__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .field--full { grid-column: 1 / -1; }
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .field__label {
+    color: var(--text-strong);
+    font-weight: var(--weight-ui);
+    line-height: var(--leading-ui);
+  }
+
+  .field__req {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+    font-weight: var(--weight-body);
+  }
+
+  .field__input {
+    width: 100%;
+    min-height: var(--input-min-height);
+    padding: var(--input-pad-block) var(--input-pad-inline);
+    background-color: var(--white);
+    color: var(--navy-900);
+    border: var(--border-width) solid var(--navy-300);
+    border-radius: var(--r-sm);
+    line-height: var(--leading-ui);
+    transition: border-color var(--dur-hover) linear, box-shadow var(--dur-hover) linear;
+  }
+
+  .field__textarea {
+    min-height: calc(var(--input-min-height) * 3);
+    line-height: var(--leading-body);
+  }
+
+  .field__input:focus {
+    border-color: var(--ovi-blue);
+    box-shadow: 0 0 0 var(--input-ring) var(--blue-100);
+  }
+
+  .field__input[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+
+  .field__error {
+    color: var(--danger);
+    font-size: var(--step--1);
+    font-weight: var(--weight-ui);
+    max-width: none;
+  }
+
+  /* The status region is never display:none — a live region removed from the
+     accessibility tree and then shown again is not reliably announced. Empty,
+     it simply takes no space. */
+  .form__status {
+    max-width: none;
+  }
+
+  .form__status:not(:empty) {
+    padding: var(--space-16) var(--space-24);
+    background-color: var(--white);
+    border: var(--border-width) solid var(--hairline);
+    border-inline-start: var(--space-4) solid var(--ovi-blue);
+    border-radius: var(--r-sm);
+  }
+
+  .form__status[data-state="error"] { border-inline-start-color: var(--danger); }
+  .form__status[data-state="success"] { border-inline-start-color: var(--success); }
+
+  .form__status-title {
+    color: var(--text-strong);
+    font-size: var(--step-0);
+    font-weight: var(--weight-display);
+  }
+
+  .form__status ul {
+    margin-block-start: var(--space-8);
+  }
+
+  .form__status a {
+    color: var(--danger);
+    font-weight: var(--weight-ui);
+  }
+
+  .form__actions {
+    max-width: none;
+  }
+
+  /* The no-JS success note. A plain-HTML submission redirects to
+     contact.html#sent, and :target shows this — no script involved. */
+  .form-sent {
+    display: none;
+    margin-block-end: var(--space-24);
+    padding: var(--space-16) var(--space-24);
+    background-color: var(--white);
+    border: var(--border-width) solid var(--hairline);
+    border-inline-start: var(--space-4) solid var(--success);
+    border-radius: var(--r-sm);
+  }
+
+  .form-sent:target {
+    display: block;
+  }
+
+  .form-sent__title {
+    font-size: var(--step-1);
+  }
 }
 
 /* ===== css/src/06-sections.css -> @layer sections ===== */
@@ -2040,6 +2211,106 @@
      Layer: pages. Keep this file short; if a rule here is reused twice it
      belongs in 05 or 06.
      ========================================================================== */
+
+  /* --- contact.html ------------------------------------------------------------
+     Direct channels first, then the form beside the office details. */
+
+  /* No margin reset here: this layer would beat .flow's spacing from the
+     layout layer and pull the buttons flush against the line above. */
+  .contact-channels__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-16);
+    padding: 0;
+    list-style: none;
+  }
+
+  /* On a phone, three buttons of three different widths stacked read as
+     untidy; full width reads as a deliberate set. */
+  @media (max-width: 639.98px) {
+    .contact-channels__list > li { flex: 1 1 100%; }
+    .contact-channels__link { width: 100%; justify-content: flex-start; }
+  }
+
+  /* The 7/5 split centres its columns vertically, which suits copy beside a
+     visual. Here both columns start with a heading, so they align to the top. */
+  .contact-main .split-7-5 {
+    align-items: start;
+  }
+
+  .contact-channels__list > li {
+    margin-block-start: 0;
+    max-width: none;
+  }
+
+  /* A long email address has no spaces to break at; let it wrap anywhere
+     rather than push the page sideways at 320px. */
+  .contact-channels__link {
+    gap: var(--space-12);
+    text-align: start;
+    overflow-wrap: anywhere;
+  }
+
+  .contact-channels__email {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8);
+  }
+
+  .contact-channels__copy:not([hidden]) {
+    gap: var(--space-8);
+  }
+
+  .contact-details {
+    --flow-space: var(--space-16);
+  }
+
+  .contact-details__title {
+    font-size: var(--step-2);
+  }
+
+  .contact-details__address {
+    display: flex;
+    flex-direction: column;
+    font-style: normal;
+  }
+
+  .contact-details__label {
+    margin-inline-end: var(--space-8);
+    color: var(--text-strong);
+    font-weight: var(--weight-ui);
+  }
+
+  .contact-map {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-color: var(--white);
+    border: var(--border-width) solid var(--hairline);
+    border-radius: var(--r-md);
+  }
+
+  .contact-map__fallback {
+    padding: var(--space-24);
+    text-align: center;
+  }
+
+  /* Once Leaflet has mounted, the fallback link sits underneath the tiles;
+     hide it so keyboard focus can never land on something invisible. */
+  .contact-map[data-map-ready] .contact-map__fallback {
+    display: none;
+  }
+
+  /* DESIGN.md §9: the WhatsApp FAB must never cover the submit button on a
+     phone, so the form's section ends with room to scroll past it. */
+  @media (max-width: 767.98px) {
+    .contact-main {
+      padding-block-end: max(var(--section-pad), var(--space-96));
+    }
+  }
 }
 
 /* ===== css/src/08-utilities.css -> @layer utilities ===== */

@@ -104,15 +104,16 @@ Measured 2026-10-07: title/description verified unique and within length budget 
 
 ## Phase 5 — Contact & form
 
-- [ ] `contact.html` — `PRD.md` §4.6
-- [ ] `js/modules/form.js` — inline per-field validation, honeypot, Web3Forms `fetch` POST, loading/success/error states, `aria-live` summary, no page reload
-- [ ] Native `action`/`method` fallback so it submits with JS disabled
-- [ ] WhatsApp click-to-chat (prefilled message), click-to-call, `mailto:`, copy-email toast
-- [ ] `js/modules/map.js` — Leaflet + OSM, injected only on scroll-in, keyboard accessible, with a text address beside it
-- [ ] Address, hours and phone rendered from `SITE`
-- [ ] Test a real submission end to end once `web3formsKey` is filled in
+- [x] `contact.html` — `PRD.md` §4.6
+- [x] `js/modules/form.js` — inline per-field validation, honeypot, Web3Forms `fetch` POST, loading/success/error states, `aria-live` summary, no page reload
+- [x] Native `action`/`method` fallback so it submits with JS disabled
+- [x] WhatsApp click-to-chat (prefilled message), click-to-call, `mailto:`, copy-email toast
+- [x] `js/modules/map.js` — Leaflet + OSM, injected only on scroll-in, keyboard accessible, with a text address beside it
+- [x] Address, hours and phone rendered from `SITE`
+- [ ] Test a real submission end to end once `web3formsKey` is filled in — **still open**: no real key yet, so the network path is tested against a mocked endpoint only
 
-**Gate:** submit with a blank form, a bad email, and a valid payload — all three behave correctly and announce to screen readers.
+**Gate:** submit with a blank form, a bad email, and a valid payload — all three behave correctly and announce to screen readers. ✅
+Measured 2026-10-07 with `node tools/check-form.js` (44 assertions), in **both** the placeholder config and a populated test config: blank submit → nothing sent, “There are 3 problems” in the `aria-live` region, all three fields `aria-invalid` + `aria-describedby` to visible text, focus to Name; bad email → “There is 1 problem”, format message, focus to Email; valid payload → one JSON POST to Web3Forms, busy state, “Sending” then “Thanks” announced, form reset, no reload. Plus server error, network failure, honeypot, double-submit and missing key. Announcement is verified as live-region text and ARIA wiring in Chrome — not with a real screen reader.
 
 ---
 
@@ -224,6 +225,17 @@ Record judgement calls here as you make them, one line each.
 | 2026-10-07 | **Added an 800w rung to every srcset** — not in the brief | The band is the LCP element on phones (see below), and the smallest file on offer was the 1240w: a 412px phone downloaded 168 KB for a ~665-device-pixel slot. Lighthouse on `smart-water-metering` was 93 (below the gate) before the rung, 97 after. |
 | 2026-10-07 | **The photo band is eager, default priority — not `loading="lazy"` as specified** | The brief's premise was that the bands sit below the fold. Measured with `tools/fold-probe.html`: all nine sit 389–596 px down at every viewport from 375×812 to 1440×900, so the band *is* the LCP element on every detail page, and lazy-loading it fails Lighthouse's "LCP image was lazily loaded" audit. Compared three strategies, median of 3: high priority 96/97, lazy 97/98 (audit fails), plain eager 97/97 (audit passes). Chose plain eager — within noise of the best score, passes every audit, and correct on real devices where lazy holds an above-fold fetch until after layout. `ARCHITECTURE.md` §3 amended: high priority measured worse here, so it is no longer assumed. |
 | 2026-10-07 | Four crops moved off the default upper-third focus, as per-image crop data in the script | Checked every crop visually against the original. RF planning's default crop cut the tower crossarm off (focus 0.1). Street lighting kept the lamps but lost the road its alt text describes (0.6). Warehouse was two-thirds ceiling (0.8). The meters' yellow meter was sliced at the bottom edge (0.5). Treatment stays identical across all nine; only the crop window moves. |
+| 2026-10-07 | **Every SITE-dependent block on contact.html lives in a partial** (`contact-channels`, `contact-form`, `contact-details`) | `sync-partials.js` bakes `{{tokens}}` and deletes `data-requires` elements across the whole page, not just partial regions. Written inline, the first sync with placeholder values would have deleted the contact details from the source page for good, and filling `site.config.js` later would never bring them back. In partials they are rebuilt from source on every run. Proved both ways: placeholder config omits them; a populated test config brings every one back. |
+| 2026-10-07 | No-JS first: the form is a complete native HTML form; `form.js` only enhances it | Native POST to `https://api.web3forms.com/submit`, native `required` / `type="email"`, `botcheck` honeypot, and a CSS-only `:target` success note at `#sent`. JS then sets `novalidate`, validates inline, and submits with fetch. Field names, honeypot markup and the JSON fetch pattern were checked against Web3Forms' own docs, not memory. |
+| 2026-10-07 | The no-JS redirect waits for `SITE.url` | Web3Forms' docs say `redirect` must be an absolute same-domain URL — a relative path does not work — so it is built from `SITE.url` and omitted while that is a placeholder. Until then a no-JS submission lands on Web3Forms' own thank-you page. |
+| 2026-10-07 | While `web3formsKey` is a placeholder, the form says so rather than sending | The key's hidden input is removed at build time; `form.js` then reports "Your enquiry was not sent — this form is not connected to an inbox yet" instead of posting an enquiry that would bounce. **With JS off and no key, a submission still reaches Web3Forms and gets their error page** — accepted for the pre-launch state; `sync-partials.js` lists `web3formsKey` as unset on every run. |
+| 2026-10-07 | Input borders are `--navy-300` (3.04:1), not `--hairline` (~1.2:1) as `DESIGN.md` §5 specifies | WCAG 2.2 1.4.11 needs 3:1 for the boundary that identifies a form field. axe does not test this, so it would have passed the gate silently. Accessibility gate wins (`AGENTS.md` §2). |
+| 2026-10-07 | **The WhatsApp FAB, back-to-top and toast moved inside `<footer>`** — affects every page | axe flagged the FAB as content outside any landmark (`region`). Present since Phase 2 but invisible to every earlier run, because the FAB only exists once `SITE.whatsapp` is real and every run used placeholders. Found by testing with a populated config. They are `position: fixed`, so nothing moves on screen. |
+| 2026-10-07 | **No cta-band on contact.html**, though `PRD.md` §5 says every page | Its heading is this page's H1 word for word, so two landmarks shared one name (axe `landmark-unique`), and its only button linked to the page the visitor is already on. |
+| 2026-10-07 | Contact breadcrumb reads "Contact", not the H1 | The H1 is a sentence. `CRUMB_NAMES` in `sync-partials.js` overrides it; the `BreadcrumbList` JSON-LD follows automatically. |
+| 2026-10-07 | `.split-7-5 > :only-child` keeps a lone column at 7/12 | With the office aside removed, the form was both `:first-child` and `:last-child`, and the later rule pushed it into the narrow 5-column slot. |
+| 2026-10-07 | Leaflet 1.9.4 pinned with SRI hashes computed from the files; loads on scroll-in only; no scroll-wheel zoom | Hashes computed with `openssl` from the jsDelivr files. Zero Leaflet requests until the map nears the viewport (measured). `scrollWheelZoom: false` — DESIGN.md §8 bans scroll-jacking. Animations off under reduced motion. 0,0 is refused both at build time and in `map.js`. Tiles use `tile.openstreetmap.org`, which the CSP sketch in §9 (`*.tile.openstreetmap.org`) does not match — fix when the headers file is written in Phase 6. |
+| 2026-10-07 | **CSS is 16.9 of 18 KB gzipped — watch item** | Form + contact styles (~2 KB) ship to every page, and `main.css` is the one render-blocking resource. `index.html` Performance median moved 99 → 97 this phase (a single re-run came back at LCP 2.1 s, so partly noise). Still above the gate. If Phase 6 needs headroom, splitting page-specific CSS out of `main.css` is the lever. |
 
 ---
 

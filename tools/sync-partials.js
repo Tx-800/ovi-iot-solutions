@@ -76,7 +76,37 @@ const VALUES = {
   'social.linkedin': SITE.social?.linkedin,
   'social.x':        SITE.social?.x,
   'social.youtube':  SITE.social?.youtube,
+
+  /* Contact page (Phase 5). */
+  web3formsKey:     SITE.web3formsKey,
+  'address.line1':  SITE.address?.line1,
+  'address.line2':  SITE.address?.line2,
+  'address.city':   SITE.address?.city,
+  'address.region': SITE.address?.region,
+  'address.postal': SITE.address?.postal,
+  'address.country': SITE.address?.country,
+  /* Web3Forms only redirects a plain-HTML (no-JS) submission to an ABSOLUTE,
+     same-domain URL — a relative path is documented as not working — so this
+     only exists once SITE.url is real. #sent shows the CSS-only success note. */
+  contactSent: isUnset(SITE.url) ? '' : `${SITE.url.replace(/\/+$/, '')}/contact.html#sent`,
+  ...mapValues(),
 };
+
+/** The office map. 0,0 is the placeholder in PRD.md §6, and a pin in the
+ *  Gulf of Guinea is worse than no map, so 0,0 counts as unset. */
+function mapValues() {
+  const lat = Number(SITE.map?.lat);
+  const lng = Number(SITE.map?.lng);
+  const zoom = Number(SITE.map?.zoom) || 15;
+  const set = Number.isFinite(lat) && Number.isFinite(lng) && !(lat === 0 && lng === 0);
+  return {
+    map: set ? `${lat},${lng}` : '',
+    'map.lat': set ? String(lat) : '',
+    'map.lng': set ? String(lng) : '',
+    'map.zoom': String(zoom),
+    osmUrl: set ? `https://www.openstreetmap.org/?mlat=${lat}&amp;mlon=${lng}#map=${zoom}/${lat}/${lng}` : '',
+  };
+}
 
 /* `address` is unset when every part is; `phone`/`whatsapp` follow their raw form. */
 const UNSET = new Set(
@@ -223,9 +253,15 @@ function breadcrumbFor(file, h1) {
   const crumbs = [{ name: 'Home', path: '/' }];
   const dir = rel.includes('/') ? rel.split('/')[0] : null;
   if (dir && SECTIONS[dir]) crumbs.push(SECTIONS[dir]);
-  crumbs.push({ name: h1, path: `/${rel}` });
+  crumbs.push({ name: CRUMB_NAMES[rel] || h1, path: `/${rel}` });
   return crumbs;
 }
+
+/* Pages whose H1 is a sentence rather than a name. The trail (and the
+   BreadcrumbList JSON-LD built from it) uses the nav label instead. */
+const CRUMB_NAMES = {
+  'contact.html': 'Contact',
+};
 
 /** The visible breadcrumb trail, built from the same breadcrumbFor() data as
  *  the BreadcrumbList JSON-LD, so the two can never drift apart. Root-relative

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>form harness</title>
+  <style>
+    html, body { margin: 0; background: #fff; }
+    iframe { border: 0; display: block; width: 1280px; height: 1200px; }
+    #out { font: 12px monospace; white-space: pre; }
+  </style>
+</head>
+<body>
+<pre id="out">pending</pre>
+<div id="frames"></div>
+<script>
+  /* Dev-only. Drives the real contact form in an iframe and asserts what a
+     screenshot cannot: native no-JS wiring, validation, focus movement,
+     aria-invalid / aria-describedby, and the text written into the
+     aria-live status region at each step.
+
+     fetch is replaced inside the frame with a mock, so sending / success /
+     server error / network failure are all exercised without posting test
+     data to Web3Forms. The no-JS frame uses sandbox="allow-same-origin"
+     without allow-scripts, which genuinely disables scripting.
+
+     Driven by tools/check-form.js. */
+  const out = document.getElementById('out');
+  const frames = document.getElementById('frames');
+  const results = [];
+  const check = (name, pass, detail) => results.push({ name, pass: !!pass, detail: detail ?? '' });
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  function makeFrame({ scripts = true } = {}) {
+    return new Promise((resolve, reject) => {
+      const f = document.createElement('iframe');
+      if (!scripts) f.setAttribute('sandbox', 'allow-same-origin');
+      f.addEventListener('load', () => {
+        const d = f.contentDocument;
+        if (!d || !d.querySelector('[data-contact-form]')) return;
+        const s = d.createElement('style');
+        s.textContent = '*,*::before,*::after{transition-duration:0s!important}';
+        d.head.append(s);
+        resolve(f);
+      });
+      f.src = '/contact.html';
+      frames.append(f);
+      setTimeout(() => reject(new Error('frame never loaded')), 15000);
+    });
+  }
+
+  (async () => {
+    try {
+      /* ---------------- 1. No JavaScript: the native form ---------------- */
+      const nf = await makeFrame({ scripts: false });
+      const nd = nf.contentDocument;
+      const nw = nf.contentWindow;
+      const nform = nd.querySelector('[data-contact-form]');
+
+      check('no-JS: posts natively to Web3Forms',
+        nform.getAttribute('action') === 'https://api.web3forms.com/submit'
+        && nform.method.toLowerCase() === 'post', `${nform.method} ${nform.getAttribute('action')}`);
+      check('no-JS: native validation is left on (no novalidate)', !nform.hasAttribute('novalidate'));
+      check('no-JS: name, email and message are required',
+        ['name', 'email', 'message'].every((n) => nform.elements.namedItem(n).required));
+      check('no-JS: email uses type="email" for native format checking',
+        nform.elements.namedItem('email').type === 'email');
+      check('no-JS: a blank form fails native validation, so it cannot be posted empty',
+        nform.checkValidity() === false);
+      check('no-JS: honeypot is out of view and out of the accessibility tree',
+        nw.getComputedStyle(nform.elements.namedItem('botcheck')).display === 'none');
+      check('no-JS: every field has a visible label',
+        [...nform.querySelectorAll('input:not([type=hidden]):not([name=botcheck]), select, textarea')]
+          .every((el) => nd.querySelector(`label[for="${el.id}"]`)));
+      const ncopy = nd.querySelector('[data-copy-email]');
+      check('no-JS: the copy button (needs JS) is not shown',
+        !ncopy || nw.getComputedStyle(ncopy).display === 'none', ncopy ? 'present, hidden' : 'absent');
+      check('no-JS: success note is hidden until a redirect lands on #sent',
+        nw.getComputedStyle(nd.getElementById('sent')).display === 'none');
+
+      /* ---------------- 2. With JavaScript ---------------- */
+      const f = await makeFrame();
+      await wait(300);
+      const d = f.contentDocument;
+      const w = f.contentWindow;
+      const form = d.querySelector('[data-contact-form]');
+      const status = d.querySelector('[data-form-status]');
+      const submit = d.querySelector('[data-form-submit]');
+      const el = (n) => form.elements.namedItem(n);
+      const err = (n) => d.getElementById(`${el(n).id}-error`);
+      const say = () => status.textContent.replace(/\s+/g, ' ').trim();
+
+      const originalKey = el('access_key');
+      check('JS: configuration state under test',
+        true, originalKey ? 'access key present (configured)' : 'access key absent (placeholder config)');
+
+      check('JS: novalidate set — the script owns validation now', form.hasAttribute('novalidate'));
+      check('JS: live region exists from first paint, polite, and empty',
+        status.getAttribute('role') === 'status' && status.getAttribute('aria-live') === 'polite' && say() === '');
+
+      /* fetch mock, installed before any submit. */
+      const calls = [];
+      let respond = null;
+      w.fetch = (url, opts) => {
+        calls.push({ url, opts });
+        return respond();
+      };
+      const reply = (statusCode, body) => () =>
+        Promise.resolve({ status: statusCode, json: () => Promise.resolve(body) });
+
+      /* -------- Test A: blank submit -------- */
+      form.requestSubmit();
+      await wait(100);
+      check('A blank: nothing is sent', calls.length === 0);
+      check('A blank: status announces 3 problems', /There are 3 problems/.test(say()), say());
+      check('A blank: summary links to each field',
+        [...status.querySelectorAll('a')].map((a) => a.getAttribute('href')).join(' ') === '#f-name #f-email #f-message');
+      check('A blank: name, email, message flagged aria-invalid',
+        ['name', 'email', 'message'].every((n) => el(n).getAttribute('aria-invalid') === 'true'));
+      check('A blank: each error tied with aria-describedby to visible text',
+        ['name', 'email', 'message'].every((n) =>
+          el(n).getAttribute('aria-describedby') === err(n).id && !err(n).hidden && err(n).textContent.length > 0));
+      check('A blank: error text gives direction',
+        err('name').textContent.includes('Enter your name')
+        && err('email').textContent.includes('Enter your work email address')
+        && err('message').textContent.includes('Enter your message'));
+      check('A blank: optional fields are not flagged',
+        ['company', 'phone', 'location', 'interest'].every((n) => !el(n).hasAttribute('aria-invalid')));
+      check('A blank: focus moves to the first field to fix', d.activeElement === el('name'),
+        d.activeElement && d.activeElement.id);
+
+      /* -------- Test B: invalid email -------- */
+      el('name').value = 'Ada Lovelace';
+      el('message').value = 'We need an RF survey for a LoRaWAN metering pilot.';
+      el('email').value = 'not-an-email';
+      form.requestSubmit();
+      await wait(100);
+      check('B bad email: nothing is sent', calls.length === 0);
+      check('B bad email: status announces exactly 1 problem', /There is 1 problem/.test(say()), say());
+      check('B bad email: email flagged, with the format message',
+        el('email').getAttribute('aria-invalid') === 'true'
+        && err('email').textContent.includes('in the correct format, like name@company.com'));
+      check('B bad email: the fixed fields are cleared of errors',
+        !el('name').hasAttribute('aria-invalid') && !el('message').hasAttribute('aria-invalid') && err('name').hidden);
+      check('B bad email: focus moves to the email field', d.activeElement === el('email'));
+
+      /* -------- Inline validation -------- */
+      el('email').value = 'ada@utility.example';
+      el('email').dispatchEvent(new w.Event('input', { bubbles: true }));
+      await wait(50);
+      check('inline: fixing a touched field clears its error as you type',
+        !el('email').hasAttribute('aria-invalid') && err('email').hidden);
+
+      /* A real key is needed to reach the network path. In the placeholder
+         state the build removed it, so put a test one in. */
+      if (!el('access_key')) {
+        const k = d.createElement('input');
+        k.type = 'hidden'; k.name = 'access_key'; k.value = 'harness-test-key';
+        form.prepend(k);
+      }
+
+      /* -------- Test C: valid payload, success -------- */
+      let release;
+      respond = () => new Promise((r) => { release = () => r({ status: 200, json: () => Promise.resolve({ success: true, message: 'Email sent successfully!' }) }); });
+      el('company').value = 'Test Water Utility';
+      el('interest').value = 'RF planning & site survey';
+      form.requestSubmit();
+      await wait(50);
+      check('C valid: one request is sent', calls.length === 1);
+      check('C valid: while sending, the form is busy and the button says so',
+        form.getAttribute('aria-busy') === 'true' && submit.getAttribute('aria-disabled') === 'true'
+        && submit.textContent.includes('Sending'), submit.textContent);
+      check('C valid: status announces sending', /Sending your enquiry/.test(say()), say());
+      form.requestSubmit();   /* a double click must not send twice */
+      await wait(50);
+      check('C valid: a second submit while sending is ignored', calls.length === 1);
+
+      const sent = calls[0];
+      let body = {};
+      try { body = JSON.parse(sent.opts.body); } catch { /* reported below */ }
+      check('C valid: posts JSON to the form action, per Web3Forms docs',
+        sent.url === 'https://api.web3forms.com/submit' && sent.opts.method === 'POST'
+        && sent.opts.headers.Accept === 'application/json'
+        && sent.opts.headers['Content-Type'] === 'application/json');
+      check('C valid: payload carries the fields and the key',
+        body.name === 'Ada Lovelace' && body.email === 'ada@utility.example'
+        && body.company === 'Test Water Utility' && body.interest === 'RF planning & site survey'
+        && body.message.startsWith('We need') && !!body.access_key);
+      check('C valid: no-JS redirect and honeypot are not sent',
+        !('redirect' in body) && !('botcheck' in body), Object.keys(body).join(','));
+
+      release();
+      await wait(100);
+      check('C valid: status announces success',
+        status.getAttribute('data-state') === 'success' && /Thanks — your enquiry has been sent/.test(say()), say());
+      check('C valid: form is reset after success',
+        el('name').value === '' && el('email').value === '' && el('message').value === '');
+      check('C valid: busy state cleared, button label restored',
+        form.getAttribute('aria-busy') === 'false' && !submit.hasAttribute('aria-disabled')
+        && submit.textContent === 'Send your enquiry');
+      /* Same document object = no navigation happened. (The dev server rewrites
+         /contact.html to /contact, so a pathname check would test the server.) */
+      check('C valid: page did not navigate — same document, no reload', f.contentDocument === d);
+
+      /* -------- Server error -------- */
+      const fill = () => {
+        el('name').value = 'Ada Lovelace';
+        el('email').value = 'ada@utility.example';
+        el('message').value = 'Second attempt.';
+      };
+      fill();
+      respond = reply(400, { success: false, message: 'Invalid access key' });
+      form.requestSubmit();
+      await wait(150);
+      check('server error: status announces failure with direction',
+        status.getAttribute('data-state') === 'error' && /could not be sent/.test(say()) && /try again/i.test(say()), say());
+      check('server error: what was typed is kept', el('message').value === 'Second attempt.');
+
+      /* -------- Network failure -------- */
+      respond = () => Promise.reject(new TypeError('Failed to fetch'));
+      form.requestSubmit();
+      await wait(150);
+      check('network failure: status says the connection failed',
+        status.getAttribute('data-state') === 'error' && /connection failed/.test(say()), say());
+      check('network failure: what was typed is kept', el('name').value === 'Ada Lovelace');
+
+      /* -------- Honeypot -------- */
+      const before = calls.length;
+      el('botcheck').checked = true;
+      form.requestSubmit();
+      await wait(100);
+      check('honeypot: a ticked honeypot sends nothing', calls.length === before);
+      el('botcheck').checked = false;
+
+      /* -------- Placeholder key -------- */
+      el('access_key').remove();
+      const before2 = calls.length;
+      form.requestSubmit();
+      await wait(100);
+      check('no key: nothing is sent while the key is a placeholder', calls.length === before2);
+      check('no key: status says plainly it was not sent',
+        status.getAttribute('data-state') === 'error' && /was not sent/.test(say()) && /not connected/.test(say()), say());
+    } catch (e) {
+      check('harness ran to completion', false, String(e && e.message || e));
+    }
+
+    out.textContent = JSON.stringify({
+      passed: results.filter((r) => r.pass).length,
+      failed: results.filter((r) => !r.pass).length,
+      results,
+    }, null, 2);
+  })();
+</script>
+</body>
+</html>

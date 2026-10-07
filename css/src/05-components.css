@@ -118,6 +118,18 @@
   background-color: var(--blue-100);
 }
 
+/* .btn sets display, which would beat the reset's [hidden] rule from a later
+   layer — a button that ships hidden until JavaScript can power it must stay
+   hidden without JavaScript. */
+.btn[hidden] {
+  display: none;
+}
+
+.btn[aria-disabled="true"] {
+  cursor: progress;
+  opacity: 0.75;
+}
+
 /* --- The logo on a dark surface -------------------------------------------
    DESIGN.md §7: never invent a knockout logo. Place the supplied full-colour
    file on a white panel instead. */
@@ -834,4 +846,154 @@ body:not(:has(.fab)) .back-to-top {
 
 .related__title {
   margin-block-end: var(--space-24);
+}
+
+/* --- Forms — DESIGN.md §5 ---------------------------------------------------
+   Labels above, always visible; no placeholder-as-label. Errors are a
+   --danger border plus a message below, tied with aria-describedby and
+   aria-invalid by js/modules/form.js.
+
+   One deliberate departure: DESIGN.md §5 gives inputs a 1px --hairline
+   border, which is ~1.2:1 on white. WCAG 2.2 1.4.11 needs 3:1 for the
+   boundary that identifies a form field, so inputs use --navy-300 (3.04:1).
+   The accessibility gate wins over the design doc (AGENTS.md §2). */
+
+/* Margins, not grid gap: the live status region is empty until something
+   happens, and an empty grid item still takes two gaps. An empty block's
+   margins collapse through it instead, so it costs no space. */
+.form > * + * {
+  margin-block-start: var(--space-24);
+}
+
+.form__title {
+  font-size: var(--step-2);
+}
+
+/* Web3Forms' honeypot. display:none keeps it out of the accessibility tree
+   and the tab order; a person never sees it, a naive bot fills it. */
+.form__hp {
+  display: none;
+}
+
+.form__note {
+  font-size: var(--step--1);
+  color: var(--text-muted);
+}
+
+.form__grid {
+  display: grid;
+  gap: var(--space-24);
+}
+
+@media (min-width: 640px) {
+  .form__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .field--full { grid-column: 1 / -1; }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.field__label {
+  color: var(--text-strong);
+  font-weight: var(--weight-ui);
+  line-height: var(--leading-ui);
+}
+
+.field__req {
+  color: var(--text-muted);
+  font-size: var(--step--1);
+  font-weight: var(--weight-body);
+}
+
+.field__input {
+  width: 100%;
+  min-height: var(--input-min-height);
+  padding: var(--input-pad-block) var(--input-pad-inline);
+  background-color: var(--white);
+  color: var(--navy-900);
+  border: var(--border-width) solid var(--navy-300);
+  border-radius: var(--r-sm);
+  line-height: var(--leading-ui);
+  transition: border-color var(--dur-hover) linear, box-shadow var(--dur-hover) linear;
+}
+
+.field__textarea {
+  min-height: calc(var(--input-min-height) * 3);
+  line-height: var(--leading-body);
+}
+
+.field__input:focus {
+  border-color: var(--ovi-blue);
+  box-shadow: 0 0 0 var(--input-ring) var(--blue-100);
+}
+
+.field__input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+.field__error {
+  color: var(--danger);
+  font-size: var(--step--1);
+  font-weight: var(--weight-ui);
+  max-width: none;
+}
+
+/* The status region is never display:none — a live region removed from the
+   accessibility tree and then shown again is not reliably announced. Empty,
+   it simply takes no space. */
+.form__status {
+  max-width: none;
+}
+
+.form__status:not(:empty) {
+  padding: var(--space-16) var(--space-24);
+  background-color: var(--white);
+  border: var(--border-width) solid var(--hairline);
+  border-inline-start: var(--space-4) solid var(--ovi-blue);
+  border-radius: var(--r-sm);
+}
+
+.form__status[data-state="error"] { border-inline-start-color: var(--danger); }
+.form__status[data-state="success"] { border-inline-start-color: var(--success); }
+
+.form__status-title {
+  color: var(--text-strong);
+  font-size: var(--step-0);
+  font-weight: var(--weight-display);
+}
+
+.form__status ul {
+  margin-block-start: var(--space-8);
+}
+
+.form__status a {
+  color: var(--danger);
+  font-weight: var(--weight-ui);
+}
+
+.form__actions {
+  max-width: none;
+}
+
+/* The no-JS success note. A plain-HTML submission redirects to
+   contact.html#sent, and :target shows this — no script involved. */
+.form-sent {
+  display: none;
+  margin-block-end: var(--space-24);
+  padding: var(--space-16) var(--space-24);
+  background-color: var(--white);
+  border: var(--border-width) solid var(--hairline);
+  border-inline-start: var(--space-4) solid var(--success);
+  border-radius: var(--r-sm);
+}
+
+.form-sent:target {
+  display: block;
+}
+
+.form-sent__title {
+  font-size: var(--step-1);
 }

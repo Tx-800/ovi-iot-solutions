@@ -56,23 +56,26 @@ function initBackToTop() {
 
 /* --- Copy email ----------------------------------------------------------- */
 
+/* Every copy button on the page — the footer has one, and contact.html adds a
+   second beside its email link. */
 function initCopyEmail() {
-  const button = document.querySelector('[data-copy-email]');
-  if (!button) return;
+  if (!navigator.clipboard) return;   /* no silent no-op buttons */
 
-  const value = button.getAttribute('data-copy-value');
-  if (!value || !navigator.clipboard) return;   /* no silent no-op button */
+  for (const button of document.querySelectorAll('[data-copy-email]')) {
+    const value = button.getAttribute('data-copy-value');
+    if (!value) continue;
 
-  button.removeAttribute('hidden');
+    button.removeAttribute('hidden');
 
-  button.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      showToast('Email address copied to your clipboard.');
-    } catch {
-      showToast('Could not copy. Select the address and copy it manually.');
-    }
-  });
+    button.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(value);
+        showToast('Email address copied to your clipboard.');
+      } catch {
+        showToast('Could not copy. Select the address and copy it manually.');
+      }
+    });
+  }
 }
 
 /* --- Accordion ------------------------------------------------------------

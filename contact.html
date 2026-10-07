@@ -118,22 +118,126 @@
     <section class="section section--tight page-head" aria-labelledby="page-title">
       <div class="container">
         <div class="flow">
-          <h1 id="page-title">Let's build smarter infrastructure together</h1>
-          <p class="lead">Tell us about your network, site or tender and we'll come back with a technical response.</p>
+          <!-- @breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list" role="list">
+      <li class="breadcrumbs__item"><a href="/">Home</a></li>
+      <li class="breadcrumbs__item" aria-current="page">Contact</li>
+      </ol>
+    </nav>
+  <!-- /@breadcrumbs -->
+          <h1 id="page-title">Let&rsquo;s build smarter infrastructure together</h1>
+          <p class="lead">Tell us about your network, site or tender and we&rsquo;ll come back with a technical response.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Every block below is a partial: its contact values are baked from
+         js/site.config.js on each sync, and blocks whose values are still
+         placeholders are removed. Written inline, the first sync would delete
+         them from this file for good. -->
+    <!-- @include contact-channels -->
+  <!-- /@include contact-channels -->
+
+    <section class="section contact-main" aria-label="Enquiry form and office details">
+      <div class="container">
+        <div class="split-7-5">
+          <!-- @include contact-form -->
+  <div class="contact-form">
+    <!-- Shown by :target after a no-JS submission redirects to #sent. -->
+    <div class="form-sent" id="sent" tabindex="-1">
+      <h2 class="form-sent__title">Thanks — your enquiry has been sent</h2>
+      <p>We&rsquo;ll come back to you with a technical response.</p>
+    </div>
+
+    <form class="form" action="https://api.web3forms.com/submit" method="POST" data-contact-form
+          aria-labelledby="form-title">
+      <h2 id="form-title" class="form__title">Send us an enquiry</h2>
+
+      
+      <input type="hidden" name="subject" value="New enquiry from the OVI IoT Solutions website">
+      <input type="hidden" name="from_name" value="OVI IoT Solutions website">
+      
+      <input class="form__hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off">
+
+      <!-- Present from first paint and never inserted later, so screen
+           readers already know to watch it. form.js writes the error
+           summary, the sending state, and the result here. -->
+      <div class="form__status" role="status" aria-live="polite" data-form-status></div>
+
+      <p class="form__note">Fields marked <span aria-hidden="true">(required)</span><span class="visually-hidden">required</span> must be filled in.</p>
+
+      <div class="form__grid">
+        <div class="field">
+          <label class="field__label" for="f-name">Name <span class="field__req" aria-hidden="true">(required)</span></label>
+          <input class="field__input" id="f-name" name="name" type="text" autocomplete="name" required>
+          <p class="field__error" id="f-name-error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-company">Company</label>
+          <input class="field__input" id="f-company" name="company" type="text" autocomplete="organization">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-email">Work email <span class="field__req" aria-hidden="true">(required)</span></label>
+          <input class="field__input" id="f-email" name="email" type="email" autocomplete="email"
+                 inputmode="email" spellcheck="false" required>
+          <p class="field__error" id="f-email-error" hidden></p>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-phone">Phone</label>
+          <input class="field__input" id="f-phone" name="phone" type="tel" autocomplete="tel">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-location">Country / city</label>
+          <input class="field__input" id="f-location" name="location" type="text" autocomplete="address-level2">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="f-interest">Area of interest</label>
+          <select class="field__input field__select" id="f-interest" name="interest">
+            <option value="">Select one</option>
+            <option>Smart water metering</option>
+            <option>Smart street lighting</option>
+            <option>Water leak detection</option>
+            <option>Water quality monitoring</option>
+            <option>Water level monitoring</option>
+            <option>People &amp; asset tracking</option>
+            <option>ATEX zone sensors</option>
+            <option>Consultancy &amp; tender preparation</option>
+            <option>RF planning &amp; site survey</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field field--full">
+          <label class="field__label" for="f-message">Message <span class="field__req" aria-hidden="true">(required)</span></label>
+          <textarea class="field__input field__textarea" id="f-message" name="message" rows="6" required></textarea>
+          <p class="field__error" id="f-message-error" hidden></p>
+        </div>
+      </div>
+
+      <p class="form__actions">
+        <button class="btn btn--primary" type="submit" data-form-submit>Send your enquiry</button>
+      </p>
+    </form>
+  </div>
+  <!-- /@include contact-form -->
+
+          <!-- @include contact-details -->
+  <!-- /@include contact-details -->
         </div>
       </div>
     </section>
   </main>
 
-  <!-- @include cta-band -->
-  <section class="section cta-band section--dark" aria-labelledby="cta-band-title">
-    <div class="container cta-band__inner flow">
-      <h2 class="cta-band__title" id="cta-band-title">Let&rsquo;s build smarter infrastructure together</h2>
-      <p class="cta-band__sub">LoRaWAN &amp; NB-IoT solutions &middot; Consultancy &middot; RF planning</p>
-      <p><a class="btn btn--on-dark" href="/contact.html" aria-current="page">Request a consultation</a></p>
-    </div>
-  </section>
-  <!-- /@include cta-band -->
+  <!-- No cta-band on this page, unlike every other page (PRD.md §5). Its
+       heading repeats this page's H1 word for word, which gave two landmarks
+       the same name (axe: landmark-unique), and its only button links to the
+       page the visitor is already on. -->
 
   <!-- @include footer -->
   <footer class="site-footer on-dark">
@@ -193,14 +297,21 @@
         <p>&copy; 2026 OVI IoT Solutions</p>
       </div>
     </div>
+
+    <!-- The floating controls are position:fixed, so where they sit in the
+         DOM does not move them on screen — but it decides their landmark.
+         Outside <footer> they belonged to none, which axe flags (`region`).
+         That stayed invisible until Phase 5, because the FAB only exists once
+         SITE.whatsapp is real and every earlier run used placeholders. The
+         footer has no transform, so it does not trap the fixed positioning. -->
+
+    <button class="back-to-top" type="button" data-back-to-top hidden>
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-up"></use></svg>
+      <span class="visually-hidden">Back to top</span>
+    </button>
+
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
   </footer>
-
-  <button class="back-to-top" type="button" data-back-to-top hidden>
-    <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-up"></use></svg>
-    <span class="visually-hidden">Back to top</span>
-  </button>
-
-  <div class="toast" role="status" aria-live="polite" data-toast></div>
   <!-- /@include footer -->
 
   <script type="module" src="/js/main.js"></script>
