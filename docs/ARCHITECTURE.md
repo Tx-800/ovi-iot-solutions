@@ -369,6 +369,19 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
 
 - No image above the fold larger than its rendered size at 2×.
 - `preload` only the LCP asset. Over-preloading is slower, not faster.
+- **Measured exception for this site — `fetchpriority="high"` on the LCP image made it slower.** The
+  solution-page photo band is the LCP element on all nine detail pages. Lighthouse mobile, default
+  simulated throttling, median of 3, with the 800w srcset rung in place:
+
+  | Loading on the photo band | smart-water-metering | water-leak-detection | "LCP image lazily loaded" audit |
+  |---|---|---|---|
+  | eager + `fetchpriority="high"` | 96 (LCP 2.71 s) | 97 (LCP 2.42 s) | pass |
+  | `loading="lazy"` | 97 (LCP 2.42 s) | 98 (LCP 2.34 s) | **fail** |
+  | eager, default priority — **shipped** | 97 (LCP 2.57 s) | 97 (LCP 2.41 s) | pass |
+
+  High priority loses because, under simulated 4G, it competes with the critical CSS and font. Do not
+  add `fetchpriority="high"` to an image on the assumption it helps; measure it. Revisit when the band
+  moves (TODO.md Phase 6).
 - Inline nothing except the JSON-LD and the hero SVG.
 
 ---

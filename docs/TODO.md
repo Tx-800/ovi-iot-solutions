@@ -127,6 +127,18 @@ Measured 2026-10-07: title/description verified unique and within length budget 
 - [ ] Security headers file for the chosen host + 404 routing
 - [ ] `README.md` — run locally, fill `site.config.js`, deploy, where the docs live
 
+Deferred from Phase 4 — tracked here, not dropped:
+- [ ] **Move the photo band below the first content section** on all nine detail pages, then re-run
+      `tools/fold-probe.html` and Lighthouse to find which element is actually LCP, and revisit the band's
+      loading attribute accordingly (`LOADING` in `tools/build-images.js`).
+- [ ] **Raise the image size cap to 220 KB** (`MAX_BYTES` in `tools/build-images.js`, and
+      `ARCHITECTURE.md` §7) and re-encode anything that was pushed below where it looks good. Check
+      `smart-water-metering.webp` for artefacts at the quality it settled on (q82, 168 KB at 1240w) and
+      whether a 2x becomes possible.
+- [ ] **Replace the street-lighting source with a dusk photograph** rather than exempting it from the
+      §7 treatment. The user supplies the new source before Phase 6 runs; drop it in as
+      `assets/img/_src/smart-street-lighting.jpg` (a hand-placed source always wins) and re-check its crop.
+
 ---
 
 ## Phase 7 — Ship Gate
