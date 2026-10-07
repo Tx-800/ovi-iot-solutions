@@ -56,7 +56,10 @@
   --focus-ring:       var(--ovi-blue);
 
   /* --- Type -------------------------------------------------------------- */
-  --font-sans: "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: "Archivo", "Archivo Fallback", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  /* Display sizes use the wide axis, which needs its own metric-matched
+     fallback — see css/src/00-fonts.css. */
+  --font-display: "Archivo", "Archivo Fallback Display", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Fluid scale, ratio ~1.25 — DESIGN.md §3 */

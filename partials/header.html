@@ -10,16 +10,6 @@
      js/modules/nav.js then adds explicit open/close, Esc, focus trapping and
      accurate aria-expanded on top. -->
 
-  <svg class="icon-sprite" aria-hidden="true" focusable="false" hidden>
-    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-    <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
-    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
-    <symbol id="i-message" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
-    <symbol id="i-copy" viewBox="0 0 24 24"><rect width="13" height="13" x="9" y="9" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
-  </svg>
-
   <header class="site-header" data-header>
     <div class="site-header__inner container">
       <a class="site-header__brand" href="/">
@@ -29,9 +19,9 @@
       </a>
 
       <button class="site-header__toggle" type="button"
-              data-drawer-toggle aria-expanded="false" aria-controls="site-nav" hidden>
+              data-drawer-toggle aria-expanded="false" aria-controls="site-nav">
         <svg class="icon site-header__toggle-icon site-header__toggle-icon--open" aria-hidden="true" focusable="false"><use href="#i-menu"></use></svg>
-        <svg class="icon site-header__toggle-icon site-header__toggle-icon--close" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg>
+        <svg class="icon site-header__toggle-icon site-header__toggle-icon--close" aria-hidden="true" focusable="false"><use href="#i-x"></use></svg>
         <span class="site-header__toggle-label">Menu</span>
       </button>
 

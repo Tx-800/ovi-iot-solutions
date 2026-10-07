@@ -43,10 +43,9 @@ performance budget in §7 without a build step.
 | Purpose | Library | Delivery |
 |---|---|---|
 | Animation | **Motion** | `import { animate, inView, stagger, scroll } from "https://cdn.jsdelivr.net/npm/motion@12/+esm"` |
-| Icons | **Lucide** | `<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js">` then `lucide.createIcons()` |
 | Map (Contact only) | **Leaflet** 1.9 + OpenStreetMap tiles | CSS + JS injected lazily on scroll-in, never on other pages |
 | Form transport | **[Web3Forms](https://web3forms.com)** | `fetch` POST to `https://api.web3forms.com/submit` — free, no backend, no account server-side |
-| Fonts | **Archivo**, **IBM Plex Mono** | Google Fonts, `display=swap`, `preconnect` |
+| Fonts | **Archivo**, **IBM Plex Mono** | **Self-hosted** `woff2` in `assets/fonts/`, `display=swap`, preload of the latin subset |
 
 **Pin every version in production** (`motion@12.x.x`, not `@latest`). `@latest` is fine while building,
 but the Ship Gate requires pinned versions.
@@ -64,10 +63,25 @@ Tooling that measures or checks the site is **not** governed by the list above. 
 |---|---|---|
 | Performance / a11y / SEO audit | **lighthouse** | `devDependencies` |
 | Accessibility rule engine | **axe-core** | `devDependencies` |
+| Icon source | **lucide-static** | `devDependencies` — see below |
+| Icon sprite generation | `tools/build-icons.js` | `tools/`, writes `partials/icons.html` |
 | Link + dead-href checking | `tools/check-links.js` | `tools/`, no dependencies |
 | Partial injection and value baking | `tools/sync-partials.js` | `tools/`, no dependencies |
 | Sitemap generation | `tools/build-sitemap.js` | `tools/`, no dependencies |
 | True-viewport measurement and screenshots | `tools/probe.html`, `tools/measure.js`, `tools/shot.js` | `tools/`, drives a local Chrome |
+
+**Fonts are self-hosted, not loaded from Google Fonts.** The Google Fonts stylesheet is a
+render-blocking third-party round trip; Lighthouse measured it at **840ms** on mobile, which was
+most of the gap to the N1 Performance gate. The same woff2 subsets are served from this origin, and
+`css/src/00-fonts.css` declares two metric-matched fallback faces so the swap does not move a
+single line. Both families are SIL Open Font Licence, so redistribution is explicitly permitted.
+This also removes the last non-CDN third party, which suits §9.
+
+**Icons ship as a committed SVG sprite, not as a library.** The Lucide UMD bundle carries roughly
+1500 icons and breaks the JS budget in §7, so `tools/build-icons.js` reads `lucide-static` and emits
+an inline `<symbol>` sprite of **only the icons actually used**. The sprite is committed, injected
+into every page by `tools/sync-partials.js`, and costs **zero runtime JavaScript and zero extra
+requests**. The artwork is genuine Lucide; only the delivery changed.
 
 **The rule that keeps this honest:** nothing in `package.json` may ever become a runtime dependency,
 and **the site must still open and work with `node_modules` deleted**. If that ever stops being
@@ -211,7 +225,7 @@ Every page starts from this skeleton. Do not deviate.
 
 ---
 
-## 4. Partials — how 14 pages stay in sync
+## 4. Partials — how 16 pages stay in sync
 
 The header and footer live in **one** file each, but ship **inlined into every page** so the site works
 with JavaScript disabled and costs nothing extra at runtime.
@@ -238,7 +252,13 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
 
 ## 5. CSS architecture
 
-- `main.css` is the only stylesheet linked. It `@import`s `01`→`08` **in that order**. Order is the cascade — do not reorder.
+- `css/main.css` is the only stylesheet linked, and it is **generated** — do not edit it by hand.
+  Sources are `css/src/00`→`08`, concatenated in that order by `node tools/build-css.js`.
+  Order is the cascade — the ORDER array in that script is the order.
+- It used to be a chain of `@import` rules. That cost a render-blocking second round trip:
+  the browser cannot discover the eight files until `main.css` has arrived. Lighthouse measured
+  ~450ms of blocked rendering. The generated bundle is committed, so the site still needs no build
+  step to serve — same rule as the icon sprite in §1.
 - **All design values come from `02-tokens.css`.** A raw hex, px font-size, or arbitrary spacing value anywhere else is a bug.
 - Use `@layer reset, base, layout, components, sections, pages, utilities;` to make specificity explicit and stop later files from accidentally losing to earlier ones.
 - **Section spacing lives on `.section` only.** Never put `margin-top` on a heading or `margin-bottom` on a last child to create section rhythm — that is exactly how padding rules end up cancelling. One class owns vertical rhythm; variants (`.section--dark`, `.section--tight`) change background and scale, nothing else.
@@ -252,7 +272,7 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
 ## 6. JavaScript architecture
 
 - ES modules, no bundler. `js/main.js` is the single entry and imports feature modules.
-- **Every module is a no-op if its target element is absent**, so one entry point serves all 14 pages:
+- **Every module is a no-op if its target element is absent**, so one entry point serves all 16 pages:
   ```js
   // js/main.js
   import { initNav }  from './modules/nav.js';
@@ -272,9 +292,31 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
 - **No global state, no `window.*` assignments.** Export named functions.
 - Never write `innerHTML` with user-supplied or form data — use `textContent`.
 - Guard every DOM query: `const el = document.querySelector(...); if (!el) return;`
-- **Progressive enhancement is mandatory (PRD N5).** With JS off: content renders, nav links work
-  (the mobile drawer falls back to a visible link list via a `<details>` element or `:target`),
+- **Progressive enhancement is mandatory (PRD N5).** With JS off: content renders, nav links work,
   the form still submits natively to the Web3Forms endpoint via `action` + `method="POST"`.
+
+- **The pattern for every enhancement — declare the enhanced layout, let `<noscript>` undo it.**
+  The CSS default *is* the enhanced layout. A `<noscript><style>` block in `partials/head.html`
+  reverts it to the plain working version when scripting is off. The module supplies only the
+  *behaviour* that layout implies — opening, closing, `Esc`, focus trapping, accurate ARIA state.
+
+  **This is the opposite of the obvious approach, and the reason is measured.** Shipping the plain
+  version and letting JavaScript collapse it into a drawer means the header changes height the
+  moment the module runs, which moves every element below it. Lighthouse scored that at
+  **CLS 0.565** against a < 0.02 gate (PRD N3). Declaring the enhanced layout up front means neither
+  path ever reflows: with script the page is already correct, without script `<noscript>` applies
+  before first paint.
+
+  The cost is the narrow case of *scripting enabled but the module fails to load*, which would leave
+  a control that does not respond. That is accepted deliberately: `js/main.js` is same-origin with no
+  dependencies, and a hard Core Web Vital beats an edge case. The no-script path is not left to rot —
+  `tools/check-nav.js` exercises it on every run in a frame with scripting genuinely disabled.
+
+  Do **not** use `<details>` or `:target` to fake a drawer. A closed `<details>` cannot be reliably
+  forced open at desktop width across browsers, which forces either `!important` or a duplicated nav.
+
+  Gate transitions on a marker set one frame after load (`data-nav-ready`), so nothing animates while
+  the page is still settling.
 - Leaflet's CSS and JS are injected by `map.js` only when the map scrolls into view.
 
 ---
@@ -284,7 +326,7 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
 | Resource | Budget |
 |---|---|
 | HTML per page | < 30 KB |
-| CSS total | < 35 KB uncompressed |
+| CSS total | **≤ 18 KB gzipped** — hard. No uncompressed cap: transfer size is what users pay, and every host serves compressed. Comments stay; they are the only documentation in a project with no build step. |
 | JS total (excl. lazy Leaflet) | < 80 KB gzipped |
 | Fonts | 2 families, `woff2`, `display=swap`, max 4 weights total |
 | Largest image | < 180 KB `.webp` |

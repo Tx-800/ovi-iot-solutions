@@ -45,6 +45,15 @@
   padding-block: var(--section-pad);
 }
 
+/* Two light sections in a row would otherwise stack 8rem of padding against
+   8rem, leaving a ~256px dead zone between them. The section still owns the
+   rhythm; this only stops it being applied twice to the same seam. A section
+   following a dark band keeps its full padding, because that seam is a real
+   change of surface. */
+.section:not(.section--dark) + .section:not(.section--dark) {
+  padding-block-start: 0;
+}
+
 .section--tight {
   padding-block: calc(var(--section-pad) / 2);
 }

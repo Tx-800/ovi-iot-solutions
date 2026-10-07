@@ -82,10 +82,12 @@
 
       check('no-JS: nav links are present', noJsLinks.length === 5, `${noJsLinks.length} links`);
       check('no-JS: every nav link is visible', [...noJsLinks].every(visible));
-      check('no-JS: header is not marked enhanced',
-        noJsHeader && !noJsHeader.hasAttribute('data-nav-enhanced'));
-      check('no-JS: drawer toggle stays hidden (it could not work)',
-        noJsToggle && noJsToggle.hasAttribute('hidden'));
+      check('no-JS: the noscript fallback puts the nav back in the flow',
+        noJs.contentWindow.getComputedStyle(nd.querySelector('.site-nav')).position === 'static');
+      check('no-JS: drawer toggle is hidden (it could not work)',
+        noJsToggle && noJs.contentWindow.getComputedStyle(noJsToggle).display === 'none');
+      check('no-JS: transitions stay off (nav.js never marks it ready)',
+        noJsHeader && !noJsHeader.hasAttribute('data-nav-ready'));
       check('no-JS: Solutions is a real link to the index page',
         nd.querySelector('.site-nav__item--has-menu a')?.getAttribute('href') === '/solutions.html');
       check('no-JS: mega-menu links are reachable',
@@ -103,8 +105,10 @@
       const toggle = md.querySelector('[data-drawer-toggle]');
       const drawer = md.querySelector('[data-drawer]');
 
-      check('JS: header is marked enhanced', header?.hasAttribute('data-nav-enhanced'));
-      check('JS: drawer toggle is revealed', toggle && !toggle.hasAttribute('hidden') && visible(toggle));
+      check('JS: header is marked ready, so transitions are on', header?.hasAttribute('data-nav-ready'));
+      check('JS: drawer toggle is shown', toggle && visible(toggle));
+      check('JS: the drawer is the default layout, so nothing reflows on boot',
+        mw.getComputedStyle(drawer).position === 'fixed');
       check('JS: drawer starts closed', toggle?.getAttribute('aria-expanded') === 'false');
       check('JS: drawer panel is not reachable while closed',
         mw.getComputedStyle(drawer).visibility === 'hidden',

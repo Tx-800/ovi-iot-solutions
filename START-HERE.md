@@ -8,7 +8,7 @@ Content is taken from the company profile deck and rebranded from the retired na
 | File | What it is |
 |---|---|
 | **`PROMPT.md`** | 👉 **Start here.** The prompt to paste into Claude Code, plus the follow-up prompts for each phase. |
-| `PRD.md` | Every word of content for all 14 pages, the sitemap, functional and non-functional requirements, SEO spec, and the one config block where contact details live. |
+| `PRD.md` | Every word of content for all 16 pages, the sitemap, functional and non-functional requirements, SEO spec, and the one config block where contact details live. |
 | `DESIGN.md` | The "Coverage" design concept, colour tokens sampled from your logo, the type system, layout grid, component specs, the two signature animated pieces, and a banned-patterns list. |
 | `ARCHITECTURE.md` | Stack decisions, the full file tree, HTML/CSS/JS conventions, the partials system, performance budget, a11y and security requirements. |
 | `AGENTS.md` | How Claude Code should work: ten non-negotiable rules, copywriting rules, the verification loop, reporting format. Rename a copy to `CLAUDE.md` at the repo root so it's auto-loaded. |

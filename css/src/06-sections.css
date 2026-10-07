@@ -1,0 +1,462 @@
+/* ==========================================================================
+   06-sections.css — hero, pillars, solutions grid, architecture, why-OVI,
+   services teaser, CTA band.
+   Layer: sections.
+
+   The dark/light sandwich (DESIGN.md §2) runs:
+   hero (dark) -> pillars (light) -> solutions (light) -> architecture (dark)
+   -> why OVI (light) -> services (light) -> CTA band (dark) -> footer (dark).
+   ========================================================================== */
+
+/* --- Section header — DESIGN.md §5 ----------------------------------------
+   H2, one-line sub, then a single hairline rule. That rule is the only
+   divider; the content below never adds a second one. */
+
+.section-head {
+  margin-block-end: var(--space-48);
+  padding-block-end: var(--space-24);
+  border-block-end: var(--border-width) solid var(--border);
+}
+
+.section-head__sub {
+  margin-block-start: var(--space-12);
+  font-size: var(--step-1);
+  color: var(--text-muted);
+  max-width: var(--measure-lead);
+}
+
+/* --- 1. Hero --------------------------------------------------------------
+   The one place --step-5 is used, and the one orchestrated motion moment. */
+
+.hero {
+  background-color: var(--navy-900);
+  overflow: hidden;
+}
+
+.hero__title {
+  font-size: var(--step-5);
+}
+
+.hero__lead {
+  margin-block-start: var(--space-24);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-16);
+  margin-block-start: var(--space-32);
+  max-width: none;
+}
+
+.hero__plot {
+  display: flex;
+  justify-content: center;
+}
+
+.hero__plot svg {
+  width: 100%;
+  max-width: 35rem;
+  height: auto;
+}
+
+@media (min-width: 1024px) {
+  .hero__inner { align-items: center; }
+
+  /* Bleeds slightly past the container end edge — DESIGN.md §6.1. The hero
+     clips it, so this cannot create horizontal scroll. */
+  .hero__plot {
+    margin-inline-end: calc(var(--space-48) * -1);
+    justify-content: flex-end;
+  }
+}
+
+/* --- The coverage plot ----------------------------------------------------
+   An RF propagation map: survey grid, dashed contour rings falling off with
+   distance, one gateway, scattered devices. DESIGN.md §6.1.
+
+   Every ring carries its settled opacity here, so with JavaScript disabled or
+   motion reduced the plot renders complete. hero-plot.js animates *to* this
+   state; reaching it never depends on script. */
+
+.plot__grid-line {
+  fill: none;
+  stroke: var(--hairline-dk);
+  stroke-opacity: 0.4;
+  stroke-width: 1;
+}
+
+.plot__ring {
+  fill: none;
+  stroke: var(--blue-200);
+  stroke-width: 1;
+  stroke-dasharray: 2 6;
+  transform-box: view-box;
+  transform-origin: center;
+}
+
+.plot__ring--1 { stroke-opacity: 0.90; }
+.plot__ring--2 { stroke-opacity: 0.62; }
+.plot__ring--3 { stroke-opacity: 0.42; }
+.plot__ring--4 { stroke-opacity: 0.26; }
+.plot__ring--5 { stroke-opacity: 0.15; }
+
+/* The one continuous element: a slow pulse every 4s, started by hero-plot.js
+   and never started at all under prefers-reduced-motion. */
+.plot__pulse {
+  fill: none;
+  stroke: var(--ovi-blue);
+  stroke-width: 1;
+  opacity: 0;
+  transform-box: view-box;
+  transform-origin: center;
+}
+
+.plot__device { fill: var(--blue-200); }
+
+.plot__gateway-ring {
+  fill: none;
+  stroke: var(--white);
+  stroke-width: 1;
+}
+
+.plot__gateway { fill: var(--ovi-blue); }
+
+/* --- 2. Pillars -----------------------------------------------------------
+   Deliberately not cards: three columns split by vertical hairlines, no
+   background, no box. DESIGN.md §5 — this is the main reason the page does
+   not read as a card kit. */
+
+.pillars__list {
+  display: grid;
+  gap: var(--space-32);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pillar {
+  margin-block-start: 0;
+  max-width: none;
+}
+
+.pillar__title {
+  margin-block: var(--space-16) var(--space-8);
+  font-size: var(--step-2);
+}
+
+.pillar__text { color: var(--text-muted); }
+
+.pillar .icon {
+  width: var(--icon-size-card);
+  height: var(--icon-size-card);
+  color: var(--ovi-blue);
+}
+
+@media (min-width: 768px) {
+  .pillars__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-48);
+  }
+
+  .pillar + .pillar {
+    padding-inline-start: var(--space-48);
+    border-inline-start: var(--border-width) solid var(--hairline);
+  }
+}
+
+/* --- 3. Solutions grid ----------------------------------------------------
+   The only boxed cards on the page: hairline border, no shadow. Hover changes
+   the border and the title colour, and nothing else. DESIGN.md §4. */
+
+.card-grid {
+  display: grid;
+  gap: var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .card-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-block-start: 0;
+  padding: var(--card-pad);
+  max-width: none;
+  background-color: var(--white);
+  border: var(--border-width) solid var(--hairline);
+  border-radius: var(--r-md);
+  transition: border-color var(--dur-hover) linear;
+}
+
+.card:hover { border-color: var(--ovi-blue); }
+
+/* The icon sits on a faint dashed contour ring — the site motif, reused at
+   component scale. DESIGN.md §1, §5. */
+.card__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--space-48);
+  height: var(--space-48);
+  margin-block-end: var(--space-24);
+}
+
+.card__icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: var(--border-width) dashed var(--blue-200);
+  border-radius: 50%;
+}
+
+.card__icon .icon {
+  width: var(--icon-size-card);
+  height: var(--icon-size-card);
+  color: var(--ovi-blue);
+}
+
+.card__title {
+  font-size: var(--step-2);
+  transition: color var(--dur-hover) linear;
+}
+
+.card__text {
+  margin-block-start: var(--space-12);
+  color: var(--text-muted);
+  max-width: none;
+}
+
+/* A whole-card link, without nesting an anchor around block content. */
+.card__link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.card:hover .card__title { color: var(--blue-600); }
+
+.card:has(.card__link:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-color: var(--ovi-blue);
+}
+
+.card__link:focus-visible { outline: none; }
+
+/* --- 4. Architecture diagram ----------------------------------------------
+   Four stages, left to right. Dashed links are radio, solid links are wired —
+   the convention the whole site borrows. DESIGN.md §1, §6.2.
+
+   Built as HTML plus CSS rather than one SVG so it reflows to a vertical
+   stack below 900px, and so the protocol labels stay real, selectable text. */
+
+.architecture { background-color: var(--navy-900); }
+
+.arch {
+  display: grid;
+  gap: var(--space-48);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: arch;
+}
+
+/* A column, so the protocol label can sit on the bottom edge. The stage
+   descriptions run to different line counts, and labels that float at
+   whatever height the text happens to end read as ragged rather than as a
+   row of link annotations. */
+.arch__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-block-start: 0;
+  max-width: none;
+  counter-increment: arch;
+}
+
+.arch__step {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--navy-300);
+}
+
+.arch__step::before { content: counter(arch, decimal-leading-zero); }
+
+.arch__stage .icon {
+  width: var(--icon-size-card);
+  height: var(--icon-size-card);
+  margin-block: var(--space-12);
+  color: var(--ovi-blue);
+}
+
+.arch__title {
+  font-size: var(--step-2);
+  color: var(--white);
+}
+
+.arch__desc {
+  margin-block-start: var(--space-8);
+  color: var(--navy-300);
+  max-width: none;
+}
+
+/* The link from this stage to the next. */
+.arch__link {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+  inset-block-start: 100%;
+  inset-inline-start: calc(var(--icon-size-card) / 2);
+  width: 0;
+  height: var(--space-48);
+}
+
+.arch__link::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-color: var(--navy-300);
+  border-style: solid;
+  border-inline-start-width: var(--border-width);
+}
+
+.arch__link--wireless::before { border-style: dashed; }
+
+.arch__packet {
+  position: absolute;
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: 50%;
+  background-color: var(--ovi-blue);
+  opacity: 0;
+  inset-inline-start: calc(var(--space-4) * -1);
+  inset-block-start: 0;
+}
+
+.arch__protocol {
+  display: inline-block;
+  margin-block-start: auto;
+  padding-block-start: var(--space-16);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: var(--weight-ui);
+  color: var(--navy-300);
+  max-width: none;
+}
+
+@media (min-width: 900px) {
+  /* DESIGN.md §6.2 — the horizontal form. 900px is the doc's own switch
+     point, not one of the --bp tokens. */
+  .arch {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--grid-gap);
+  }
+
+  .arch__link {
+    inset-block-start: var(--space-48);
+    inset-inline-start: calc(var(--icon-size-card) + var(--space-16));
+    width: calc(100% - var(--icon-size-card) - var(--space-16) + var(--grid-gap));
+    height: 0;
+  }
+
+  .arch__link::before {
+    border-inline-start-width: 0;
+    border-block-start-width: var(--border-width);
+  }
+
+  .arch__packet {
+    inset-block-start: calc(var(--space-4) * -1);
+    inset-inline-start: 0;
+  }
+}
+
+/* --- 5. Why choose OVI ----------------------------------------------------
+   Text-led and deliberately unboxed, so it does not read as a second card
+   grid straight after the first. A rule above each item is the only
+   structure. */
+
+.why {
+  display: grid;
+  gap: var(--space-32);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.why__item {
+  margin-block-start: 0;
+  padding-block-start: var(--space-24);
+  border-block-start: 2px solid var(--ovi-blue);
+  max-width: none;
+}
+
+/* --step-1 rather than the card --step-2: at four columns "End-to-end
+   expertise" breaks across its own hyphen at the larger size. Smaller also
+   keeps this block visibly subordinate to the solutions grid above. */
+.why__title { font-size: var(--step-1); }
+
+.why__text {
+  margin-block-start: var(--space-12);
+  color: var(--text-muted);
+}
+
+@media (min-width: 640px) {
+  .why { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-48); }
+}
+
+@media (min-width: 1024px) {
+  .why { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* --- 6. Services teaser ---------------------------------------------------
+   Two wide cards. Wider padding sets them apart from the eight solution
+   cards above. */
+
+.services-teaser {
+  display: grid;
+  gap: var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .services-teaser { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.services-teaser .card { padding: var(--space-48); }
+
+/* --- 7. Closing CTA band ---------------------------------------------------
+   The second dark surface of the sandwich. */
+
+.cta-band { background-color: var(--navy-700); }
+
+.cta-band__inner { --flow-space: var(--space-24); }
+
+.cta-band__title { max-width: 20ch; }
+
+.cta-band__sub {
+  color: var(--navy-300);
+  font-size: var(--step-1);
+  max-width: var(--measure-lead);
+}
+
+.cta-band p { max-width: none; }

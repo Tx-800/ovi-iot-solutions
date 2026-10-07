@@ -92,8 +92,12 @@ actions, the signal motif, and live data. `--hazard` appears on **two pages only
 Inner pages: slim dark page-header → light content → dark CTA → dark footer.
 
 **Contrast gates.** `--navy-500` on `--paper` = 7.0:1 ✓. `--white` on `--navy-900` = 15.9:1 ✓.
-`--ovi-blue` on `--white` = 3.6:1 — **fails for body text.** Blue is permitted for: large text ≥ 24 px,
-icons, borders, and `--white`-on-blue buttons. For a blue link in body copy use `--blue-600` (5.3:1).
+`--ovi-blue` on `--white` = 3.6:1 — **fails for body text.**
+`--ovi-blue` is permitted for text only at **≥ 24 px**, and for icons, borders, focus rings and the
+signal motif. **Any filled button with a label under 24 px uses `--blue-600`.** Contrast is
+symmetric, so white-on-blue is the same 3.6:1 as blue-on-white: a 16 px button label is normal text
+under WCAG and needs 4.5:1, not the 3:1 that applies to large text and UI components.
+For a blue link in body copy use `--blue-600` (5.3:1).
 **Verify every pair you invent** — do not assume.
 
 ---
@@ -200,7 +204,7 @@ title shifts to `--blue-600`. That is the entire hover treatment.
 ### Buttons
 | Variant | Fill | Text | Border | Use |
 |---|---|---|---|---|
-| Primary | `--ovi-blue` | `--white` | none | one per section, max |
+| Primary | `--blue-600` | `--white` | none | one per section, max |
 | Secondary | transparent | `--navy-700` | `1px --navy-700` | paired with primary |
 | On dark | `--white` | `--navy-900` | none | inside dark bands |
 | Ghost | transparent | `--blue-600` | none | tertiary, in-card links |

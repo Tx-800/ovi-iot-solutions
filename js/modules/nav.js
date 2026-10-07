@@ -1,12 +1,13 @@
 /* ==========================================================================
    nav.js — sticky header, Solutions mega-menu, mobile drawer, focus trap.
 
-   This module only ever *adds* behaviour. The header in partials/header.html
-   is already usable without it: the nav is a plain visible list, "Solutions"
-   is a real link, and CSS :focus-within opens the mega-menu for keyboard
-   users. So the first thing initNav does is announce itself with
-   `data-nav-enhanced`, which is what switches the CSS into drawer mode.
-   Nothing is hidden behind a control that cannot work (PRD N5).
+   The drawer and dropdown layout is the CSS default, and the <noscript>
+   block in partials/head.html reverts to a plain visible nav when scripting
+   is off (PRD N5). This module supplies the behaviour that layout implies:
+   opening and closing, Esc, focus trapping, and accurate aria-expanded.
+
+   "Solutions" is a real link to the index page either way, and CSS
+   :focus-within opens the mega-menu for keyboard users without any script.
    ========================================================================== */
 
 const DRAWER_QUERY = '(max-width: 767.98px)';   /* below --bp-md */
@@ -35,14 +36,9 @@ export function initNav() {
   const drawerMedia = window.matchMedia(DRAWER_QUERY);
   const megaMedia = window.matchMedia(MEGA_QUERY);
 
-  /* Switches the CSS from "plain list" to "drawer + dropdown". */
-  header.setAttribute('data-nav-enhanced', '');
-  if (toggle) toggle.removeAttribute('hidden');
-
-  /* Enhancement is what first hides the drawer, so transitions have to stay
-     off for that first style change — otherwise the panel animates itself
-     shut in front of the visitor on every page load. One frame later, the
-     closed state is the starting state and motion is safe to switch on. */
+  /* The drawer layout is already the CSS default; <noscript> is what undoes
+     it. All this marker does is switch transitions on, one frame after load,
+     so nothing animates while the page is still settling. */
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => header.setAttribute('data-nav-ready', ''));
   });

@@ -8,7 +8,38 @@
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#111B2E">
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/main.css">
+
+  <!-- The no-JavaScript nav. The drawer is the default layout, so without a
+       script to open it the nav would be unreachable; these rules put the
+       list back in the flow and remove the control that could not work.
+       Parsed only when scripting is off, so it costs enabled browsers
+       nothing, and tools/check-nav.js tests this path on every run. -->
+  <noscript>
+    <style>
+      .site-header__toggle { display: none; }
+      .site-nav {
+        position: static;
+        width: auto;
+        padding: 0;
+        background: none;
+        box-shadow: none;
+        visibility: visible;
+        transform: none;
+        overflow: visible;
+      }
+      .mega {
+        position: static;
+        display: block;
+        opacity: 1;
+        visibility: visible;
+        min-width: 0;
+        padding: 0 0 0 var(--space-12);
+        background: none;
+        border: 0;
+        box-shadow: none;
+      }
+      .site-nav__disclosure { display: none; }
+    </style>
+  </noscript>

@@ -4,9 +4,15 @@
    Layer: components.
 
    Progressive enhancement, stated once so the rest of the file reads clearly:
-   the base styles below are the no-JavaScript site. js/modules/nav.js sets
-   `data-nav-enhanced` on the header, and only then does the drawer exist.
-   Nothing is hidden behind a control that cannot work (PRD N5).
+   the drawer and the dropdown are the DEFAULT layout here, and the
+   <noscript> block in partials/head.html reverts them to a plain visible nav
+   when scripting is off.
+
+   It was the other way round until Lighthouse measured it: shipping the
+   visible list and letting JavaScript collapse it into a drawer moved every
+   element below the header once the module ran, which scored CLS 0.565
+   against a < 0.02 gate. Declaring the enhanced layout up front and letting
+   <noscript> undo it means neither path ever reflows.
    ========================================================================== */
 
 /* --- Icons ---------------------------------------------------------------- */
@@ -80,6 +86,28 @@
 
 .btn--on-dark:hover {
   background-color: var(--blue-100);
+}
+
+/* The secondary partner to .btn--on-dark. DESIGN.md §5 lists a Secondary in
+   --navy-700, which is invisible on a dark band; this is its counterpart.
+   White on --navy-900 is 15.9:1. */
+.btn--outline-on-dark {
+  color: var(--white);
+  border-color: var(--white);
+}
+
+.btn--outline-on-dark:hover {
+  background-color: var(--white);
+  color: var(--navy-900);
+}
+
+.btn--ghost-on-dark {
+  color: var(--blue-200);
+  padding-inline: 0;
+}
+
+.btn--ghost-on-dark:hover {
+  color: var(--white);
 }
 
 .btn--ghost {
@@ -267,17 +295,17 @@
 /* --- Enhanced: the Solutions accordion below --bp-lg ---------------------- */
 
 @media (max-width: 1023.98px) {   /* below --bp-lg */
-  [data-nav-enhanced] .site-nav__disclosure { display: inline-flex; }
-  [data-nav-enhanced] .mega { display: none; }
-  [data-nav-enhanced] .mega[data-open] { display: block; }
+  .site-nav__disclosure { display: inline-flex; }
+  .mega { display: none; }
+  .mega[data-open] { display: block; }
 }
 
 /* --- Enhanced: the drawer below --bp-md ----------------------------------- */
 
 @media (max-width: 767.98px) {   /* below --bp-md */
-  [data-nav-enhanced] .site-header__toggle:not([hidden]) { display: inline-flex; }
+  .site-header__toggle { display: inline-flex; }
 
-  [data-nav-enhanced] .site-nav {
+  .site-nav {
     position: fixed;
     inset-block: 0;
     inset-inline-end: 0;
@@ -296,41 +324,39 @@
   }
 
   /* Transitions are gated on data-nav-ready, which nav.js sets one frame
-     after data-nav-enhanced. Without the gate the drawer animates itself
-     shut on every page load, because enhancement is what first applies
-     `visibility: hidden` to an element that was visible. */
+     after the page loads, so the drawer never animates on arrival. */
   [data-nav-ready] .site-nav {
     transition:
       transform var(--dur-menu) var(--ease-menu),
       visibility var(--dur-menu) var(--ease-menu);
   }
 
-  [data-nav-enhanced][data-drawer-open] .site-nav {
+  [data-drawer-open] .site-nav {
     visibility: visible;
     transform: translateX(0);
   }
 
-  [data-nav-enhanced] .site-nav__list {
+  .site-nav__list {
     flex-direction: column;
     align-items: stretch;
     gap: var(--space-4);
   }
 
-  [data-nav-enhanced] .site-nav__item {
+  .site-nav__item {
     justify-content: space-between;
     border-block-end: var(--border-width) solid var(--hairline);
   }
 
-  [data-nav-enhanced] .site-nav__cta { width: 100%; }
+  .site-nav__cta { width: 100%; }
 
-  [data-nav-enhanced] .mega {
+  .mega {
     width: 100%;
     padding-block-end: var(--space-12);
     padding-inline-start: var(--space-12);
   }
 
   /* Backdrop. Sits under the panel, inside the header's stacking context. */
-  [data-nav-enhanced][data-drawer-open]::after {
+  [data-drawer-open]::after {
     content: "";
     position: fixed;
     inset: 0;
@@ -571,6 +597,13 @@
   color: var(--navy-700);
   box-shadow: var(--shadow-overlay);
   transition: border-color var(--dur-hover) linear, color var(--dur-hover) linear;
+}
+
+/* The offset above reserves room for the WhatsApp FAB. While the FAB is
+   omitted — its number is not filled in yet — back-to-top takes the corner
+   itself rather than floating in the gap where the FAB will be. */
+body:not(:has(.fab)) .back-to-top {
+  inset-inline-end: var(--space-16);
 }
 
 .back-to-top:hover {

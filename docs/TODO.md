@@ -57,19 +57,20 @@ Measured 2026-10-06: header, footer and CTA band byte-identical across 6 sampled
 
 Build this one *completely*. Every later page copies its patterns.
 
-- [ ] Section 1 — hero: 7/5 split, H1 at `--step-5`, lead, two buttons
-- [ ] **`js/modules/hero-plot.js`** — the SVG coverage plot and its staggered entrance (`DESIGN.md` §6.1). This is the single most important visual on the site; give it real attention.
-- [ ] Section 2 — three pillars, divided by vertical hairlines, **not cards**
-- [ ] Section 3 — `solutions-grid`, 8 cards, 4/2/1 columns, hairline borders, Lucide icons on contour rings
-- [ ] Section 4 — **`js/modules/architecture.js`** — the 4-stage SVG diagram, dashed vs solid links, mono protocol labels, packets travelling once on scroll-in, vertical reflow below 900 px (`DESIGN.md` §6.2)
-- [ ] Section 5 — Why choose OVI (4 items)
-- [ ] Section 6 — services teaser, two wide cards
-- [ ] Section 7 — CTA band
-- [ ] Head block complete: title, description, canonical, OG, JSON-LD `Organization` + `WebSite`
-- [ ] Responsive pass at all 7 widths
-- [ ] **Screenshot review at 375 px and 1440 px — look at them fresh and fix what you see**
+- [x] Section 1 — hero: 7/5 split, H1 at `--step-5`, lead, two buttons
+- [x] **`js/modules/hero-plot.js`** — the SVG coverage plot and its staggered entrance (`DESIGN.md` §6.1). This is the single most important visual on the site; give it real attention.
+- [x] Section 2 — three pillars, divided by vertical hairlines, **not cards**
+- [x] Section 3 — `solutions-grid`, 8 cards, 4/2/1 columns, hairline borders, Lucide icons on contour rings
+- [x] Section 4 — **`js/modules/architecture.js`** — the 4-stage SVG diagram, dashed vs solid links, mono protocol labels, packets travelling once on scroll-in, vertical reflow below 900 px (`DESIGN.md` §6.2)
+- [x] Section 5 — Why choose OVI (4 items)
+- [x] Section 6 — services teaser, two wide cards
+- [x] Section 7 — CTA band
+- [~] Head block: title, description and OG done. Canonical and JSON-LD are generated the moment `SITE.url` is real — proven, then reverted (see Phase 2 *Decisions*).
+- [x] Responsive pass at all 7 widths — 0 horizontal overflow, measured
+- [x] **Screenshot review at 375 px and 1440 px** — fixed what the images showed: plot mask too tight, 256px dead zone between sections, architecture links drawing only in the gutter, ragged protocol labels, back-to-top floating in the absent FAB gap, `End-to-end expertise` breaking across its own hyphen
 
-**Gate:** Lighthouse mobile ≥ 95 / 100 / 95 / 100. axe 0. Keyboard clean. Reduced-motion clean. JS-off clean.
+**Gate:** Lighthouse mobile ≥ 95 / 100 / 95 / 100. axe 0. Keyboard clean. Reduced-motion clean. JS-off clean. ✅
+Measured 2026-10-07 — see the Phase 3 numbers in the report and *Decisions* below.
 
 ---
 
@@ -139,9 +140,9 @@ Every line must pass. Report the real numbers.
 - [ ] `node tools/sync-partials.js` → **no diff**
 - [ ] Lighthouse mobile on `index.html`: Perf ≥ 95 · A11y 100 · BP ≥ 95 · SEO 100
 - [ ] Lighthouse mobile on one solution page: same gates
-- [ ] axe DevTools on all 14 pages → **0 violations**
-- [ ] Keyboard-only pass on all 14 pages
-- [ ] JS disabled: all 14 pages readable and navigable
+- [ ] axe DevTools on all 16 pages → **0 violations**
+- [ ] Keyboard-only pass on all 16 pages
+- [ ] JS disabled: all 16 pages readable and navigable
 - [ ] `prefers-reduced-motion: reduce`: nothing animates
 - [ ] 320 px → 2560 px: no horizontal scroll anywhere
 - [ ] Chrome, Safari, Firefox, Edge + iOS Safari
@@ -178,7 +179,18 @@ Record judgement calls here as you make them, one line each.
 | 2026-10-06 | Added `tools/check-nav.js` + `nav-harness.html` and `tools/check-a11y.js` + `a11y-harness.html` | The Phase 2 gate is keyboard and no-JS behaviour, which a screenshot cannot show. The harness drives the real header in an iframe; the no-JS frame uses `sandbox="allow-same-origin"` without `allow-scripts`, which genuinely disables scripting while leaving the DOM readable. |
 | 2026-10-06 | Harness frames switch transitions off before asserting | Headless Chrome runs on virtual time, which freezes transitions part-way, so computed styles reported mid-animation values rather than settled state. Three apparent failures were this, not the site. The one real bug it masked is the `data-nav-ready` row above. |
 | 2026-10-06 | Added `.gitattributes` with `* text=auto eol=lf` | `core.autocrlf` was rewriting line endings on checkout, which would have shown as whole-file churn in the "run sync-partials twice, no diff" proof. |
-| 2026-10-06 | `PRD.md` says "14 pages" but the §3 sitemap lists 16 files | Built the 16 the sitemap lists (7 root + 7 solutions + 2 services). Flagging the discrepancy rather than silently dropping two pages. |
+| 2026-10-06 | `PRD.md` header said "14 pages" while the §3 sitemap listed 16 files | Built the 16 the sitemap lists (7 root + 7 solutions + 2 services). Flagging the discrepancy rather than silently dropping two pages. |
+| 2026-10-07 | **Fonts are self-hosted, not loaded from Google Fonts.** `ARCHITECTURE.md` §1 amended | The Google Fonts stylesheet was render-blocking at 840ms on mobile — most of the gap to the N1 Performance gate. Same woff2 subsets served from this origin. Both families are SIL OFL, so redistribution is permitted. Perf went 88 → 99, FCP 2.7s → 1.3s. |
+| 2026-10-07 | Two metric-matched fallback faces (`size-adjust: 99.6%` text, `112.9%` display) | Measured against Arial at 100px in the browser, not guessed. Self-hosting moves the font off the blocking path, so the page paints in a fallback and swaps; matching the advance widths means the swap changes no line breaks. |
+| 2026-10-07 | **`css/main.css` is now generated by `tools/build-css.js` from `css/src/`.** `ARCHITECTURE.md` §5 amended | The `@import` chain cost a render-blocking second round trip — the browser cannot discover the eight files until main.css arrives. Lighthouse measured ~450ms of blocked rendering. The bundle is committed, so the site still needs no build step to serve. Same rule as the icon sprite. |
+| 2026-10-07 | **The progressive-enhancement pattern was inverted, and `ARCHITECTURE.md` §6 rewritten.** The enhanced layout is now the CSS default and `<noscript>` reverts it | This reverses what was documented in Phase 2 and what you asked me to write down. Shipping the plain nav and letting JS collapse it into a drawer changed the header height on boot and moved everything below: **CLS 0.565** against a < 0.02 gate. Declaring the drawer up front means neither path reflows. Cost: scripting-on-but-module-failed leaves a dead control. The no-JS path is still tested on every `check-nav` run in a frame with scripting genuinely disabled. |
+| 2026-10-07 | Two adjacent light sections no longer stack their padding | 8rem against 8rem left a 256px dead zone between the pillars and the solutions grid. `.section` still owns the rhythm; the rule only stops it applying twice to one seam. A section after a dark band keeps full padding, because that seam is a real change of surface. |
+| 2026-10-07 | The architecture diagram is HTML + CSS, not one SVG | `DESIGN.md` §6.2 says "SVG + CSS"; the intent is "not the bitmap from the deck". HTML reflows to the vertical stack below 900px without a second drawing, and keeps the protocol labels as real, selectable, translatable text. The dashed-radio / solid-wired convention is carried on the connector borders. |
+| 2026-10-07 | The pillars block is not cards, despite `PRD.md` §4.1 saying "three cards with line icons" | Not treated as a contradiction: `AGENTS.md` §2 gives PRD the content and DESIGN the visuals, and `DESIGN.md` §5 is explicit that this block is "deliberately not cards" and is the main reason the page does not read as a card kit. Content honoured — three items, line icons. |
+| 2026-10-07 | Added `.btn--outline-on-dark` and `.btn--ghost-on-dark` | `DESIGN.md` §5's Secondary is `--navy-700` on transparent, which is invisible on a dark band. White on `--navy-900` is 15.9:1. |
+| 2026-10-07 | `.why__title` is `--step-1`, not the card `--step-2` | At four columns "End-to-end expertise" broke across its own hyphen. Smaller also keeps the block subordinate to the solutions grid above it, which is the point of not boxing it. |
+| 2026-10-07 | Back-to-top takes the corner while the WhatsApp FAB is absent | Its offset reserves room for the FAB. The FAB is omitted until `whatsapp` is filled in, so without the rule the button floats in an empty gap. |
+| 2026-10-07 | Added `tools/build-css.js`, `tools/build-icons.js`, `tools/motion-probe.html`, `tools/font-metrics.html`, `tools/box-probe.html` | Build-time generators for committed artefacts, plus probes so the reduced-motion gate, the font metrics and the layout geometry are measured rather than asserted. |
 
 ---
 

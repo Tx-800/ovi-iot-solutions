@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "axe-core": "^4.10.2",
-    "lighthouse": "^12.2.1"
+    "lighthouse": "^12.2.1",
+    "lucide-static": "^1.52.0"
   }
 }

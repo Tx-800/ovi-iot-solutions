@@ -8,7 +8,7 @@
 ## 1. What this project is
 
 A **static marketing website** for **OVI IoT Solutions** — a LoRaWAN / NB-IoT infrastructure IoT company.
-14 pages. **HTML, CSS and vanilla JavaScript only.** No React, no framework, no bundler.
+16 pages. **HTML, CSS and vanilla JavaScript only.** No React, no framework, no bundler.
 
 The site's job is to win a technical meeting with a utility engineer, a procurement officer, or a
 plant HSE manager. Credibility beats flash.
@@ -27,6 +27,11 @@ plant HSE manager. Credibility beats flash.
 
 **Precedence when they disagree:** `PRD.md` > `DESIGN.md` > `ARCHITECTURE.md` > your own preference.
 If you find a real contradiction, **stop and ask** — do not silently pick one.
+
+**The accessibility gate wins over the design doc whenever they disagree.** If a visual instruction
+in `DESIGN.md` cannot meet WCAG 2.2 AA, the gate stands and the design doc is wrong. Implement the
+accessible version, log it under *Decisions*, and flag it for sign-off — do not ship a known
+violation because a document asked for it.
 
 ---
 

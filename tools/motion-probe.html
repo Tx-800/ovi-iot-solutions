@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>motion probe</title>
+<style>html,body{margin:0}iframe{border:0;display:block;width:1280px;height:900px}#out{font:12px monospace;white-space:pre}</style>
+</head><body><pre id="out">pending</pre><iframe id="f"></iframe><script>
+/* Dev-only. Reports every running animation in the framed page, so the
+   reduced-motion gate (DESIGN.md §8) can be measured rather than assumed.
+   Drive with chrome --force-prefers-reduced-motion to test the reduced case. */
+const f=document.getElementById('f');
+f.addEventListener('load',()=>{
+  const d=f.contentDocument, w=f.contentWindow;
+  if(!d||!d.querySelector('[data-header]'))return;
+  setTimeout(()=>{
+    const anims=(d.getAnimations?d.getAnimations():[]).map(a=>({
+      target:(a.effect&&a.effect.target&&(a.effect.target.className?.baseVal||a.effect.target.className||a.effect.target.tagName))||'?',
+      state:a.playState,
+      duration:a.effect&&a.effect.getTiming?a.effect.getTiming().duration:null
+    }));
+    const ring=d.querySelector('[data-ring]');
+    const pulse=d.querySelector('[data-pulse]');
+    document.getElementById('out').textContent=JSON.stringify({
+      reducedMotion:w.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      runningAnimations:anims.filter(a=>a.state==='running').length,
+      totalAnimations:anims.length,
+      animations:anims.slice(0,12),
+      firstRingStrokeOpacity:ring?w.getComputedStyle(ring).strokeOpacity:null,
+      pulseOpacity:pulse?w.getComputedStyle(pulse).opacity:null
+    },null,2);
+  },2500);
+});
+f.src='/index.html';
+</script></body></html>

@@ -73,7 +73,7 @@ No "revolutionary", no "cutting-edge", no "unleash", no invented statistics.
 
 ## 3. Site map
 
-14 pages. Multi-page static HTML.
+16 pages. Multi-page static HTML.
 
 ```
 /
@@ -433,7 +433,7 @@ export const SITE = {
 - Open Graph + Twitter card tags; `og:image` → `/assets/brand/og-image.jpg` (1200×630, already supplied).
 - **JSON-LD:** `Organization` (Home, with `logo`, `address`, `contactPoint`), `BreadcrumbList`
   (all inner pages), `Service` (each solution and service page), `WebSite` (Home).
-- `sitemap.xml` listing all 14 pages, and a `robots.txt` pointing at it.
+- `sitemap.xml` listing all 16 pages, and a `robots.txt` pointing at it.
 - One `<h1>` per page. Semantic `<header> <nav> <main> <section> <article> <footer>`.
 - Descriptive `alt` on every meaningful image; `alt=""` + `aria-hidden="true"` on decorative SVG.
 - Target terms per page, used naturally — never stuffed:
@@ -454,7 +454,7 @@ If the user later asks for analytics, use a cookieless provider and add consent 
 
 ## 11. Definition of done
 
-1. All 14 pages exist, are linked, and have no dead links or dead images.
+1. All 16 pages exist, are linked, and have no dead links or dead images.
 2. `grep -rin "ideas" .` returns nothing outside `/docs`.
 3. `grep -rn "REPLACE_ME" .` returns only `js/site.config.js`.
 4. No lorem ipsum, no `TODO`, no placeholder images anywhere in `/` output.

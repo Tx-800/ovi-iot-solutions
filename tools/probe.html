@@ -75,6 +75,10 @@
       }
     }
 
+    /* shot mode can start the capture part-way down a long page */
+    const scrollY = Number(params.get("scroll") || 0);
+    if (scrollY) win.scrollTo(0, scrollY);
+
     out.textContent = JSON.stringify({
       url,
       requestedWidth: w,
