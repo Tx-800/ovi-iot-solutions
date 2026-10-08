@@ -142,24 +142,69 @@ Deferred from Phase 4 — tracked here, not dropped:
 
 ## Phase 7 — Ship Gate
 
-Every line must pass. Report the real numbers.
+Every line must pass. Report the real numbers. Run 2026-10-08 with the **placeholder** config, so
+everything gated on the domain is checked against `tools/check-release.js` instead (it fails, on purpose).
 
-- [ ] `grep -rin "ideas" . --include="*.html" --include="*.css" --include="*.js" --exclude-dir=docs` → **empty**
-- [ ] `grep -rn "REPLACE_ME" . --include="*.html"` → **empty** (only `js/site.config.js` may contain it, and only if the user hasn't supplied details yet)
-- [ ] `grep -rin "lorem\|ipsum\|FIXME\|coming soon" . --include="*.html"` → **empty**
-- [ ] `grep -rn 'href="#"' . --include="*.html"` → **empty**
-- [ ] `node tools/check-links.js` → **0 broken**
-- [ ] `node tools/sync-partials.js` → **no diff**
-- [ ] Lighthouse mobile on `index.html`: Perf ≥ 95 · A11y 100 · BP ≥ 95 · SEO 100
-- [ ] Lighthouse mobile on one solution page: same gates
-- [ ] axe DevTools on all 16 pages → **0 violations**
-- [ ] Keyboard-only pass on all 16 pages
-- [ ] JS disabled: all 16 pages readable and navigable
-- [ ] `prefers-reduced-motion: reduce`: nothing animates
-- [ ] 320 px → 2560 px: no horizontal scroll anywhere
-- [ ] Chrome, Safari, Firefox, Edge + iOS Safari
-- [ ] JS payload < 80 KB gzipped (excl. lazy Leaflet); CSS < 35 KB
-- [ ] Self-critique questions in `DESIGN.md` §10 answered honestly, in writing
+- [x] `grep -rin "ideas" . --include="*.html" --include="*.css" --include="*.js" --exclude-dir=docs` → **empty** (0)
+- [x] `grep -rn "REPLACE_ME" . --include="*.html"` → **empty** (0; `js/site.config.js` still holds placeholders — you haven't supplied the details yet)
+- [x] `grep -rin "lorem\|ipsum\|FIXME\|coming soon" . --include="*.html"` → **empty** (0)
+- [x] `grep -rn 'href="#"' . --include="*.html"` → **empty** (0)
+- [x] `node tools/check-links.js` → **0 broken**, 0 dead
+- [x] `node tools/sync-partials.js` → **no diff**
+- [x] Lighthouse mobile on `index.html`: Perf ≥ 95 · A11y 100 · BP ≥ 95 · SEO 100 → **97 · 100 · 100 · 100** (median of 3; two of three sets gave 97, one 93 under machine load — single runs range 93–97, so the margin is thin)
+- [x] Lighthouse mobile on one solution page → `atex-zone-sensors` **98 · 100 · 100 · 100**; `smart-water-metering` 98 · 100 · 100 · 100
+- [x] axe on all 16 pages → **0 violations**, plus 0 findings from `tools/a11y-measure.js` (1,383 control measurements; 1,526 with a populated config)
+- [x] Keyboard-only pass on all 16 pages → **automated with real key presses, Chrome**: 1,023 tab stops at 375 and 1280, every one with a visible, on-screen, uncovered focus ring; skip link first and working; no trap; drawer opens on Enter, holds focus, closes on Esc and returns focus; mega menu the same; empty form submitted by keyboard reports 3 errors and focuses the first. A person tabbing through is still worth ten minutes before launch.
+- [x] JS disabled: all 16 pages readable and navigable → main content, H1 and every nav link visible at 375 and 1280; no overflow; the form posts natively to Web3Forms (it can only *succeed* once the key is set)
+- [x] `prefers-reduced-motion: reduce`: nothing animates → 0 running animations on all 16 pages after a full scroll; the Motion library is never downloaded
+- [x] 320 px → 2560 px: no horizontal scroll anywhere → 16 pages × 320/360/414/768/1024/1440/2560, 0 overflow
+- [ ] Chrome, Safari, Firefox, Edge + iOS Safari → **Chrome 154 only.** Edge 154 is installed but this machine's policy stops it being launched by automation (it exits at once, headless or not). Firefox is not installed. Safari and iOS cannot run on Windows. **These four are yours** — README *Before launch*.
+- [x] JS payload < 80 KB gzipped (excl. lazy Leaflet); CSS < 35 KB → **JS 11.9 KB, CSS 17.9 KB** gzipped (the project's own CSS gate is 22 KB)
+- [x] Self-critique questions in `DESIGN.md` §10 answered honestly, in writing → below
+
+**Not on this list but still failing:** the ARCHITECTURE.md §7 LCP budget (< 2.0 s). Measured 2.11–2.42 s
+(about, contact, detail pages ≈ 2.1–2.3 s; index 2.42 s). See *LCP — what was measured* below.
+
+### DESIGN.md §10 — self-critique, answered from screenshots taken 2026-10-08 (375 and 1440, home, solutions, ATEX, contact)
+
+1. **Swap in another company's logo and content — would it still work?** Partly, yes. The coverage-plot hero
+   and the architecture diagram are specific to radio networks: concentric coverage contours around a
+   gateway, protocol labels in mono. Another *LPWAN* company could still wear them; a generic SaaS company could
+   not. The card grids below the hero are the least specific part of the site.
+2. **More than one bold element competing on any page?** No. Each page has one: the hero on home, the dark
+   page head on inner pages, the form on contact. The CTA band closes every page except contact, but it sits
+   after all the content and doesn't compete with the top.
+3. **Cards all the same radius, shadow and padding regardless of importance?** Mostly yes, and that's a fair
+   criticism. Solution cards, consultancy cards and "related" cards share one treatment; the only difference is
+   column count. Pillars and "Why choose OVI" are already de-carded (rules, no boxes). The "related" cards on
+   detail pages are the obvious candidate to de-card next. Not changed in this phase.
+4. **Tracked-out ALL-CAPS eyebrow?** None. No `text-transform` anywhere in the CSS; eyebrows are sentence case.
+5. **Anything animating that the user didn't ask for, other than the hero?** One thing: the architecture
+   packets on home and technology, which run once on scroll-in. DESIGN.md §8 allows it explicitly, but on
+   **home** it makes a second unrequested motion after the hero, against the "one orchestrated moment" budget.
+   It is a short one-shot and is off under reduced motion. Your call whether home keeps it; one line in
+   `main.js` would restrict it to technology.
+6. **Amber anywhere other than ATEX and form errors?** No. The only amber rule is the ATEX callout; form errors
+   use `--danger`.
+7. **Screenshots, looked at fresh.** One real flaw found and fixed: on ATEX, street lighting and both service
+   pages, the card grid sat **14 px** under the intro paragraph. Now 48 px, matching the gap under a section
+   head. Nothing else overlapped or clipped at either width.
+
+### LCP — what was measured (Lighthouse mobile, median of 3, simulated 4G)
+
+| Experiment | about | index |
+|---|---|---|
+| As shipped | 2.11 s | 2.41 s |
+| Without the font preload | — | 2.42 s (no gain; reverted) |
+| Without `main.js` (no JS) | 1.96 s | 1.96 s |
+| Without the header logo | 1.89 s | 1.96 s |
+| Without the hero module (Motion) | — | 2.26 s |
+| Logo `fetchpriority="low"` | 2.11 s | 2.34 s (no gain; reverted) |
+
+LCP is text on every page. What holds it above 2.0 s is everything that downloads early beside the CSS and the
+90 KB variable font: the logo (32 KB PNG) and the module graph. None of these can be removed. A lossless WebP of
+the logo is pixel-identical on every visible pixel and 20 % smaller, but that is about 30 ms. **Decision needed
+from you** — see the Phase 7 report.
 
 ---
 
