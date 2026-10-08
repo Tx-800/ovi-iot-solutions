@@ -35,13 +35,22 @@ export async function init() {
 
   const { animate } = motion;
 
-  /* Each ring fades to the opacity its own class already sets, so the
-     animation cannot disagree with the stylesheet. */
+  /* Motion 12 drives SVG elements through its SVG renderer, which shaped two
+     choices here (measured in a real-time browser, 2026-10-08):
+     - `scale`, not a raw `transform` string. The string form wrote
+       transform="undefined" — a console error that cost Best Practices 4
+       points. Motion scales around each circle's own centre; every ring is
+       centred on the view-box centre, where the CSS transform-origin puts
+       it, so the result is identical.
+     - `opacity`, not `strokeOpacity`. The renderer writes stroke-opacity as
+       a presentation attribute, which each ring's class outranks, so the
+       fade never showed. Element opacity fades 0 -> 1 over the stroke
+       opacity the class sets, so the settled state is still the
+       stylesheet's own. */
   rings.forEach((ring, i) => {
-    const settled = getComputedStyle(ring).strokeOpacity;
     animate(
       ring,
-      { transform: ['scale(0.6)', 'scale(1)'], strokeOpacity: [0, settled] },
+      { scale: [0.6, 1], opacity: [0, 1] },
       { duration: DURATION, delay: i * STAGGER, ease: EASE },
     );
   });
@@ -54,7 +63,7 @@ export async function init() {
 
   animate(
     pulse,
-    { transform: ['scale(1)', 'scale(4.5)'], opacity: [0.5, 0] },
+    { scale: [1, 4.5], opacity: [0.5, 0] },
     {
       duration: PULSE_PERIOD,
       delay: entranceEnd,
