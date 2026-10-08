@@ -10,6 +10,22 @@
      js/modules/nav.js then adds explicit open/close, Esc, focus trapping and
      accurate aria-expanded on top. -->
 
+  <!-- Logo intro: shown only when js/intro-gate.js sets data-intro on <html>
+       (first page of a session, motion allowed). Pure CSS animation, 1.5s, and
+       it hides itself at the end. aria-hidden: it is decoration, and the page
+       underneath is already there for assistive technology. The logo pixels are
+       the supplied file, untouched: only position, scale and opacity move. -->
+  <div class="intro" aria-hidden="true">
+    <div class="intro__stage">
+      <svg class="intro__rings" viewBox="0 0 200 200" focusable="false">
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+      </svg>
+      <img class="intro__logo" src="/assets/brand/ovi-logo-320.png" width="320" height="139" alt="" decoding="async">
+    </div>
+  </div>
+
   <header class="site-header" data-header>
     <div class="site-header__inner container">
       <a class="site-header__brand" href="/">

@@ -10,6 +10,9 @@
 
   <link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/main.css">
+  <!-- Synchronous on purpose: decides before first paint whether the logo intro
+       plays (once per session, never under reduced motion). ~0.5 KB. -->
+  <script src="/js/intro-gate.js"></script>
 
   <!-- The no-JavaScript nav. The drawer is the default layout, so without a
        script to open it the nav would be unreachable; these rules put the

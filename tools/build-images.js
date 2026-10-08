@@ -189,25 +189,21 @@ async function render(srcPath, box, width, height) {
 const OPEN = '<!-- @photo -->';
 const CLOSE = '<!-- /@photo -->';
 
-/* Loading strategy — lazy. Measured, not assumed.
+/* Loading strategy — eager, default priority. Measured, not assumed.
 
-   Phase 4 put the band straight under the page head, 389-596px down: above
-   the fold everywhere and the LCP element on all nine pages, so it shipped
-   eager (fetchpriority=high measured slower; lazy failed the "LCP image
-   lazily loaded" audit). Phase 6 moved it below the first content section.
-   tools/fold-probe.html now puts its top edge below the fold at 375x812,
-   412x823, 1024x768 and 1440x900 on all nine pages; at 768x1024 three pages
-   show a 16-47px sliver, which Chrome's lazy-load margin fetches at once.
+   The band sits directly under the page head again, so it is above the fold
+   on every page and likely the LCP element. Lazy loading an above-the-fold
+   image fails Lighthouse's "LCP image lazily loaded" audit and delays it on
+   a real device, so it loads eagerly.
 
-   Lighthouse mobile, median of 3, lazy, after the move (2026-10-08):
-     metering 98 (LCP 2.41s)  leak 98 (2.33s)  rf-planning 98 (2.26s)
-   LCP is now text (the lead or the first section's paragraph) on every
-   page, and the image audit no longer applies. The remaining LCP time is
-   the dev server's .html -> clean-URL redirect and the 90 KB Archivo font,
-   not the photograph.
-
-   Re-run tools/fold-probe.html if the page head or first section shrinks. */
-const LOADING = 'loading="lazy" decoding="async"';
+   Phase 4 measured the same position, Lighthouse mobile, median of 3:
+     eager + fetchpriority=high   metering 96 (LCP 2.71s)  leak 97 (2.42s)
+     loading=lazy                metering 97 (LCP 2.42s)  leak 98 (2.34s)  but FAILS the audit
+     eager, default priority     metering 97 (LCP 2.57s)  leak 97 (2.41s)  <- chosen
+   Phase 6 moved the band below the first content section (lazy, LCP text,
+   98 on each); it came back to the top on review because it looked better
+   there. Re-measure if the page head changes height. */
+const LOADING = 'decoding="async"';
 
 function bandHTML(img, has2x, w2) {
   const base = `/assets/img/${img.basename}`;
@@ -233,20 +229,19 @@ function placeInPage(img, has2x, w2) {
   const file = join(ROOT, img.page);
   let html = readFileSync(file, 'utf8');
 
-  /* The band sits after the first titled content section, not straight under
-     the page head. Directly under the head it was the LCP element on all nine
-     pages and outranked the heading and lead it exists to illustrate.
-     "Titled" skips the short pull-quote section that opens service pages.
-     Placement is recomputed every run, so changing this rule moves the band. */
+  /* The band sits directly under the dark page head, straddling its lower
+     edge (06-sections.css). Phase 6 tried it after the first content
+     section; on review that read as a stray picture mid-page, so it is back
+     at the top by your instruction. Placement is recomputed every run, so
+     changing this rule moves the band. */
   if (html.includes(OPEN)) {
     const from = html.indexOf(OPEN);
     const to = html.indexOf(CLOSE) + CLOSE.length;
     html = html.slice(0, from).replace(/\n\s*$/, '') + html.slice(to);
   }
   const head = html.indexOf('page-head');
-  const first = head === -1 ? -1 : html.slice(head).search(/<section[^>]*aria-labelledby=/);
-  if (first === -1) throw new Error(`${img.page}: no titled content section after the page head`);
-  const end = html.indexOf('</section>', head + first);
+  if (head === -1) throw new Error(`${img.page}: no page-head section to place the band after`);
+  const end = html.indexOf('</section>', head);
   const at = end + '</section>'.length;
   html = `${html.slice(0, at)}\n\n    ${OPEN}\n    ${CLOSE}${html.slice(at)}`;
 

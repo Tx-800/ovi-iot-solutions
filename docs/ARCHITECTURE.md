@@ -259,8 +259,11 @@ Every page starts from this skeleton. Do not deviate.
   - **Do not assume `fetchpriority="high"` helps — measure it.** It made the Phase 4 photo band
     slower (table in §7), and removing it from the header logo in Phase 6 changed LCP by less than
     run-to-run noise (metering 2.18 → 2.26 s, about 2.11 → 2.10 s). No image on the site carries it.
-  - Since Phase 6 no image is an LCP element: the photo band sits below the first content section and
-    is `loading="lazy"`; LCP is text on every page.
+  - The photo band sits directly under the page head (moved below the first section in Phase 6, back
+    on review). It is above the fold and the LCP element on the nine detail pages, so it loads eagerly
+    at default priority.
+- `js/intro-gate.js` is the one synchronous script: it decides before first paint whether the logo
+  intro plays (first page of a session, motion allowed). Keep it tiny; everything else is a module.
 - Decorative SVG: `aria-hidden="true"` + `focusable="false"`.
 - Use **root-relative** paths (`/css/main.css`), never `../../`.
 - Class naming: **BEM-lite** — `.block`, `.block__element`, `.block--variant`. No utility soup, no ID selectors for styling.
@@ -390,7 +393,8 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
   High priority loses because, under simulated 4G, it competes with the critical CSS and font. Do not
   add `fetchpriority="high"` to an image on the assumption it helps; measure it.
 
-  **Phase 6 — the band moved below the first content section and is now `loading="lazy"`.** It is
+  **Phase 6 — the band moved below the first content section and went `loading="lazy"`; after review it
+  moved back under the page head and is eager again (metering Perf 96, LCP 2.57 s).** At the time: It is
   below the fold on all nine pages at 375, 412, 1024 and 1440 wide (a 16–47 px sliver at 768×1024 on
   three). Lighthouse, median of 3: metering 98, leak 98, rf-planning 98; LCP is text everywhere.
 - **LCP budget currently FAILS on every page: 2.10–2.41 s against < 2.0 s** (2026-10-08, median of 3).

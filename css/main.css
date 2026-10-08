@@ -362,6 +362,7 @@
   --chip-pad-block:   var(--space-4);    /* 4px  */
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */
+  --band-overlap:     clamp(4rem, 12vw, 10rem); /* how far the page-head navy runs behind the photo band */
   --tap-min:          2.75rem;           /* 44px — DESIGN.md §9 */
   --target-min:       1.5rem;            /* 24px — WCAG 2.2 2.5.8 floor, for dense UI like breadcrumbs */
   --icon-size:        1.5rem;            /* 24px in UI */
@@ -371,6 +372,7 @@
 
   --logo-width-header: 8.25rem;          /* 132px — above the 120px minimum */
   --logo-width-footer: 9.25rem;          /* 148px */
+  --logo-width-intro:  clamp(10rem, 40vw, 15rem); /* 160-240px, the logo intro */
 
   /* --- Borders ----------------------------------------------------------- */
   --border-width: 1px;
@@ -383,6 +385,7 @@
   --dur-accordion: 240ms;
   --dur-enter:     320ms;   /* inner-page H1 + lead, together */
   --dur-hero:      900ms;   /* hero plot entrance, total */
+  --dur-intro:     1500ms;  /* logo intro, first page of a session only */
   --stagger-hero:  90ms;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -1180,9 +1183,9 @@
     height: auto;
   }
 
-  /* Flex rather than fixed grid columns: the contact block is removed entirely
-     while its values are unset, and a grid with hard column assignments would
-     leave a dead gap where it used to be. */
+  /* Flex rather than fixed grid columns: the contact block's detail lines
+     come and go with js/site.config.js, so its height and width vary, and a
+     grid with hard column assignments would leave dead gaps. */
   .site-footer__inner {
     position: relative;
     display: flex;
@@ -1193,7 +1196,7 @@
 
   .site-footer__brand { flex: 1 1 15rem; }
   .site-footer__nav { flex: 3 1 28rem; }
-  .site-footer__contact { flex: 1 1 14rem; }
+  .site-footer__contact { flex: 1 1 16rem; }
 
   .site-footer__tagline {
     margin-block-start: var(--space-16);
@@ -1262,10 +1265,41 @@
     padding-block: var(--space-8);
   }
 
-  .site-footer__email {
+  /* Contact block: one detail per row, icon first. The icon aligns with the
+     first line of a wrapped address rather than its middle. */
+  .site-footer__contact-list li {
     display: flex;
+    align-items: flex-start;
+    gap: var(--space-12);
+    color: var(--navy-300);
+  }
+
+  .site-footer__contact-icon {
+    flex: none;
+    margin-block-start: var(--space-4);
+    color: var(--ovi-blue);
+  }
+
+  .site-footer__email {
+    align-items: center;
+  }
+
+  .site-footer__email .site-footer__contact-icon {
+    margin-block-start: 0;
+  }
+
+  .site-footer__enquiry {
+    margin-block-start: var(--space-16);
+  }
+
+  /* Matches .site-footer a:not(.fab) (0,2,1) and comes later, so it wins. */
+  .site-footer .site-footer__enquiry a {
+    display: inline-flex;
     align-items: center;
     gap: var(--space-8);
+    min-height: var(--target-min);
+    color: var(--white);
+    font-weight: var(--weight-ui);
   }
 
   /* An author `display` beats the UA's `[hidden] { display: none }`, so every
@@ -1748,6 +1782,103 @@
   .form-sent__title {
     font-size: var(--step-1);
   }
+
+  /* --- Logo intro ------------------------------------------------------------
+     Plays on the first page of a session only (js/intro-gate.js sets
+     html[data-intro]); otherwise display:none, which is also the no-JS and
+     reduced-motion state. One CSS timeline of --dur-intro (1.5s):
+       0-35%    the logo fades in and settles from 88% scale
+       12-80%   three coverage rings radiate from it, staggered — the same
+                signal motif as the hero plot
+       80-100%  the overlay fades out, then ends hidden
+     The overlay ends visibility:hidden on its own, so it can never strand the
+     page even if every script fails. White, because the supplied logo's navy
+     wordmark disappears on navy. */
+
+  .intro { display: none; }
+
+  [data-intro] .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: grid;
+    place-items: center;
+    background-color: var(--white);
+    pointer-events: none;
+    animation: intro-out var(--dur-intro) linear forwards;
+  }
+
+  .intro__stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+
+  .intro__logo {
+    position: relative;
+    width: var(--logo-width-intro);
+    height: auto;
+    opacity: 0;
+    animation: intro-logo var(--dur-intro) var(--ease-out-expo) forwards;
+  }
+
+  .intro__rings {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: calc(var(--logo-width-intro) * 1.6);
+    height: auto;
+    translate: -50% -50%;
+    overflow: visible;
+  }
+
+  .intro__ring {
+    fill: none;
+    stroke: var(--ovi-blue);
+    stroke-width: 1.5;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: intro-ring var(--dur-intro) var(--ease-out-expo) forwards;
+  }
+
+  .intro__ring:nth-child(2) { animation-name: intro-ring-2; }
+  .intro__ring:nth-child(3) { animation-name: intro-ring-3; }
+
+  @keyframes intro-logo {
+    0%   { opacity: 0; transform: scale(0.88); }
+    35%  { opacity: 1; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes intro-ring {
+    0%, 12% { opacity: 0; transform: scale(1); }
+    16%     { opacity: 0.7; }
+    60%     { opacity: 0; transform: scale(2.2); }
+    100%    { opacity: 0; transform: scale(2.2); }
+  }
+
+  @keyframes intro-ring-2 {
+    0%, 24% { opacity: 0; transform: scale(1); }
+    28%     { opacity: 0.6; }
+    70%     { opacity: 0; transform: scale(2.2); }
+    100%    { opacity: 0; transform: scale(2.2); }
+  }
+
+  @keyframes intro-ring-3 {
+    0%, 36% { opacity: 0; transform: scale(1); }
+    40%     { opacity: 0.5; }
+    80%     { opacity: 0; transform: scale(2.2); }
+    100%    { opacity: 0; transform: scale(2.2); }
+  }
+
+  @keyframes intro-out {
+    0%, 80% { opacity: 1; visibility: visible; }
+    100%    { opacity: 0; visibility: hidden; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-intro] .intro { display: none; }
+  }
 }
 
 /* ===== css/src/06-sections.css -> @layer sections ===== */
@@ -2226,15 +2357,27 @@
 
   /* --- Photo band — DESIGN.md §7 ---------------------------------------------
      The one photograph on a solution or service page: 21:9, container width,
-     after the first content section (tools/build-images.js places it). The
+     directly under the dark page head (tools/build-images.js places it). The
      treatment (desaturation + navy multiply) is baked into the file by
      tools/build-images.js, so all nine read as one set without any CSS filter
-     cost at paint time. */
+     cost at paint time.
+
+     The navy of the page head continues behind the top of the photo, so the
+     picture straddles the belt's lower edge instead of sitting in a gap below
+     it. Done with a gradient on the band itself, not a negative margin, so no
+     browser can pull the photo over the heading. */
+
+  .page-head + .media-band {
+    padding-block-start: 0;
+    background-image: linear-gradient(to bottom,
+      var(--navy-900) 0, var(--navy-900) var(--band-overlap), transparent var(--band-overlap));
+  }
 
   .media-band__img {
     width: 100%;
     height: auto;
     border-radius: var(--r-md);
+    box-shadow: var(--shadow-overlay);
   }
 }
 

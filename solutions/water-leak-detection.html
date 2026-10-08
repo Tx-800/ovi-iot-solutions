@@ -15,6 +15,9 @@
 
   <link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/css/main.css">
+  <!-- Synchronous on purpose: decides before first paint whether the logo intro
+       plays (once per session, never under reduced motion). ~0.5 KB. -->
+  <script src="/js/intro-gate.js"></script>
 
   <!-- The no-JavaScript nav. The drawer is the default layout, so without a
        script to open it the nav would be unreachable; these rules put the
@@ -61,6 +64,22 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <!-- @include header -->
+  <!-- Logo intro: shown only when js/intro-gate.js sets data-intro on <html>
+       (first page of a session, motion allowed). Pure CSS animation, 1.5s, and
+       it hides itself at the end. aria-hidden: it is decoration, and the page
+       underneath is already there for assistive technology. The logo pixels are
+       the supplied file, untouched: only position, scale and opacity move. -->
+  <div class="intro" aria-hidden="true">
+    <div class="intro__stage">
+      <svg class="intro__rings" viewBox="0 0 200 200" focusable="false">
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+      </svg>
+      <img class="intro__logo" src="/assets/brand/ovi-logo-320.png" width="320" height="139" alt="" decoding="async">
+    </div>
+  </div>
+
   <header class="site-header" data-header>
     <div class="site-header__inner container">
       <a class="site-header__brand" href="/">
@@ -135,6 +154,17 @@
       </div>
     </section>
 
+    <!-- @photo -->
+    <div class="section section--tight media-band">
+      <div class="container">
+        <img class="media-band__img" src="/assets/img/water-leak-detection.webp"
+             srcset="/assets/img/water-leak-detection-800w.webp 800w, /assets/img/water-leak-detection.webp 1240w, /assets/img/water-leak-detection@2x.webp 2400w"
+             sizes="(min-width: 1240px) 1176px, (min-width: 800px) calc(100vw - 4rem), calc(100vw - 2rem)"
+             width="1240" height="531" alt="A large pipeline discharging water onto dry open ground" decoding="async">
+      </div>
+    </div>
+    <!-- /@photo -->
+
     <section class="section" aria-labelledby="how-title">
       <div class="container">
         <div class="flow">
@@ -151,17 +181,6 @@
         </div>
       </div>
     </section>
-
-    <!-- @photo -->
-    <div class="section section--tight media-band">
-      <div class="container">
-        <img class="media-band__img" src="/assets/img/water-leak-detection.webp"
-             srcset="/assets/img/water-leak-detection-800w.webp 800w, /assets/img/water-leak-detection.webp 1240w, /assets/img/water-leak-detection@2x.webp 2400w"
-             sizes="(min-width: 1240px) 1176px, (min-width: 800px) calc(100vw - 4rem), calc(100vw - 2rem)"
-             width="1240" height="531" alt="A large pipeline discharging water onto dry open ground" loading="lazy" decoding="async">
-      </div>
-    </div>
-    <!-- /@photo -->
 
     <section class="section" aria-labelledby="related-title">
       <div class="container">
@@ -243,6 +262,20 @@
           </ul>
         </div>
       </nav>
+
+      <!-- Always rendered: the enquiry link works with no details configured.
+           Each detail line appears only once its value in js/site.config.js
+           is real (data-requires), so a placeholder never ships. -->
+      <div class="site-footer__contact">
+        <h2 class="site-footer__heading">Get in touch</h2>
+        <ul class="site-footer__contact-list" role="list">
+        </ul>
+
+        <p class="site-footer__enquiry">
+          <a href="/contact.html">Send an enquiry
+            <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-right"></use></svg></a>
+        </p>
+      </div>
     </div>
 
     <div class="site-footer__legal">

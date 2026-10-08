@@ -139,6 +139,7 @@
   --chip-pad-block:   var(--space-4);    /* 4px  */
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */
+  --band-overlap:     clamp(4rem, 12vw, 10rem); /* how far the page-head navy runs behind the photo band */
   --tap-min:          2.75rem;           /* 44px — DESIGN.md §9 */
   --target-min:       1.5rem;            /* 24px — WCAG 2.2 2.5.8 floor, for dense UI like breadcrumbs */
   --icon-size:        1.5rem;            /* 24px in UI */
@@ -148,6 +149,7 @@
 
   --logo-width-header: 8.25rem;          /* 132px — above the 120px minimum */
   --logo-width-footer: 9.25rem;          /* 148px */
+  --logo-width-intro:  clamp(10rem, 40vw, 15rem); /* 160-240px, the logo intro */
 
   /* --- Borders ----------------------------------------------------------- */
   --border-width: 1px;
@@ -160,6 +162,7 @@
   --dur-accordion: 240ms;
   --dur-enter:     320ms;   /* inner-page H1 + lead, together */
   --dur-hero:      900ms;   /* hero plot entrance, total */
+  --dur-intro:     1500ms;  /* logo intro, first page of a session only */
   --stagger-hero:  90ms;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);

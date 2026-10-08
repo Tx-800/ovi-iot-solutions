@@ -72,6 +72,11 @@ const ICONS = {
   'scale':              'vendor and technology evaluation (consultancy)',
   'signal':             'on-site signal surveys (RF planning)',
   'radar':              'coverage simulation (RF planning)',
+  /* Footer contact block */
+  'phone':              'footer phone',
+  'mail':               'footer email',
+  'clock':              'footer opening hours',
+  'arrow-right':        'footer enquiry link',
 };
 
 const missing = [];
