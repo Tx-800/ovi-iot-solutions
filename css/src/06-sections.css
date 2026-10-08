@@ -463,9 +463,10 @@
 
 /* --- Photo band — DESIGN.md §7 ---------------------------------------------
    The one photograph on a solution or service page: 21:9, container width,
-   between the lead and the first content section. The treatment (desaturation
-   + navy multiply) is baked into the file by tools/build-images.js, so all
-   nine read as one set without any CSS filter cost at paint time. */
+   after the first content section (tools/build-images.js places it). The
+   treatment (desaturation + navy multiply) is baked into the file by
+   tools/build-images.js, so all nine read as one set without any CSS filter
+   cost at paint time. */
 
 .media-band__img {
   width: 100%;

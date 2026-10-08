@@ -189,24 +189,25 @@ async function render(srcPath, box, width, height) {
 const OPEN = '<!-- @photo -->';
 const CLOSE = '<!-- /@photo -->';
 
-/* Loading strategy — eager, default priority. Measured, not assumed.
+/* Loading strategy — lazy. Measured, not assumed.
 
-   The band sits straight after a slim page-head, which puts its top edge
-   389-596px down on all nine pages at every viewport measured (375x812
-   through 1440x900). It is above the fold, so it is the page's LCP element.
+   Phase 4 put the band straight under the page head, 389-596px down: above
+   the fold everywhere and the LCP element on all nine pages, so it shipped
+   eager (fetchpriority=high measured slower; lazy failed the "LCP image
+   lazily loaded" audit). Phase 6 moved it below the first content section.
+   tools/fold-probe.html now puts its top edge below the fold at 375x812,
+   412x823, 1024x768 and 1440x900 on all nine pages; at 768x1024 three pages
+   show a 16-47px sliver, which Chrome's lazy-load margin fetches at once.
 
-   Lighthouse mobile, median of 3, with the 800w rung in place:
-     eager + fetchpriority=high   metering 96 (LCP 2.71s)  leak 97 (2.42s)
-     loading=lazy                metering 97 (LCP 2.42s)  leak 98 (2.34s)  but FAILS "LCP image lazily loaded"
-     eager, default priority     metering 97 (LCP 2.57s)  leak 97 (2.41s)  <- chosen
+   Lighthouse mobile, median of 3, lazy, after the move (2026-10-08):
+     metering 98 (LCP 2.41s)  leak 98 (2.33s)  rf-planning 98 (2.26s)
+   LCP is now text (the lead or the first section's paragraph) on every
+   page, and the image audit no longer applies. The remaining LCP time is
+   the dev server's .html -> clean-URL redirect and the 90 KB Archivo font,
+   not the photograph.
 
-   High priority loses because, under simulated 4G, it competes with the
-   critical CSS and font. Lazy matches eager on score in the lab, but on a
-   real device it holds an above-the-fold fetch until after layout. Plain
-   eager is within noise of the best score and passes every audit.
-
-   Re-check with tools/fold-probe.html if the page-head ever grows. */
-const LOADING = 'decoding="async"';
+   Re-run tools/fold-probe.html if the page head or first section shrinks. */
+const LOADING = 'loading="lazy" decoding="async"';
 
 function bandHTML(img, has2x, w2) {
   const base = `/assets/img/${img.basename}`;
@@ -232,15 +233,22 @@ function placeInPage(img, has2x, w2) {
   const file = join(ROOT, img.page);
   let html = readFileSync(file, 'utf8');
 
-  /* First run: put the marker pair straight after the page-head section, so
-     the band sits between the lead and the first content section. */
-  if (!html.includes(OPEN)) {
-    const head = html.indexOf('page-head');
-    const end = html.indexOf('</section>', head);
-    if (head === -1 || end === -1) throw new Error(`${img.page}: no page-head section to place the band after`);
-    const at = end + '</section>'.length;
-    html = `${html.slice(0, at)}\n\n    ${OPEN}\n    ${CLOSE}${html.slice(at)}`;
+  /* The band sits after the first titled content section, not straight under
+     the page head. Directly under the head it was the LCP element on all nine
+     pages and outranked the heading and lead it exists to illustrate.
+     "Titled" skips the short pull-quote section that opens service pages.
+     Placement is recomputed every run, so changing this rule moves the band. */
+  if (html.includes(OPEN)) {
+    const from = html.indexOf(OPEN);
+    const to = html.indexOf(CLOSE) + CLOSE.length;
+    html = html.slice(0, from).replace(/\n\s*$/, '') + html.slice(to);
   }
+  const head = html.indexOf('page-head');
+  const first = head === -1 ? -1 : html.slice(head).search(/<section[^>]*aria-labelledby=/);
+  if (first === -1) throw new Error(`${img.page}: no titled content section after the page head`);
+  const end = html.indexOf('</section>', head + first);
+  const at = end + '</section>'.length;
+  html = `${html.slice(0, at)}\n\n    ${OPEN}\n    ${CLOSE}${html.slice(at)}`;
 
   const start = html.indexOf(OPEN) + OPEN.length;
   const stop = html.indexOf(CLOSE);
