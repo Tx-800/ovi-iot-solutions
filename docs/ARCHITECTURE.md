@@ -71,6 +71,10 @@ Tooling that measures or checks the site is **not** governed by the list above. 
 | Contact form behaviour | `tools/check-form.js` + `tools/form-harness.html` | `tools/`, 44 assertions incl. no-JS wiring; fetch mocked, nothing posted |
 | Map lazy-load + keyboard check | `tools/map-probe.html` | `tools/`, needs a populated `SITE.map` to have a map to test. Its IntersectionObserver step is unreliable in a headless iframe (2026-10-08); mounting was confirmed by loading `contact.html` top-level instead |
 | Rendered contrast, focus, target size | `tools/a11y-measure.js` (run by `check-a11y.js`) | `tools/`, measures 1.4.3, 1.4.11, 2.4.11 and 2.5.8 on every control at rest, hover, focus, error state and inside the open menus — the class axe misses |
+| Release gate | `tools/check-release.js` | `tools/`, exit 1 until site.config.js is real, generated files are current and one host remains |
+| Host headers + 404 | `tools/build-headers.js` | writes `_headers`, `netlify.toml`, `vercel.json`, `.htaccess` from one definition; `--check` |
+| Deploy folder | `tools/build-dist.js` | copies shipped files to `dist/` (gitignored); gated by the release check; `--preview` for local only |
+| Deploy preview server | `tools/serve-dist.js` | serves `dist/` with the host headers and real 404s, no dependencies |
 | Link + dead-href checking | `tools/check-links.js` | `tools/`, no dependencies |
 | Partial injection and value baking | `tools/sync-partials.js` | `tools/`, no dependencies |
 | Sitemap generation | `tools/build-sitemap.js` | `tools/`, no dependencies |

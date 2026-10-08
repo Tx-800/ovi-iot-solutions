@@ -119,26 +119,24 @@ Measured 2026-10-07 with `node tools/check-form.js` (44 assertions), in **both**
 
 ## Phase 6 — Polish & SEO
 
-- [ ] `404.html`
-- [ ] `robots.txt`, `sitemap.xml` (via `tools/build-sitemap.js`), `site.webmanifest`
-- [ ] JSON-LD on every page: `Organization`, `WebSite`, `BreadcrumbList`, `Service`
-- [ ] `tools/check-links.js` — crawl every `href` and fail on a broken internal link
-- [ ] Images converted to `.webp`, resized, explicit `width`/`height`, LCP image `fetchpriority="high"` and not lazy
-- [ ] Pin every CDN version (no `@latest`)
-- [ ] Security headers file for the chosen host + 404 routing
-- [ ] `README.md` — run locally, fill `site.config.js`, deploy, where the docs live
+- [x] `404.html` — served with a real 404 by all four host configs (tested through `tools/serve-dist.js`); no canonical or `og:url`, since it is served at whatever URL was missed
+- [x] `robots.txt`, `sitemap.xml` (via `tools/build-sitemap.js`), `site.webmanifest` — sitemap generation is built and tested, but **`sitemap.xml` cannot be written until `SITE.url` is real** (the generator refuses a placeholder). Manifest checked: icons exist at their declared sizes, the maskable mark is inside the safe zone
+- [x] JSON-LD on every page: `Organization`, `WebSite`, `BreadcrumbList`, `Service` — verified on all 16 with a populated test config, then reverted. **Emitted only once `SITE.url` is real**
+- [x] `tools/check-links.js` — crawl every `href` and fail on a broken internal link
+- [x] Images converted to `.webp`, resized, explicit `width`/`height`. *Superseded:* "LCP image `fetchpriority="high"` and not lazy" — no image is LCP any more, and `fetchpriority="high"` measured slower (ARCHITECTURE.md §7)
+- [x] Pin every CDN version (no `@latest`) — Motion `12.43.0` (import tree all exact), Leaflet `1.9.4` with SRI; all 7 runtime URLs resolve
+- [x] Security headers + 404 routing — generated for **all four hosts** by `tools/build-headers.js`, because no host has been named yet. **Delete the files for the hosts you don't use** (README)
+- [x] `README.md` — run locally, fill `site.config.js`, deploy, where the docs live, and the pre-launch checklist
+- [x] **Release gate:** `tools/check-release.js` (and `sync-partials --check`) fail until the config is real and one host is chosen. **They fail now, on purpose.**
+- [x] Accessibility: `tools/a11y-measure.js` measures contrast (1.4.3, 1.4.11), focus visibility (2.4.11) and target size (2.5.8) on every control; 0 findings on 16 pages in both configs
 
 Deferred from Phase 4 — tracked here, not dropped:
-- [ ] **Move the photo band below the first content section** on all nine detail pages, then re-run
-      `tools/fold-probe.html` and Lighthouse to find which element is actually LCP, and revisit the band's
-      loading attribute accordingly (`LOADING` in `tools/build-images.js`).
-- [ ] **Raise the image size cap to 220 KB** (`MAX_BYTES` in `tools/build-images.js`, and
-      `ARCHITECTURE.md` §7) and re-encode anything that was pushed below where it looks good. Check
-      `smart-water-metering.webp` for artefacts at the quality it settled on (q82, 168 KB at 1240w) and
-      whether a 2x becomes possible.
-- [ ] **Replace the street-lighting source with a dusk photograph** rather than exempting it from the
-      §7 treatment. The user supplies the new source before Phase 6 runs; drop it in as
-      `assets/img/_src/smart-street-lighting.jpg` (a hand-placed source always wins) and re-check its crop.
+- [x] **Move the photo band below the first content section** — done; bands are now `loading="lazy"` and LCP is text on every page
+- [x] **Raise the image size cap to 220 KB** — done; three @2x files re-encoded at q78. `smart-water-metering` still cannot fit a 2400w @2x under 220 KB at q50+, so it ships 1x. Checked at 1:1 against its source: no artefacts
+- [ ] **Replace the street-lighting source with a dusk photograph** — **on hold: you are sourcing it.** Drop it in as
+      `assets/img/_src/smart-street-lighting.jpg` (a hand-placed source always wins) and run `node tools/build-images.js smart-street-lighting`.
+
+**Carried to Phase 7:** the LCP budget (< 2.0 s) fails on every page at 2.10–2.41 s — see ARCHITECTURE.md §7.
 
 ---
 
@@ -236,6 +234,20 @@ Record judgement calls here as you make them, one line each.
 | 2026-10-07 | `.split-7-5 > :only-child` keeps a lone column at 7/12 | With the office aside removed, the form was both `:first-child` and `:last-child`, and the later rule pushed it into the narrow 5-column slot. |
 | 2026-10-07 | Leaflet 1.9.4 pinned with SRI hashes computed from the files; loads on scroll-in only; no scroll-wheel zoom | Hashes computed with `openssl` from the jsDelivr files. Zero Leaflet requests until the map nears the viewport (measured). `scrollWheelZoom: false` — DESIGN.md §8 bans scroll-jacking. Animations off under reduced motion. 0,0 is refused both at build time and in `map.js`. Tiles use `tile.openstreetmap.org`, which the CSP sketch in §9 (`*.tile.openstreetmap.org`) does not match — fix when the headers file is written in Phase 6. |
 | 2026-10-07 | **CSS is 16.9 of 18 KB gzipped — watch item** | Form + contact styles (~2 KB) ship to every page, and `main.css` is the one render-blocking resource. `index.html` Performance median moved 99 → 97 this phase (a single re-run came back at LCP 2.1 s, so partly noise). Still above the gate. If Phase 6 needs headroom, splitting page-specific CSS out of `main.css` is the lever. |
+| 2026-10-08 | Motion pinned to exactly `12.43.0`; CSS budget 22 KB gz, image cap 220 KB | Per your Phase 6 instruction. One shared stylesheet kept. CSS is now 17.8 KB gz. |
+| 2026-10-08 | **New `tools/a11y-measure.js`, run by `check-a11y.js`, failing on any finding** | axe passed values that failed WCAG. It measures rendered contrast (1.4.3, 1.4.11), focus not obscured (2.4.11) and target size (2.5.8) at rest, hover, focus, error state, after scroll, and in the open drawer and mega menu. Mutation-tested against the original failures. |
+| 2026-10-08 | Drawer close button now stacks above the open panel; logo link inert while the drawer is open | The panel covered the toggle: it was in the focus trap but invisible. Found by measurement, not by axe or the nav harness. |
+| 2026-10-08 | WhatsApp FAB icon fixed (`.site-footer a:not(.fab)`) | Moving the FAB into the footer in Phase 5 let the footer link colour turn its icon `--navy-300` on blue, 1.19:1, on every page once a number is set. |
+| 2026-10-08 | **Input border `--navy-500`, not `--navy-300`. NEEDS SIGN-OFF.** | `--navy-300` was 3.04:1 on white, but the fields sit on the `--paper` panel, where it is 2.86:1. `--navy-500` is the next existing step. No new colour invented. |
+| 2026-10-08 | New `--target-min: 24px`; breadcrumbs, 404 links, footer contact links and map links meet it outright | They were 17–22 px and passed 2.5.8 only on the spacing exception. The checker now lists every target that relies on an exception. |
+| 2026-10-08 | New unlayered `css/src/09-vendor.css` for Leaflet overrides | Leaflet's CDN CSS is unlayered, so no `@layer` rule can beat it. Attribution made opaque (was 3.08:1 over a dark tile). The map marker is no longer a tab stop: it had no popup. |
+| 2026-10-08 | Photo band placed after the first **titled** section | Service pages open with a short pull quote; "titled" skips it. `build-images.js` recomputes placement on every run. |
+| 2026-10-08 | Photo bands `loading="lazy"`; header logo loses `fetchpriority="high"` | The bands are below the fold now. Removing the logo hint changed LCP by less than noise; it was never measured. |
+| 2026-10-08 | Hero: `scale` and `opacity` keys instead of a `transform` string and `strokeOpacity` | Motion 12.43's SVG renderer wrote `transform="undefined"` (a console error, Best Practices 96) and lost the stroke fade to the CSS class. Verified in a real-time browser. |
+| 2026-10-08 | **Host config for all four hosts, generated from one file** | No host named yet. `tools/build-headers.js` writes `_headers`, `netlify.toml`, `vercel.json` and `.htaccess`; `check-release.js` fails until only one host's set remains. CSP has no `unsafe-inline`; the one inline style is allowed by hash. |
+| 2026-10-08 | Deploys publish `dist/` via `tools/build-dist.js` | Publishing the repository root would have put `docs/`, `tools/` and `partials/` online. It copies files only, and refuses to build while the release check fails. |
+| 2026-10-08 | `sync-partials --check` now fails on a placeholder domain | Before this it only checked partials and exited 0 with no domain; the gate assumed to exist did not. |
+| 2026-10-08 | README converted to UTF-8 | The original stub was UTF-16. |
 
 ---
 
@@ -248,6 +260,6 @@ Record judgement calls here as you make them, one line each.
 
 - [ ] Real contact details for `js/site.config.js` — address, phone, WhatsApp number, email, domain, business hours
 - [ ] Web3Forms access key (free, 60 seconds: https://web3forms.com)
-- [ ] Which host — Netlify / Vercel / Cloudflare Pages / cPanel? (decides the headers + 404 config file)
+- [ ] Which host — Netlify / Vercel / Cloudflare Pages / cPanel? All four configs are written; naming it means deleting the other three (README)
 - [ ] Any real LinkedIn / X / YouTube profiles, or omit the social row entirely?
 - [ ] Is there a company registration number or legal entity name needed in the footer?

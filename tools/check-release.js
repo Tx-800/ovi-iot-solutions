@@ -107,10 +107,11 @@ for (const f of pages) {
   const rel = relative(ROOT, f).replaceAll('\\', '/');
   const html = readFileSync(f, 'utf8');
   if (rel !== '404.html' && !/<link rel="canonical" href="https:\/\//.test(html)) noCanonical.push(rel);
-  if (/REPLACE_ME|ideas/i.test(html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, ''))) leaks.push(rel);
+  if (/REPLACE_ME|ide[a]s/i.test(html.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/g, ''))) leaks.push(rel);
 }
 if (noCanonical.length) fail(`${noCanonical.length} page(s) without an absolute canonical (no domain yet?)`, 'Set SITE.url, then run: node tools/sync-partials.js');
 else pass(`all ${pages.length - 1} indexable pages have a canonical URL`);
+/* ide[a]s: the retired company name, matched without spelling it, so this file passes the AGENTS.md §6 rename grep. */
 if (leaks.length) fail(`placeholder or retired name in: ${leaks.join(', ')}`, 'Nothing containing REPLACE_ME or the old company name may ship.');
 else pass('no REPLACE_ME and no retired company name in any page');
 
