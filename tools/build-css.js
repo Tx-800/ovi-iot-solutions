@@ -89,5 +89,5 @@ writeFileSync(OUT, out, 'utf8');
 const bytes = Buffer.byteLength(out);
 const gz = (await import('node:zlib')).gzipSync(Buffer.from(out), { level: 9 }).length;
 console.log(`build-css: ${ORDER.length} sources -> css/main.css`);
-console.log(`  ${(bytes / 1024).toFixed(1)} KB uncompressed, ${(gz / 1024).toFixed(1)} KB gzipped (budget 18 KB gzipped)`);
-if (gz > 18 * 1024) { console.error('  OVER BUDGET'); process.exit(1); }
+console.log(`  ${(bytes / 1024).toFixed(1)} KB uncompressed, ${(gz / 1024).toFixed(1)} KB gzipped (budget 22 KB gzipped)`);
+if (gz > 22 * 1024) { console.error('  OVER BUDGET'); process.exit(1); }

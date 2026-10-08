@@ -6,9 +6,13 @@
    render the final state instead of animating (DESIGN.md §8).
    ========================================================================== */
 
-/* Pinned to the major. The Ship Gate requires an exact version (motion@12.x.x)
-   — ARCHITECTURE.md §1. */
-const MOTION_CDN = 'https://cdn.jsdelivr.net/npm/motion@12/+esm';
+/* Pinned exactly — ARCHITECTURE.md §1. 12.43.0 was the latest 12.x on
+   2026-10-08. The +esm URL is a stub that re-exports from
+   framer-motion@12.43.0/dom/+esm, which jsDelivr also pins exactly; both
+   were fetched and checked to export animate and inView before pinning.
+   No SRI: jsDelivr generates +esm files and documents that SRI must not be
+   used on them. */
+const MOTION_CDN = 'https://cdn.jsdelivr.net/npm/motion@12.43.0/+esm';
 
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 

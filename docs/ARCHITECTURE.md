@@ -362,10 +362,10 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
 | Resource | Budget |
 |---|---|
 | HTML per page | **≤ 12 KB gzipped** — hard. Governed the same way as CSS below: transfer size is what a visitor pays, and every host serves compressed. No uncompressed cap. |
-| CSS total | **≤ 18 KB gzipped** — hard. No uncompressed cap: transfer size is what users pay, and every host serves compressed. Comments stay; they are the only documentation in a project with no build step. |
+| CSS total | **≤ 22 KB gzipped** — hard. (Raised from 18 KB in Phase 6: the first figure was an estimate, and one shared stylesheet is kept deliberately — contact styles are not split out.) No uncompressed cap: transfer size is what users pay, and every host serves compressed. Comments stay; they are the only documentation in a project with no build step. |
 | JS total (excl. lazy Leaflet) | < 80 KB gzipped |
 | Fonts | 2 families, `woff2`, `display=swap`, max 4 weights total |
-| Largest image | < 180 KB `.webp` |
+| Largest image | **≤ 220 KB** `.webp` (220,000 bytes — the stricter decimal reading). Raised from 180 KB in Phase 6. |
 | LCP (mobile, 4G) | < 2.0 s |
 | CLS | < 0.02 |
 

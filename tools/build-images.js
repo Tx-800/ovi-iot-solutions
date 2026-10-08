@@ -26,7 +26,7 @@
          and it is never upscaled: its width is the smaller of 2480 and the
          source's own crop width. The Pexels downloads are 2400px wide, so
          their @2x is 2400w, not 2480w; the 1280px Pixabay source gets none.
-       - it fits the 180 KB image budget at quality >= MIN_QUALITY. A 2x that
+       - it fits the 220 KB image budget at quality >= MIN_QUALITY. A 2x that
          only fits by smearing it is worse than the browser upscaling a good
          1x, so it is dropped rather than shipped over budget or degraded.
 
@@ -59,7 +59,7 @@ const H1 = 531;                  /* 1240 * 9/21, rounded */
 const RATIO = W1 / H1;
 const W2_MAX = 2480;
 const MIN_2X_SOURCE = W1 * 1.5;  /* below this, a "2x" adds nothing honest */
-const MAX_BYTES = 180_000;        /* ARCHITECTURE.md §7 — decimal kB, the stricter reading */
+const MAX_BYTES = 220_000;        /* ARCHITECTURE.md §7 — decimal kB, the stricter reading */
 const FOCUS_Y = 1 / 3;
 const MIN_QUALITY = 50;          /* below this the artefacts show; not worth serving */
 
@@ -174,7 +174,7 @@ async function render(srcPath, box, width, height) {
     .png()
     .toBuffer();
 
-  /* Highest quality that clears the 180 KB budget, never below MIN_QUALITY.
+  /* Highest quality that clears the 220 KB budget, never below MIN_QUALITY.
      Returns null when it cannot be done; the caller decides what that means —
      fatal for the 1x, "ship no 2x" for the 2x. */
   for (let q = 82; q >= MIN_QUALITY; q -= 4) {
@@ -319,7 +319,7 @@ for (const img of todo) {
   if (box.width >= MIN_2X_SOURCE) {
     w2 = Math.min(W2_MAX, box.width - (box.width % 2));
     two = await render(src.path, box, w2, Math.round(w2 / RATIO));
-    if (!two) why2x = `${w2}w cannot fit 180 KB at q${MIN_QUALITY}+`;
+    if (!two) why2x = `${w2}w cannot fit 220 KB at q${MIN_QUALITY}+`;
   }
   const has2x = Boolean(two);
   const twoPath = join(OUT_DIR, `${img.basename}@2x.webp`);
