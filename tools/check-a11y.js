@@ -1,9 +1,21 @@
 /* ==========================================================================
-   check-a11y.js — axe-core over every page, or one named page.
+   check-a11y.js — axe-core plus rendered measurement over every page.
 
-   The gate is zero violations (ARCHITECTURE.md §8). Runs axe inside a real
+   The gate is zero violations (ARCHITECTURE.md §8). Runs inside a real
    browser against the real rendered page, at a desktop and a mobile width,
-   because some rules (contrast, target size, reflow) depend on layout.
+   because contrast, target size and reflow depend on layout.
+
+   Two passes per page and width:
+     axe              the standard rule set
+     a11y-measure.js  rendered contrast of text (1.4.3) and of field
+                      boundaries, icons and focus indicators (1.4.11), and
+                      target size (2.5.8), for every interactive control at
+                      rest, on hover, on focus, after the header scrolls,
+                      and inside the opened drawer (375px) or mega menu
+                      (1280px). Written because axe passed three values
+                      that failed WCAG; see that file's header.
+   Any axe violation, any measured failure, and any control the measurer
+   could not verify fails the run.
 
    axe-core is a devDependency and never ships. Requires the dev server
    running (npx serve . -l 4321) and a local Chrome.
@@ -65,7 +77,7 @@ function run(page, width) {
     '--disable-gpu',
     '--no-first-run',
     '--no-default-browser-check',
-    '--virtual-time-budget=20000',
+    '--virtual-time-budget=120000',
     '--window-size=1400,1500',
     '--dump-dom',
     `${ORIGIN}/tools/a11y-harness.html#url=${encodeURIComponent(page)}&w=${width}`,
@@ -77,12 +89,15 @@ function run(page, width) {
   const text = match[1]
     .replaceAll('&quot;', '"').replaceAll('&lt;', '<')
     .replaceAll('&gt;', '>').replaceAll('&amp;', '&');
-  if (text.trim() === 'pending') throw new Error('axe did not finish');
+  if (text.trim() === 'pending') throw new Error('harness did not finish');
   return JSON.parse(text);
 }
 
 let totalViolations = 0;
 let failedPages = 0;
+let controlsMeasured = 0;
+let unverified = 0;
+const exceptions = [];
 
 for (const page of pages) {
   const lines = [];
@@ -109,6 +124,25 @@ for (const page of pages) {
       lines.push(`    ${width}px  ${v.impact ?? 'n/a'}  ${v.id} — ${v.help} (${v.nodeCount} node${v.nodeCount === 1 ? '' : 's'})`);
       for (const n of v.nodes) lines.push(`             ${n.target}`);
     }
+
+    const { measured } = r;
+    if (!/^(drawer|mega)$/.test(measured.menuState)) {
+      lines.push(`    ${width}px  ERROR  navigation menu: ${measured.menuState}`);
+      pageViolations += 1;
+    }
+    controlsMeasured += measured.page.controls + measured.menu.controls;
+    for (const f of r.findings) {
+      if (f.kind === 'info') {
+        /* Not a failure: an undersized target WCAG exempts. Listed so a
+           reliance on the exception is a visible decision, not an accident. */
+        exceptions.push(`    ${width}px  ${page}  ${f.selector}${f.label ? ` “${f.label}”` : ''} — ${f.detail}`);
+        continue;
+      }
+      pageViolations += 1;
+      if (f.kind === 'unverified') unverified += 1;
+      lines.push(`    ${width}px  ${f.kind === 'fail' ? 'FAIL' : 'UNVERIFIED'}  ${f.sc} ${f.state}  ${f.selector}${f.label ? ` “${f.label}”` : ''}`);
+      lines.push(`             ${f.detail}`);
+    }
   }
 
   totalViolations += pageViolations;
@@ -118,7 +152,14 @@ for (const page of pages) {
   for (const l of lines) console.log(l);
 }
 
+if (exceptions.length) {
+  console.log('\nUndersized targets WCAG exempts (2.5.8 exceptions, not failures):');
+  for (const e of new Set(exceptions)) console.log(e);
+}
+
 console.log(`\ncheck-a11y: ${pages.length} page(s) at ${WIDTHS.join(' and ')}px — `
-  + `${totalViolations} violation(s) across ${failedPages} page(s).`);
+  + `${totalViolations} problem(s) across ${failedPages} page(s)`
+  + `${unverified ? ` (${unverified} of them unverifiable)` : ''}; `
+  + `${controlsMeasured} control measurements.`);
 
 process.exit(totalViolations === 0 ? 0 : 1);

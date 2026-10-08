@@ -12,11 +12,18 @@
 <body>
 <pre id="out">pending</pre>
 <iframe id="frame" title="axe target"></iframe>
+<script src="/tools/a11y-measure.js"></script>
 <script>
   /* Dev-only accessibility harness — never linked from the site.
-     Loads a page in an iframe, injects axe-core from node_modules into that
-     frame, and runs it against the frame's own document. Driven by
-     tools/check-a11y.js, which reads the JSON from #out.
+     Loads a page in an iframe, then:
+       1. injects axe-core from node_modules and runs it on the frame;
+       2. runs tools/a11y-measure.js — rendered contrast (1.4.3, 1.4.11) and
+          target size (2.5.8) for every interactive control, at rest, on
+          hover and on keyboard focus;
+       3. opens the navigation (the drawer below 768px, the solutions mega
+          menu above it) and measures the controls inside it, since a
+          closed menu is invisible to both passes.
+     Driven by tools/check-a11y.js, which reads the JSON from #out.
 
      Usage: /tools/a11y-harness.html#url=/index.html&w=1280
   */
@@ -27,6 +34,9 @@
   const out = document.getElementById('out');
   const frame = document.getElementById('frame');
   frame.style.width = width + 'px';
+  /* A phone-shaped or laptop-shaped viewport, so fixed and sticky elements
+     sit where they do on a real screen. */
+  frame.style.height = (width < 768 ? 812 : 900) + 'px';
 
   function loadScript(doc, src) {
     return new Promise((resolve, reject) => {
@@ -38,19 +48,65 @@
     });
   }
 
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const waitFor = async (fn, timeout = 6000) => {
+    const start = Date.now();
+    while (Date.now() - start < timeout) {
+      try { if (fn()) return true; } catch { /* not yet */ }
+      await wait(50);
+    }
+    return false;
+  };
+
   frame.addEventListener('load', async () => {
     const doc = frame.contentDocument;
+    const win = frame.contentWindow;
     if (!doc || !doc.querySelector('[data-header]')) return;
 
     try {
       await loadScript(doc, '/node_modules/axe-core/axe.min.js');
-      const axe = frame.contentWindow.axe;
-
-      const results = await axe.run(doc, {
+      const results = await win.axe.run(doc, {
         resultTypes: ['violations'],
         runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] },
       });
 
+      const header = doc.querySelector('[data-header]');
+      await waitFor(() => header.hasAttribute('data-nav-ready'));
+      const page = await window.oviMeasure(win, { label: 'page' });
+
+      /* Open the navigation and measure inside it. */
+      let menu = { counted: { controls: 0 }, findings: [] };
+      let menuState = 'none';
+      const toggle = doc.querySelector('[data-drawer-toggle]');
+      const disclosure = doc.querySelector('[data-disclosure]');
+      win.scrollTo(0, 0);
+      if (toggle && win.getComputedStyle(toggle).display !== 'none') {
+        toggle.click();
+        menuState = (await waitFor(() => toggle.getAttribute('aria-expanded') === 'true')) ? 'drawer' : 'drawer-failed-to-open';
+        await wait(400);
+        if (menuState === 'drawer') {
+          /* Expand the solutions list inside the drawer as well. */
+          const openSub = async () => {
+            if (toggle.getAttribute('aria-expanded') !== 'true') { toggle.click(); await wait(100); }
+            if (disclosure && win.getComputedStyle(disclosure).display !== 'none'
+              && disclosure.getAttribute('aria-expanded') !== 'true') { disclosure.click(); await wait(100); }
+          };
+          await openSub();
+          menu = await window.oviMeasure(win, { scope: '[data-header]', label: 'drawer', prepare: openSub });
+        }
+      } else if (disclosure) {
+        disclosure.click();
+        menuState = (await waitFor(() => disclosure.getAttribute('aria-expanded') === 'true')) ? 'mega' : 'mega-failed-to-open';
+        await wait(400);
+        /* Blurring a control inside the menu closes it, by design; reopen
+           before each measurement. */
+        const reopen = async () => {
+          if (disclosure.getAttribute('aria-expanded') !== 'true') { disclosure.click(); await wait(100); }
+        };
+        if (menuState === 'mega') menu = await window.oviMeasure(win, { scope: '[data-header]', label: 'mega', prepare: reopen });
+      }
+
+      const findings = page.findings.concat(menu.findings);
       out.textContent = JSON.stringify({
         url,
         width,
@@ -65,9 +121,11 @@
           })),
           nodeCount: v.nodes.length,
         })),
+        measured: { page: page.counted, menu: menu.counted, menuState },
+        findings,
       }, null, 2);
     } catch (err) {
-      out.textContent = JSON.stringify({ url, width, error: String(err && err.message || err) }, null, 2);
+      out.textContent = JSON.stringify({ url, width, error: String(err && err.stack || err) }, null, 2);
     }
   });
 
