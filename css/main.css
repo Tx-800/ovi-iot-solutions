@@ -1924,6 +1924,14 @@
      The only boxed cards on the page: hairline border, no shadow. Hover changes
      the border and the title colour, and nothing else. DESIGN.md §4. */
 
+  /* An intro paragraph between the section head and the cards (ATEX, street
+     lighting, both service pages). .card-grid zeroes its margin and .lead has
+     none, so without this the cards sat 14px under the copy. 48px matches the
+     gap the section head itself leaves before its content. */
+  .lead + .card-grid {
+    margin-block-start: var(--space-48);
+  }
+
   .card-grid {
     display: grid;
     gap: var(--space-24);
