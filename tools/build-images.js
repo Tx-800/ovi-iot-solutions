@@ -229,8 +229,8 @@ function placeInPage(img, has2x, w2) {
   const file = join(ROOT, img.page);
   let html = readFileSync(file, 'utf8');
 
-  /* The band sits directly under the dark page head, straddling its lower
-     edge (06-sections.css). Phase 6 tried it after the first content
+  /* The band sits directly below the dark page head, wholly on the light
+     section — never across the belt's edge. Phase 6 tried it after the first content
      section; on review that read as a stray picture mid-page, so it is back
      at the top by your instruction. Placement is recomputed every run, so
      changing this rule moves the band. */

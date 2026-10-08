@@ -139,7 +139,6 @@
   --chip-pad-block:   var(--space-4);    /* 4px  */
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */
-  --band-overlap:     clamp(4rem, 12vw, 10rem); /* how far the page-head navy runs behind the photo band */
   --tap-min:          2.75rem;           /* 44px — DESIGN.md §9 */
   --target-min:       1.5rem;            /* 24px — WCAG 2.2 2.5.8 floor, for dense UI like breadcrumbs */
   --icon-size:        1.5rem;            /* 24px in UI */

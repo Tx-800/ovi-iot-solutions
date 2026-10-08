@@ -362,7 +362,6 @@
   --chip-pad-block:   var(--space-4);    /* 4px  */
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */
-  --band-overlap:     clamp(4rem, 12vw, 10rem); /* how far the page-head navy runs behind the photo band */
   --tap-min:          2.75rem;           /* 44px — DESIGN.md §9 */
   --target-min:       1.5rem;            /* 24px — WCAG 2.2 2.5.8 floor, for dense UI like breadcrumbs */
   --icon-size:        1.5rem;            /* 24px in UI */
@@ -2357,27 +2356,18 @@
 
   /* --- Photo band — DESIGN.md §7 ---------------------------------------------
      The one photograph on a solution or service page: 21:9, container width,
-     directly under the dark page head (tools/build-images.js places it). The
-     treatment (desaturation + navy multiply) is baked into the file by
+     directly below the dark page head, on the light section
+     (tools/build-images.js places it). The treatment (desaturation + navy multiply) is baked into the file by
      tools/build-images.js, so all nine read as one set without any CSS filter
      cost at paint time.
 
-     The navy of the page head continues behind the top of the photo, so the
-     picture straddles the belt's lower edge instead of sitting in a gap below
-     it. Done with a gradient on the band itself, not a negative margin, so no
-     browser can pull the photo over the heading. */
-
-  .page-head + .media-band {
-    padding-block-start: 0;
-    background-image: linear-gradient(to bottom,
-      var(--navy-900) 0, var(--navy-900) var(--band-overlap), transparent var(--band-overlap));
-  }
+     The photo sits wholly on the light section below the belt, never across
+     it: a picture half on navy and half on white read as a mistake. */
 
   .media-band__img {
     width: 100%;
     height: auto;
     border-radius: var(--r-md);
-    box-shadow: var(--shadow-overlay);
   }
 }
 
