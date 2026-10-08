@@ -1,0 +1,5 @@
+# OVI IoT Solutions. Everything is public; 404.html is kept out of search
+# by its own noindex meta tag. tools/build-sitemap.js appends the Sitemap
+# line once SITE.url in js/site.config.js is the real domain.
+User-agent: *
+Allow: /

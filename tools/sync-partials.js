@@ -20,7 +20,8 @@
    placeholder string, which is what keeps REPLACE_ME out of shipped HTML.
 
    Usage: node tools/sync-partials.js [--check]
-     --check  report what would change and exit 1 if anything would, without
+     --check  report what would change and exit 1 if anything would, or if
+              SITE.url is still a placeholder (not shippable), without
               writing. Useful in the verification loop.
    ========================================================================== */
 
@@ -30,7 +31,7 @@ import { SITE } from '../js/site.config.js';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const PARTIALS_DIR = join(ROOT, 'partials');
-const SKIP_DIRS = new Set(['docs', 'node_modules', '.git', 'partials', 'tools', '.shots']);
+const SKIP_DIRS = new Set(['docs', 'node_modules', '.git', 'partials', 'tools', '.shots', 'dist']);
 const CHECK_ONLY = process.argv.includes('--check');
 
 /* --- Which values are real yet -------------------------------------------- */
@@ -316,14 +317,17 @@ function generatedMeta(file, html) {
   }
 
   const canonical = `${siteOrigin}${path}`;
+  /* The 404 page is served at whatever URL was missed, so it has no URL of
+     its own to declare: no canonical, no og:url. It is noindex anyway. */
+  const notFound = rel === '404.html';
   const lines = [
     '',
-    `  <link rel="canonical" href="${canonical}">`,
+    ...(notFound ? [] : [`  <link rel="canonical" href="${canonical}">`]),
     '  <meta property="og:type" content="website">',
     `  <meta property="og:site_name" content="${SITE.name}">`,
     `  <meta property="og:title" content="${title.replaceAll('"', '&quot;')}">`,
     `  <meta property="og:description" content="${desc.replaceAll('"', '&quot;')}">`,
-    `  <meta property="og:url" content="${canonical}">`,
+    ...(notFound ? [] : [`  <meta property="og:url" content="${canonical}">`]),
     `  <meta property="og:image" content="${siteOrigin}/assets/brand/og-image.jpg">`,
     '  <meta name="twitter:card" content="summary_large_image">',
   ];
@@ -491,6 +495,17 @@ if (!SITE_URL_READY) {
 if (problems.length) {
   console.error(`\n${problems.length} problem(s):`);
   for (const p of problems) console.error(`  ${p}`);
+  process.exit(1);
+}
+
+/* --check is a release gate as well as a drift check: pages built without a
+   domain have no canonical, og:url or JSON-LD, so they are not shippable
+   even when they are perfectly in sync. Plain runs (no --check) stay quiet
+   about it, because building with placeholders is normal during development. */
+if (CHECK_ONLY && !SITE_URL_READY) {
+  console.error('\n  ✗ NOT SHIPPABLE: SITE.url in js/site.config.js is still a placeholder.');
+  console.error('    Set it to the production domain, then run: node tools/sync-partials.js');
+  if (changed.length) console.error(`    (also out of sync: ${changed.join(', ')})`);
   process.exit(1);
 }
 
