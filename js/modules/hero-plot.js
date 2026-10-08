@@ -35,6 +35,14 @@ export async function init() {
 
   const { animate } = motion;
 
+  /* When the logo intro is playing (js/intro-gate.js), start after it ends,
+     or the entrance runs unseen under the overlay. INTRO_MS matches
+     --dur-intro; the overlay starts fading at 80% of it. */
+  const INTRO_MS = 1500;
+  const start = document.documentElement.hasAttribute('data-intro')
+    ? Math.max(0, INTRO_MS * 0.8 - performance.now()) / 1000
+    : 0;
+
   /* Motion 12 drives SVG elements through its SVG renderer, which shaped two
      choices here (measured in a real-time browser, 2026-10-08):
      - `scale`, not a raw `transform` string. The string form wrote
@@ -51,7 +59,7 @@ export async function init() {
     animate(
       ring,
       { scale: [0.6, 1], opacity: [0, 1] },
-      { duration: DURATION, delay: i * STAGGER, ease: EASE },
+      { duration: DURATION, delay: start + i * STAGGER, ease: EASE },
     );
   });
 
@@ -59,7 +67,7 @@ export async function init() {
 
   /* One continuous element, deliberately slow: a single contour leaving the
      gateway every four seconds. It starts after the entrance has finished. */
-  const entranceEnd = DURATION + (rings.length - 1) * STAGGER;
+  const entranceEnd = start + DURATION + (rings.length - 1) * STAGGER;
 
   animate(
     pulse,
