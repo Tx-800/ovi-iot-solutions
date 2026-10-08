@@ -51,7 +51,9 @@
   transition:
     background-color var(--dur-hover) linear,
     border-color var(--dur-hover) linear,
-    color var(--dur-hover) linear;
+    color var(--dur-hover) linear,
+    box-shadow var(--dur-hover) linear,
+    transform var(--dur-hover) var(--ease-out-expo);
 }
 
 /* DESIGN.md §5 specifies --ovi-blue as the primary fill, but white on

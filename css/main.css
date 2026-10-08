@@ -349,6 +349,10 @@
   /* --- Elevation. There are exactly two shadows on this site. ------------ */
   --shadow-header:  0 1px 0 var(--hairline), 0 6px 20px -12px rgb(17 27 46 / 0.22);
   --shadow-overlay: 0 24px 60px -20px rgb(17 27 46 / 0.40);
+  --shadow-lift:    0 18px 40px -18px rgb(17 27 46 / 0.30);   /* hovered card */
+  --shadow-btn:     0 10px 22px -12px rgb(2 105 196 / 0.55);  /* hovered button */
+  --lift-card:      -4px;
+  --lift-btn:       -2px;
 
   /* --- Component sizing — DESIGN.md §5 ----------------------------------
      The few values DESIGN.md states in px rather than on the 8px scale.
@@ -367,6 +371,8 @@
   --icon-size:        1.5rem;            /* 24px in UI */
   --icon-size-sm:     1rem;
   --icon-size-card:   1.75rem;           /* 28px in cards */
+  --icon-tile:        3.25rem;           /* 52px rounded tile behind card, pillar and diagram icons */
+  --icon-stroke-tile: 1.75;              /* a touch heavier inside a tile, so the glyph holds against the fill */
   --icon-stroke:      1.5;
 
   --logo-width-header: 8.25rem;          /* 132px — above the 120px minimum */
@@ -779,7 +785,9 @@
     transition:
       background-color var(--dur-hover) linear,
       border-color var(--dur-hover) linear,
-      color var(--dur-hover) linear;
+      color var(--dur-hover) linear,
+      box-shadow var(--dur-hover) linear,
+      transform var(--dur-hover) var(--ease-out-expo);
   }
 
   /* DESIGN.md §5 specifies --ovi-blue as the primary fill, but white on
@@ -2032,10 +2040,19 @@
 
   .pillar__text { color: var(--text-muted); }
 
+  /* Icon tiles: a soft-blue rounded square behind the glyph. The SVG itself
+     carries the tile (an outer <svg> takes background and padding), so no
+     wrapper markup is needed. Replaced the dashed contour ring in Phase 7 on
+     review. */
   .pillar .icon {
-    width: var(--icon-size-card);
-    height: var(--icon-size-card);
-    color: var(--ovi-blue);
+    width: var(--icon-tile);
+    height: var(--icon-tile);
+    padding: calc((var(--icon-tile) - var(--icon-size-card)) / 2);
+    background-color: var(--blue-100);
+    border-radius: var(--r-md);
+    color: var(--blue-600);
+    stroke-width: var(--icon-stroke-tile);
+    transition: background-color var(--dur-hover) linear, color var(--dur-hover) linear;
   }
 
   @media (min-width: 768px) {
@@ -2088,34 +2105,30 @@
     background-color: var(--white);
     border: var(--border-width) solid var(--hairline);
     border-radius: var(--r-md);
-    transition: border-color var(--dur-hover) linear;
+    transition:
+      border-color var(--dur-hover) linear,
+      box-shadow var(--dur-hover) linear,
+      transform var(--dur-hover) var(--ease-out-expo);
   }
 
-  .card:hover { border-color: var(--ovi-blue); }
-
-  /* The icon sits on a faint dashed contour ring — the site motif, reused at
-     component scale. DESIGN.md §1, §5. */
+  /* The icon sits on a soft-blue rounded tile; on hover the tile fills with
+     the brand blue (see the hover section at the end of this file). */
   .card__icon {
-    position: relative;
     display: grid;
     place-items: center;
-    width: var(--space-48);
-    height: var(--space-48);
+    width: var(--icon-tile);
+    height: var(--icon-tile);
     margin-block-end: var(--space-24);
-  }
-
-  .card__icon::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border: var(--border-width) dashed var(--blue-200);
-    border-radius: 50%;
+    background-color: var(--blue-100);
+    border-radius: var(--r-md);
+    color: var(--blue-600);
+    transition: background-color var(--dur-hover) linear, color var(--dur-hover) linear;
   }
 
   .card__icon .icon {
     width: var(--icon-size-card);
     height: var(--icon-size-card);
-    color: var(--ovi-blue);
+    stroke-width: var(--icon-stroke-tile);
   }
 
   .card__title {
@@ -2193,11 +2206,19 @@
 
   .arch__step::before { content: counter(arch, decimal-leading-zero); }
 
+  /* On the dark band the tile is navy-700, so it reads as a node on the link
+     line rather than a light patch. */
   .arch__stage .icon {
-    width: var(--icon-size-card);
-    height: var(--icon-size-card);
+    position: relative;
+    width: var(--icon-tile);
+    height: var(--icon-tile);
     margin-block: var(--space-12);
+    padding: calc((var(--icon-tile) - var(--icon-size-card)) / 2);
+    background-color: var(--navy-700);
+    border-radius: var(--r-md);
     color: var(--ovi-blue);
+    stroke-width: var(--icon-stroke-tile);
+    transition: background-color var(--dur-hover) linear, color var(--dur-hover) linear;
   }
 
   .arch__title {
@@ -2217,7 +2238,7 @@
     display: block;
     pointer-events: none;
     inset-block-start: 100%;
-    inset-inline-start: calc(var(--icon-size-card) / 2);
+    inset-inline-start: calc(var(--icon-tile) / 2);
     width: 0;
     height: var(--space-48);
   }
@@ -2263,10 +2284,12 @@
       gap: var(--grid-gap);
     }
 
+    /* Runs through the middle of the icon tiles, from just after this
+       stage's tile to just before the next one. */
     .arch__link {
-      inset-block-start: var(--space-48);
-      inset-inline-start: calc(var(--icon-size-card) + var(--space-16));
-      width: calc(100% - var(--icon-size-card) - var(--space-16) + var(--grid-gap));
+      inset-block-start: calc(var(--space-48) + (var(--icon-tile) - var(--icon-size-card)) / 2);
+      inset-inline-start: calc(var(--icon-tile) + var(--space-8));
+      width: calc(100% + var(--grid-gap) - var(--icon-tile) - var(--space-16));
       height: 0;
     }
 
@@ -2368,6 +2391,78 @@
     width: 100%;
     height: auto;
     border-radius: var(--r-md);
+  }
+
+  /* --- Hover, sitewide -------------------------------------------------------
+     One place for hover across the site, so it reads as one system.
+     - (hover: hover) only: a touch screen has no hover, and a tap must not
+       leave a card stuck half-lifted.
+     - Colour changes for everyone; movement (lift, nudge, zoom) only when the
+       visitor has not asked for reduced motion.
+     - Blocks that are not links (pillars, the "why" list, diagram stages) only
+       light their icon or rule; they never lift, because lifting says "click
+       me" and they are not clickable. */
+
+  @media (hover: hover) {
+    .card:hover {
+      border-color: var(--ovi-blue);
+      box-shadow: var(--shadow-lift);
+    }
+
+    .card:hover .card__icon,
+    .pillar:hover .icon,
+    .arch__stage:hover .icon {
+      background-color: var(--ovi-blue);
+      color: var(--white);
+    }
+
+    .why__item {
+      transition: border-color var(--dur-hover) linear;
+    }
+
+    .why__item:hover { border-block-start-color: var(--blue-600); }
+
+    .site-nav__link:hover:not([aria-current]) { border-block-end-color: var(--blue-200); }
+
+    .btn--primary:hover,
+    .btn--on-dark:hover { box-shadow: var(--shadow-btn); }
+
+    .fab:hover,
+    .back-to-top:hover { box-shadow: var(--shadow-btn); }
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .card:hover { transform: translateY(var(--lift-card)); }
+
+    .btn:hover { transform: translateY(var(--lift-btn)); }
+
+    .fab,
+    .back-to-top {
+      transition:
+        background-color var(--dur-hover) linear,
+        border-color var(--dur-hover) linear,
+        color var(--dur-hover) linear,
+        box-shadow var(--dur-hover) linear,
+        transform var(--dur-hover) var(--ease-out-expo);
+    }
+
+    .fab:hover,
+    .back-to-top:hover { transform: translateY(var(--lift-btn)); }
+
+    .site-footer__enquiry .icon {
+      transition: transform var(--dur-hover) var(--ease-out-expo);
+    }
+
+    .site-footer__enquiry a:hover .icon { transform: translateX(var(--space-4)); }
+
+    .media-band__img {
+      transition: transform var(--dur-menu) var(--ease-out-expo), box-shadow var(--dur-menu) linear;
+    }
+
+    .media-band__img:hover {
+      transform: scale(1.015);
+      box-shadow: var(--shadow-lift);
+    }
   }
 }
 

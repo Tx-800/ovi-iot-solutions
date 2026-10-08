@@ -126,6 +126,10 @@
   /* --- Elevation. There are exactly two shadows on this site. ------------ */
   --shadow-header:  0 1px 0 var(--hairline), 0 6px 20px -12px rgb(17 27 46 / 0.22);
   --shadow-overlay: 0 24px 60px -20px rgb(17 27 46 / 0.40);
+  --shadow-lift:    0 18px 40px -18px rgb(17 27 46 / 0.30);   /* hovered card */
+  --shadow-btn:     0 10px 22px -12px rgb(2 105 196 / 0.55);  /* hovered button */
+  --lift-card:      -4px;
+  --lift-btn:       -2px;
 
   /* --- Component sizing — DESIGN.md §5 ----------------------------------
      The few values DESIGN.md states in px rather than on the 8px scale.
@@ -144,6 +148,8 @@
   --icon-size:        1.5rem;            /* 24px in UI */
   --icon-size-sm:     1rem;
   --icon-size-card:   1.75rem;           /* 28px in cards */
+  --icon-tile:        3.25rem;           /* 52px rounded tile behind card, pillar and diagram icons */
+  --icon-stroke-tile: 1.75;              /* a touch heavier inside a tile, so the glyph holds against the fill */
   --icon-stroke:      1.5;
 
   --logo-width-header: 8.25rem;          /* 132px — above the 120px minimum */
