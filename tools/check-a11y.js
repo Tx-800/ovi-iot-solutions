@@ -31,7 +31,7 @@ import { join, resolve, relative } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const ORIGIN = process.env.OVI_ORIGIN || 'http://localhost:4321';
-const SKIP_DIRS = new Set(['docs', 'node_modules', '.git', 'partials', 'tools', '.shots']);
+const SKIP_DIRS = new Set(['docs', 'node_modules', '.git', 'partials', 'tools', '.shots', 'dist']);
 const WIDTHS = [375, 1280];
 
 const CHROME_CANDIDATES = [

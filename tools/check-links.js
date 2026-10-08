@@ -15,7 +15,7 @@ import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, resolve, dirname, posix } from 'node:path';
 
 const ROOT = resolve(import.meta.dirname, '..');
-const SKIP_DIRS = new Set(['docs', 'node_modules', '.git', 'partials', 'tools']);
+const SKIP_DIRS = new Set(['docs', 'node_modules', '.git', 'partials', 'tools', 'dist']);
 const EXTERNAL = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 
 function htmlFiles(dir = ROOT, found = []) {
