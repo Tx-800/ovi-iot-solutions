@@ -19,7 +19,7 @@ f.addEventListener('load',async()=>{
   c('fallback link hidden once mounted (cannot take focus)',w.getComputedStyle(d.querySelector('.contact-map__fallback')).display==='none');
   c('zoom controls are focusable links',d.querySelectorAll('.leaflet-control-zoom a[href]').length===2);
   const mk=d.querySelector('.leaflet-marker-icon');
-  c('marker has alt text and is focusable',mk&&mk.alt==='OVI IoT Solutions office'&&mk.tabIndex===0,mk?mk.alt:'no marker');
+  c('marker has alt text and is not a tab stop (it has no popup)',!!mk&&mk.alt==='OVI IoT Solutions office'&&mk.tabIndex<0,mk?mk.alt+' tabIndex='+mk.tabIndex:'no marker');
   c('OSM attribution shown',/OpenStreetMap/.test((d.querySelector('.leaflet-control-attribution')||{}).textContent||''));
   c('text address sits beside the map',!!d.querySelector('.contact-details__address'));
   c('directions link works without the map',/openstreetmap\.org\/\?mlat=51\.5202/.test(d.querySelector('.contact-details__directions a').href));

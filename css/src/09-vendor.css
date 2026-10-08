@@ -1,0 +1,25 @@
+/* ==========================================================================
+   09-vendor.css — overrides for third-party CSS. Unlayered on purpose.
+
+   Leaflet's stylesheet is loaded from the CDN at runtime and is unlayered,
+   and unlayered rules outrank every @layer rule whatever their specificity,
+   so nothing in components/ or pages/ can restyle it. Rules here are
+   unlayered too, and win on specificity instead (each is written one class
+   stronger than the Leaflet rule it overrides). Keep this file to overrides
+   that accessibility requires; it is not a place for new styling.
+   ========================================================================== */
+
+/* Attribution. Leaflet draws #0078A8 links on 80% white over the tiles,
+   which is 3.08:1 over a dark tile — tools/a11y-measure.js. An opaque
+   background makes the contrast independent of the map, and the padding
+   keeps a focused link's ring (3px offset + 2px) on that background rather
+   than on the tiles. */
+.contact-map.leaflet-container .leaflet-control-attribution {
+  padding: var(--space-8);
+  background-color: var(--white);
+  color: var(--text);
+}
+
+.contact-map.leaflet-container .leaflet-control-attribution a {
+  color: var(--link);
+}

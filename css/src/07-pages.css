@@ -90,6 +90,19 @@
   text-align: center;
 }
 
+/* Clear of the map, so its focus ring sits on the page rather than on map
+   tiles of unknown colour. Both map links are full 24px targets. */
+.contact-details__directions {
+  margin-block-start: var(--space-12);
+}
+
+.contact-map__fallback a,
+.contact-details__directions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+}
+
 /* Once Leaflet has mounted, the fallback link sits underneath the tiles;
    hide it so keyboard focus can never land on something invisible. */
 .contact-map[data-map-ready] .contact-map__fallback {
@@ -102,4 +115,14 @@
   .contact-main {
     padding-block-end: max(var(--section-pad), var(--space-96));
   }
+}
+
+/* --- 404 --------------------------------------------------------------------
+   The three ways out are the page's only job; each is a full 24px target
+   rather than a 17px line of text passing on 2.5.8's spacing exception. */
+
+.not-found__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
 }

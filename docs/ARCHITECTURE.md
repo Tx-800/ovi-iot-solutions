@@ -69,7 +69,8 @@ Tooling that measures or checks the site is **not** governed by the list above. 
 | Solution-page photography | `tools/build-images.js` | `tools/`, writes `assets/img/*.webp`, each page's `<!-- @photo -->` band, and `assets/img/CREDITS.md` |
 | Photo-band fold check | `tools/fold-probe.html` | `tools/`, reports where each band sits against the fold |
 | Contact form behaviour | `tools/check-form.js` + `tools/form-harness.html` | `tools/`, 44 assertions incl. no-JS wiring; fetch mocked, nothing posted |
-| Map lazy-load + keyboard check | `tools/map-probe.html` | `tools/`, needs a populated `SITE.map` to have a map to test |
+| Map lazy-load + keyboard check | `tools/map-probe.html` | `tools/`, needs a populated `SITE.map` to have a map to test. Its IntersectionObserver step is unreliable in a headless iframe (2026-10-08); mounting was confirmed by loading `contact.html` top-level instead |
+| Rendered contrast, focus, target size | `tools/a11y-measure.js` (run by `check-a11y.js`) | `tools/`, measures 1.4.3, 1.4.11, 2.4.11 and 2.5.8 on every control at rest, hover, focus, error state and inside the open menus — the class axe misses |
 | Link + dead-href checking | `tools/check-links.js` | `tools/`, no dependencies |
 | Partial injection and value baking | `tools/sync-partials.js` | `tools/`, no dependencies |
 | Sitemap generation | `tools/build-sitemap.js` | `tools/`, no dependencies |
@@ -148,6 +149,7 @@ ovi-website/
 │   ├── 06-sections.css       hero, pillars, solutions-grid, architecture, cta-band
 │   ├── 07-pages.css          the few genuine page-specific overrides
 │   ├── 08-utilities.css      .visually-hidden, .flow, .text-balance, spacing helpers
+│   ├── 09-vendor.css         UNLAYERED overrides of third-party CSS (Leaflet) — a11y fixes only
 │   └── main.css              @import of the above, in order. This is the only <link>.
 │
 ├── js/
@@ -398,6 +400,8 @@ links) are plain HTML in each page — do not over-engineer a templating layer.
 - Toasts: `role="status"`, `aria-live="polite"`.
 - Visible focus on every interactive element, including inside dark bands (use `--white` outline there).
 - Test with the keyboard and with a screen reader's landmark list. Run `axe` DevTools — **zero violations**.
+- `node tools/check-a11y.js` must exit 0 with the placeholder config **and** with a populated one: controls that only exist once contact details are filled in (the WhatsApp button, the map) are invisible to a placeholder run.
+- Third-party CSS (Leaflet) is unlayered and beats every `@layer` rule, so its accessibility fixes live in `css/src/09-vendor.css`, also unlayered, each one class stronger than the rule it overrides.
 
 ---
 

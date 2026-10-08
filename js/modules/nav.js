@@ -68,8 +68,11 @@ export function initNav() {
 
   /* --- Drawer ------------------------------------------------------------ */
 
+  /* Everything outside the dialog: the rest of the page, plus the logo link,
+     which shares the header with the drawer but sits under its backdrop. */
+  const brand = header.querySelector('.site-header__brand');
   const outsideElements = () =>
-    Array.from(document.body.children).filter((el) => el !== header);
+    Array.from(document.body.children).filter((el) => el !== header).concat(brand ?? []);
 
   function openDrawer() {
     if (!drawer || !toggle) return;

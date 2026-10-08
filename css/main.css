@@ -363,6 +363,7 @@
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */
   --tap-min:          2.75rem;           /* 44px — DESIGN.md §9 */
+  --target-min:       1.5rem;            /* 24px — WCAG 2.2 2.5.8 floor, for dense UI like breadcrumbs */
   --icon-size:        1.5rem;            /* 24px in UI */
   --icon-size-sm:     1rem;
   --icon-size-card:   1.75rem;           /* 28px in cards */
@@ -1040,7 +1041,14 @@
   /* --- Enhanced: the drawer below --bp-md ----------------------------------- */
 
   @media (max-width: 767.98px) {   /* below --bp-md */
-    .site-header__toggle { display: inline-flex; }
+    /* Above the open panel (z-index 2) and its backdrop (1): it is the close
+       button, and the focus trap starts on it. Under the panel it was focusable
+       but invisible — found by tools/a11y-measure.js, not by axe. */
+    .site-header__toggle {
+      display: inline-flex;
+      position: relative;
+      z-index: 3;
+    }
 
     .site-nav {
       position: fixed;
@@ -1218,13 +1226,16 @@
     list-style: none;
   }
 
-  .site-footer a {
+  /* :not(.fab): the WhatsApp button lives inside the footer landmark but is
+     not a footer link. Without the exclusion this rule outranks .fab and turns
+     its icon --navy-300 on blue, 1.19:1 — tools/a11y-measure.js caught it. */
+  .site-footer a:not(.fab) {
     color: var(--navy-300);
     text-decoration: none;
     transition: color var(--dur-hover) linear;
   }
 
-  .site-footer a:hover {
+  .site-footer a:not(.fab):hover {
     color: var(--white);
     text-decoration: underline;
   }
@@ -1234,6 +1245,13 @@
     margin-block-start: 0;
     padding-block: var(--space-4);
     max-width: none;
+  }
+
+  /* A full 24px target, not a 17px line passing on 2.5.8's spacing exception. */
+  .site-footer__contact-list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
   }
 
   /* Padding rather than min-height: these labels wrap to two lines, and a
@@ -1425,7 +1443,13 @@
     color: var(--navy-300);
   }
 
+  /* 24px tall, not the 22px the line-height gives. At 22px they passed 2.5.8
+     only through its spacing exception; a target size that holds without the
+     exception survives a later change to the gap. */
   .breadcrumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
     color: var(--navy-300);
   }
 
@@ -1580,8 +1604,10 @@
 
      One deliberate departure: DESIGN.md §5 gives inputs a 1px --hairline
      border, which is ~1.2:1 on white. WCAG 2.2 1.4.11 needs 3:1 for the
-     boundary that identifies a form field, so inputs use --navy-300 (3.04:1).
-     The accessibility gate wins over the design doc (AGENTS.md §2). */
+     boundary that identifies a form field. --navy-300 was tried first: 3.04:1
+     on white, but the fields sit on the --paper form panel, where it is
+     2.86:1 — tools/a11y-measure.js caught it. --navy-500 is the next step on
+     the scale. The accessibility gate wins over the design doc (AGENTS.md §2). */
 
   /* Margins, not grid gap: the live status region is empty until something
      happens, and an empty grid item still takes two gaps. An empty block's
@@ -1639,7 +1665,7 @@
     padding: var(--input-pad-block) var(--input-pad-inline);
     background-color: var(--white);
     color: var(--navy-900);
-    border: var(--border-width) solid var(--navy-300);
+    border: var(--border-width) solid var(--navy-500);
     border-radius: var(--r-sm);
     line-height: var(--leading-ui);
     transition: border-color var(--dur-hover) linear, box-shadow var(--dur-hover) linear;
@@ -2298,6 +2324,19 @@
     text-align: center;
   }
 
+  /* Clear of the map, so its focus ring sits on the page rather than on map
+     tiles of unknown colour. Both map links are full 24px targets. */
+  .contact-details__directions {
+    margin-block-start: var(--space-12);
+  }
+
+  .contact-map__fallback a,
+  .contact-details__directions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+  }
+
   /* Once Leaflet has mounted, the fallback link sits underneath the tiles;
      hide it so keyboard focus can never land on something invisible. */
   .contact-map[data-map-ready] .contact-map__fallback {
@@ -2310,6 +2349,16 @@
     .contact-main {
       padding-block-end: max(var(--section-pad), var(--space-96));
     }
+  }
+
+  /* --- 404 --------------------------------------------------------------------
+     The three ways out are the page's only job; each is a full 24px target
+     rather than a 17px line of text passing on 2.5.8's spacing exception. */
+
+  .not-found__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
   }
 }
 
@@ -2332,4 +2381,32 @@
     clip-path: inset(50%);
     white-space: nowrap;
   }
+}
+
+/* ===== css/src/09-vendor.css -> unlayered ===== */
+
+/* ==========================================================================
+   09-vendor.css — overrides for third-party CSS. Unlayered on purpose.
+
+   Leaflet's stylesheet is loaded from the CDN at runtime and is unlayered,
+   and unlayered rules outrank every @layer rule whatever their specificity,
+   so nothing in components/ or pages/ can restyle it. Rules here are
+   unlayered too, and win on specificity instead (each is written one class
+   stronger than the Leaflet rule it overrides). Keep this file to overrides
+   that accessibility requires; it is not a place for new styling.
+   ========================================================================== */
+
+/* Attribution. Leaflet draws #0078A8 links on 80% white over the tiles,
+   which is 3.08:1 over a dark tile — tools/a11y-measure.js. An opaque
+   background makes the contrast independent of the map, and the padding
+   keeps a focused link's ring (3px offset + 2px) on that background rather
+   than on the tiles. */
+.contact-map.leaflet-container .leaflet-control-attribution {
+  padding: var(--space-8);
+  background-color: var(--white);
+  color: var(--text);
+}
+
+.contact-map.leaflet-container .leaflet-control-attribution a {
+  color: var(--link);
 }

@@ -27,7 +27,9 @@ const CHECK_ONLY = process.argv.includes('--check');
 const LAYERS = 'reset, base, layout, components, sections, pages, utilities';
 
 /* file -> layer. `null` means unlayered on purpose: a token definition should
-   outrank every layered rule, and unlayered normal declarations do. */
+   outrank every layered rule, and unlayered normal declarations do. Vendor
+   overrides are unlayered for the opposite reason: Leaflet's own CSS is
+   unlayered, so no layered rule can ever beat it. */
 const ORDER = [
   ['00-fonts.css', null],
   ['01-reset.css', 'reset'],
@@ -38,6 +40,7 @@ const ORDER = [
   ['06-sections.css', 'sections'],
   ['07-pages.css', 'pages'],
   ['08-utilities.css', 'utilities'],
+  ['09-vendor.css', null],       /* overrides for unlayered third-party CSS (Leaflet) */
 ];
 
 const indent = (text) => text.split('\n').map((l) => (l.trim() ? `  ${l}` : l)).join('\n');

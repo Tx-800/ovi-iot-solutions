@@ -140,6 +140,7 @@
   --chip-pad-inline:  0.625rem;          /* 10px */
   --card-pad:         var(--space-32);   /* 32px */
   --tap-min:          2.75rem;           /* 44px — DESIGN.md §9 */
+  --target-min:       1.5rem;            /* 24px — WCAG 2.2 2.5.8 floor, for dense UI like breadcrumbs */
   --icon-size:        1.5rem;            /* 24px in UI */
   --icon-size-sm:     1rem;
   --icon-size-card:   1.75rem;           /* 28px in cards */

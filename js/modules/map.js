@@ -14,8 +14,9 @@
    also refuses 0,0 itself, so a map in the Gulf of Guinea can never render.
 
    Accessibility: Leaflet's own keyboard support stays on (the map is
-   focusable; arrows pan, +/- zoom), the zoom controls are links, and the
-   office address is always written out as text beside the map.
+   focusable; arrows pan, +/- zoom), the zoom controls are links, the marker
+   is not a tab stop (it has no popup), and the office address is always
+   written out as text beside the map.
    ========================================================================== */
 
 import { prefersReducedMotion } from './motion.js';
@@ -71,10 +72,13 @@ function mount(L, el, lat, lng, zoom) {
 
   L.tileLayer(TILES, { maxZoom: 19, attribution: ATTRIBUTION }).addTo(map);
 
+  /* Not interactive: there is no popup, so a focusable marker would be a tab
+     stop that does nothing. The alt text still names it, and the address is
+     written out beside the map. */
   L.marker([lat, lng], {
     alt: 'OVI IoT Solutions office',
-    title: 'OVI IoT Solutions office',
-    keyboard: true,
+    keyboard: false,
+    interactive: false,
   }).addTo(map);
 
   /* Hides the fallback link (07-pages.css) now that tiles cover it. */
