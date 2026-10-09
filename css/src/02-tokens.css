@@ -149,8 +149,10 @@
   --icon-size-sm:     1rem;
   --icon-size-card:   1.75rem;           /* 28px in cards */
   --icon-tile:        3.25rem;           /* 52px rounded tile behind card, pillar and diagram icons */
-  --orbit-size:       56rem;             /* the Why-choose-OVI circle at desktop: 896px square */
-  --orbit-card:       17rem;             /* each card on the circle */
+  --orbit-size:       58rem;             /* the Why-choose-OVI orbit at desktop: 928px square */
+  --orbit-radius:     20rem;             /* ring radius = distance from centre to each card's centre */
+  --orbit-step:       72deg;             /* 360 / 5 cards */
+  --orbit-card:       15.5rem;           /* each card on the circle */
   --orbit-badge:      2.25rem;           /* the numbered badge */
   --icon-stroke-tile: 1.75;              /* a touch heavier inside a tile, so the glyph holds against the fill */
   --icon-stroke:      1.5;
@@ -171,6 +173,7 @@
   --dur-enter:     320ms;   /* inner-page H1 + lead, together */
   --dur-hero:      900ms;   /* hero plot entrance, total */
   --dur-intro:     1500ms;  /* logo intro, first page of a session only */
+  --dur-orbit:     60s;     /* one full revolution of the Why-choose-OVI orbit */
   --stagger-hero:  90ms;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -200,4 +203,13 @@
   --border:         var(--hairline-dk);
   --link:           var(--blue-200);
   --focus-ring:     var(--white);
+}
+
+/* The orbit's revolve angle. Registered so it can be animated: an
+   unregistered custom property only flips between keyframes. Unlayered with
+   the other tokens; @property is global. */
+@property --spin {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
 }

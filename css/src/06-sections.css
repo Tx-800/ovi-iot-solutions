@@ -412,11 +412,9 @@
 }
 
 /* --- 5. Why choose OVI — the orbit ------------------------------------------
-   Four numbered cards. Phones: one column; tablets: two. From --bp-lg the
+   Five numbered cards. Phones: one column; tablets: two. From --bp-lg the
    cards sit on a circle around a soft signal glow — the coverage motif of
-   the hero, at section scale. The orbit is a square 3x3 grid: cards take
-   the middle cell of each edge, and the ring is drawn through the centres
-   of those cells (inset 1/6), so it passes exactly through every card. */
+   the hero, at section scale — and slowly revolve (see below). */
 
 .orbit {
   position: relative;
@@ -490,20 +488,27 @@
 }
 
 @media (min-width: 1024px) {   /* --bp-lg */
+  /* Five cards on a circle, one every 72 degrees, starting at the top.
+     Each card is placed from the centre: rotate to its angle, step out by
+     the radius, rotate back so it stays upright. --spin (registered in
+     02-tokens.css so it can animate) is added to every angle, so animating
+     that one value revolves the whole orbit while the text never tilts. */
   .orbit {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(3, minmax(0, 1fr));
-    gap: 0;
+    display: block;
     max-width: var(--orbit-size);
-    aspect-ratio: 1;
+    height: var(--orbit-size);
     margin-inline: auto;
   }
 
-  /* The ring, through the centres of the edge cells. */
+  /* The ring, through every card's centre. */
   .orbit::before {
     content: "";
     position: absolute;
-    inset: calc(100% / 6);
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: calc(var(--orbit-radius) * 2);
+    height: calc(var(--orbit-radius) * 2);
+    translate: -50% -50%;
     border: 2px solid var(--blue-200);
     border-radius: 50%;
   }
@@ -512,7 +517,7 @@
   .orbit::after {
     content: "";
     position: absolute;
-    inset: 41%;
+    inset: 42%;
     border-radius: 50%;
     background: radial-gradient(circle, var(--ovi-blue) 0, var(--blue-200) 35%, transparent 70%);
     opacity: 0.55;
@@ -521,14 +526,51 @@
   .orbit__num { inset-inline-start: calc(var(--space-16) * -1); }
 
   .orbit__item {
-    place-self: center;
-    width: min(100%, var(--orbit-card));
+    --angle: calc(var(--orbit-step) * var(--i) + var(--spin));
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: var(--orbit-card);
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--angle))
+      translateY(calc(var(--orbit-radius) * -1))
+      rotate(calc(var(--angle) * -1));
   }
 
-  .orbit__item:nth-child(1) { grid-area: 1 / 2; }
-  .orbit__item:nth-child(2) { grid-area: 2 / 3; }
-  .orbit__item:nth-child(3) { grid-area: 3 / 2; }
-  .orbit__item:nth-child(4) { grid-area: 2 / 1; }
+  .orbit__item:nth-child(1) { --i: 0; }
+  .orbit__item:nth-child(2) { --i: 1; }
+  .orbit__item:nth-child(3) { --i: 2; }
+  .orbit__item:nth-child(4) { --i: 3; }
+  .orbit__item:nth-child(5) { --i: 4; }
+
+  /* Revolve. Set by js/modules/orbit.js only when the Pause button can be
+     shown and motion is allowed. Stops while hovered, while anything inside
+     has keyboard focus, and when paused with the button. */
+  .orbit[data-spin] {
+    animation: orbit-spin var(--dur-orbit) linear infinite;
+  }
+
+  .orbit[data-spin]:hover,
+  .orbit[data-spin]:focus-within,
+  .orbit[data-spin][data-paused] {
+    animation-play-state: paused;
+  }
+
+  .orbit__controls {
+    display: flex;
+    justify-content: flex-end;
+    max-width: none;
+    margin-block-end: var(--space-8);
+  }
+}
+
+@keyframes orbit-spin {
+  to { --spin: 360deg; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit[data-spin] { animation: none; }
 }
 
 /* --- 6. Services teaser ---------------------------------------------------

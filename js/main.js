@@ -27,6 +27,10 @@ if (document.querySelector('[data-architecture]')) {
   import('./modules/architecture.js').then((m) => m.init());
 }
 
+if (document.querySelector('[data-orbit]')) {
+  import('./modules/orbit.js').then((m) => m.init());
+}
+
 if (document.querySelector('[data-contact-form]')) {
   import('./modules/form.js').then((m) => m.init());
 }

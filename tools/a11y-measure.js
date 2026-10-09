@@ -668,6 +668,7 @@
     for (const a of win.document.getAnimations()) {
       try {
         if (a.effect && a.effect.getTiming().iterations !== Infinity) a.finish();
+        else a.pause(); /* an endless loop (the orbit revolve) is measured where it stands */
       } catch { /* already finished */ }
     }
   }
