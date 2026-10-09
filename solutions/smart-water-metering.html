@@ -230,11 +230,105 @@
   </main>
 
   <!-- @include cta-band -->
-  <section class="section cta-band section--dark" aria-labelledby="cta-band-title">
-    <div class="container cta-band__inner flow">
-      <h2 class="cta-band__title" id="cta-band-title">Let&rsquo;s build smarter infrastructure together</h2>
-      <p class="cta-band__sub">LoRaWAN &amp; NB-IoT solutions &middot; Consultancy &middot; RF planning</p>
-      <p><a class="btn btn--on-dark" href="/contact.html">Request a consultation</a></p>
+  <section class="section touch" aria-labelledby="cta-band-title">
+    <div class="container">
+      <header class="touch__head">
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="touch__title" id="cta-band-title">Let&rsquo;s build smarter infrastructure together</h2>
+      </header>
+
+      <div class="touch__grid">
+        <div class="touch__info">
+          <p class="touch__intro">Tell us about your network, site or tender and we&rsquo;ll come back with a technical response — LoRaWAN &amp; NB-IoT solutions, consultancy and RF planning.</p>
+
+          <ul class="touch__cards" role="list">
+            <li class="touch-card">
+              <svg class="icon touch-card__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-map-pin"></use></svg>
+              <div>
+                <h3 class="touch-card__label">Office address</h3>
+                <p class="touch-card__value is-placeholder">Office address, city and postcode</p>
+              </div>
+            </li>
+            <li class="touch-card">
+              <svg class="icon touch-card__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-mail"></use></svg>
+              <div>
+                <h3 class="touch-card__label">Email</h3>
+                <p class="touch-card__value is-placeholder">name@company-domain.com</p>
+              </div>
+            </li>
+            <li class="touch-card">
+              <svg class="icon touch-card__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-phone"></use></svg>
+              <div>
+                <h3 class="touch-card__label">Phone</h3>
+                <p class="touch-card__value is-placeholder">+00 00000 00000</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="touch__form">
+          <div class="form-sent" id="sent" tabindex="-1">
+            <h2 class="form-sent__title">Thanks — your enquiry has been sent</h2>
+            <p>We&rsquo;ll come back to you with a technical response.</p>
+          </div>
+
+          <form class="form" action="https://api.web3forms.com/submit" method="POST" data-contact-form
+                aria-labelledby="touch-form-title">
+            <h3 id="touch-form-title" class="touch__form-title">Send us a message</h3>
+
+            
+            <input type="hidden" name="subject" value="New enquiry from the OVI IoT Solutions website">
+            <input type="hidden" name="from_name" value="OVI IoT Solutions website">
+            
+            <input class="form__hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off">
+
+            <div class="form__status" role="status" aria-live="polite" data-form-status></div>
+
+            <div class="form__grid">
+              <div class="field">
+                <label class="field__label" for="t-name">Name <span class="field__req" aria-hidden="true">(required)</span></label>
+                <input class="field__input" id="t-name" name="name" type="text" autocomplete="name" required>
+                <p class="field__error" id="t-name-error" hidden></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="t-email">Work email <span class="field__req" aria-hidden="true">(required)</span></label>
+                <input class="field__input" id="t-email" name="email" type="email" autocomplete="email"
+                       inputmode="email" spellcheck="false" required>
+                <p class="field__error" id="t-email-error" hidden></p>
+              </div>
+
+              <div class="field field--full">
+                <label class="field__label" for="t-interest">Area of interest</label>
+                <select class="field__input field__select" id="t-interest" name="interest">
+                  <option value="">Select one</option>
+                  <option>Smart water metering</option>
+                  <option>Smart street lighting</option>
+                  <option>Water leak detection</option>
+                  <option>Water quality monitoring</option>
+                  <option>Water level monitoring</option>
+                  <option>People &amp; asset tracking</option>
+                  <option>ATEX zone sensors</option>
+                  <option>Consultancy &amp; tender preparation</option>
+                  <option>RF planning &amp; site survey</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="field field--full">
+                <label class="field__label" for="t-message">Message <span class="field__req" aria-hidden="true">(required)</span></label>
+                <textarea class="field__input field__textarea" id="t-message" name="message" rows="4" required></textarea>
+                <p class="field__error" id="t-message-error" hidden></p>
+              </div>
+            </div>
+
+            <p class="form__actions">
+              <button class="btn btn--primary" type="submit" data-form-submit>Send message
+                <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-send"></use></svg></button>
+            </p>
+          </form>
+        </div>
+      </div>
     </div>
   </section>
   <!-- /@include cta-band -->
@@ -290,20 +384,6 @@
           </ul>
         </div>
       </nav>
-
-      <!-- Always rendered: the enquiry link works with no details configured.
-           Each detail line appears only once its value in js/site.config.js
-           is real (data-requires), so a placeholder never ships. -->
-      <div class="site-footer__contact">
-        <h2 class="site-footer__heading">Get in touch</h2>
-        <ul class="site-footer__contact-list" role="list">
-        </ul>
-
-        <p class="site-footer__enquiry">
-          <a href="/contact.html">Send an enquiry
-            <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-right"></use></svg></a>
-        </p>
-      </div>
     </div>
 
     <div class="site-footer__legal">

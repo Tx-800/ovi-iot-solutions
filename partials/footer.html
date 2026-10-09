@@ -21,6 +21,11 @@
                sizes="148px" width="320" height="139" alt="OVI IoT Solutions" loading="lazy" decoding="async">
         </a>
         <p class="site-footer__tagline">Smart IoT solutions for connected infrastructure.</p>
+        <ul class="site-footer__social" role="list" data-requires-any="social.linkedin social.x social.youtube">
+          <li data-requires="social.linkedin"><a href="{{social.linkedin}}" rel="noopener noreferrer" target="_blank">LinkedIn</a></li>
+          <li data-requires="social.x"><a href="{{social.x}}" rel="noopener noreferrer" target="_blank">X</a></li>
+          <li data-requires="social.youtube"><a href="{{social.youtube}}" rel="noopener noreferrer" target="_blank">YouTube</a></li>
+        </ul>
       </div>
 
       <nav class="site-footer__nav" aria-label="Footer">
@@ -56,50 +61,6 @@
           </ul>
         </div>
       </nav>
-
-      <!-- Always rendered: the enquiry link works with no details configured.
-           Each detail line appears only once its value in js/site.config.js
-           is real (data-requires), so a placeholder never ships. -->
-      <div class="site-footer__contact">
-        <h2 class="site-footer__heading">Get in touch</h2>
-        <ul class="site-footer__contact-list" role="list">
-          <li data-requires="address">
-            <svg class="icon icon--sm site-footer__contact-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-map-pin"></use></svg>
-            <span><span class="visually-hidden">Address: </span><span data-site="address">{{address}}</span></span>
-          </li>
-          <li data-requires="phone">
-            <svg class="icon icon--sm site-footer__contact-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-phone"></use></svg>
-            <a href="{{tel}}" data-site-attr="href:tel"><span class="visually-hidden">Phone: </span><span data-site="phone">{{phone}}</span></a>
-          </li>
-          <li class="site-footer__email" data-requires="email">
-            <svg class="icon icon--sm site-footer__contact-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-mail"></use></svg>
-            <a href="{{mailto}}" data-site-attr="href:mailto"><span class="visually-hidden">Email: </span><span data-site="email">{{email}}</span></a>
-            <button class="copy-email" type="button" data-copy-email data-copy-value="{{email}}" hidden>
-              <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-copy"></use></svg>
-              <span class="visually-hidden">Copy email address</span>
-            </button>
-          </li>
-          <li data-requires="whatsapp">
-            <svg class="icon icon--sm site-footer__contact-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-message-circle"></use></svg>
-            <a href="{{whatsapp}}" data-site-attr="href:whatsapp" rel="noopener noreferrer" target="_blank">WhatsApp<span class="visually-hidden"> (opens in a new tab)</span></a>
-          </li>
-          <li data-requires="hours">
-            <svg class="icon icon--sm site-footer__contact-icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-clock"></use></svg>
-            <span><span class="visually-hidden">Opening hours: </span><span data-site="hours">{{hours}}</span></span>
-          </li>
-        </ul>
-
-        <p class="site-footer__enquiry">
-          <a href="/contact.html">Send an enquiry
-            <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-right"></use></svg></a>
-        </p>
-
-        <ul class="site-footer__social" role="list" data-requires-any="social.linkedin social.x social.youtube">
-          <li data-requires="social.linkedin"><a href="{{social.linkedin}}" rel="noopener noreferrer" target="_blank">LinkedIn</a></li>
-          <li data-requires="social.x"><a href="{{social.x}}" rel="noopener noreferrer" target="_blank">X</a></li>
-          <li data-requires="social.youtube"><a href="{{social.youtube}}" rel="noopener noreferrer" target="_blank">YouTube</a></li>
-        </ul>
-      </div>
     </div>
 
     <div class="site-footer__legal">

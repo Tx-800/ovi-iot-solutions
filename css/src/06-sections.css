@@ -411,42 +411,124 @@
   }
 }
 
-/* --- 5. Why choose OVI ----------------------------------------------------
-   Text-led and deliberately unboxed, so it does not read as a second card
-   grid straight after the first. A rule above each item is the only
-   structure. */
+/* --- 5. Why choose OVI — the orbit ------------------------------------------
+   Four numbered cards. Phones: one column; tablets: two. From --bp-lg the
+   cards sit on a circle around a soft signal glow — the coverage motif of
+   the hero, at section scale. The orbit is a square 3x3 grid: cards take
+   the middle cell of each edge, and the ring is drawn through the centres
+   of those cells (inset 1/6), so it passes exactly through every card. */
 
-.why {
+.orbit {
+  position: relative;
   display: grid;
-  gap: var(--space-32);
+  gap: var(--space-32) var(--grid-gap);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.why__item {
+.orbit__item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-block-start: 0;
-  padding-block-start: var(--space-24);
-  border-block-start: 2px solid var(--ovi-blue);
+  max-width: none;
+  padding: var(--space-32) var(--card-pad) var(--card-pad);
+  background-color: var(--white);
+  border: var(--border-width) solid var(--hairline);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lift);
+  text-align: center;
+  transition: border-color var(--dur-hover) linear;
+}
+
+/* Overhangs the card corner. Only by 8px on narrow screens, where the card
+   sits at the container edge and a 16px overhang would touch the viewport. */
+.orbit__num {
+  position: absolute;
+  inset-block-start: calc(var(--space-16) * -1);
+  inset-inline-start: calc(var(--space-8) * -1);
+  display: grid;
+  place-items: center;
+  width: var(--orbit-badge);
+  height: var(--orbit-badge);
+  border-radius: 50%;
+  background-color: var(--navy-700);
+  color: var(--white);
+  font-weight: var(--weight-display);
+  font-size: var(--step--1);
+}
+
+.orbit__icon {
+  width: var(--icon-tile);
+  height: var(--icon-tile);
+  padding: calc((var(--icon-tile) - var(--icon-size-card)) / 2);
+  border-radius: 50%;
+  background-color: var(--blue-100);
+  color: var(--blue-600);
+  stroke-width: var(--icon-stroke-tile);
+  transition: background-color var(--dur-hover) linear, color var(--dur-hover) linear;
+}
+
+.orbit__title {
+  margin-block-start: var(--space-16);
+  text-wrap: balance;
+  font-size: var(--step-1);
+  color: var(--text-strong);
+}
+
+.orbit__text {
+  margin-block-start: var(--space-8);
+  color: var(--text-muted);
   max-width: none;
 }
 
-/* --step-1 rather than the card --step-2: at four columns "End-to-end
-   expertise" breaks across its own hyphen at the larger size. Smaller also
-   keeps this block visibly subordinate to the solutions grid above. */
-.why__title { font-size: var(--step-1); }
-
-.why__text {
-  margin-block-start: var(--space-12);
-  color: var(--text-muted);
-}
-
 @media (min-width: 640px) {
-  .why { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-48); }
+  .orbit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (min-width: 1024px) {
-  .why { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (min-width: 1024px) {   /* --bp-lg */
+  .orbit {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    max-width: var(--orbit-size);
+    aspect-ratio: 1;
+    margin-inline: auto;
+  }
+
+  /* The ring, through the centres of the edge cells. */
+  .orbit::before {
+    content: "";
+    position: absolute;
+    inset: calc(100% / 6);
+    border: 2px solid var(--blue-200);
+    border-radius: 50%;
+  }
+
+  /* The signal at the centre. */
+  .orbit::after {
+    content: "";
+    position: absolute;
+    inset: 41%;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--ovi-blue) 0, var(--blue-200) 35%, transparent 70%);
+    opacity: 0.55;
+  }
+
+  .orbit__num { inset-inline-start: calc(var(--space-16) * -1); }
+
+  .orbit__item {
+    place-self: center;
+    width: min(100%, var(--orbit-card));
+  }
+
+  .orbit__item:nth-child(1) { grid-area: 1 / 2; }
+  .orbit__item:nth-child(2) { grid-area: 2 / 3; }
+  .orbit__item:nth-child(3) { grid-area: 3 / 2; }
+  .orbit__item:nth-child(4) { grid-area: 2 / 1; }
 }
 
 /* --- 6. Services teaser ---------------------------------------------------
@@ -467,22 +549,119 @@
 
 .services-teaser .card { padding: var(--space-48); }
 
-/* --- 7. Closing CTA band ---------------------------------------------------
-   The second dark surface of the sandwich. */
+/* --- 7. Get in touch ---------------------------------------------------------
+   Closes every page except Contact. Left: intro and three contact cards.
+   Right: a short enquiry form in a raised card. Placeholder values (while
+   js/site.config.js is unfilled) are marked .is-placeholder. */
 
-.cta-band { background-color: var(--navy-700); }
+.touch {
+  border-block-start: var(--border-width) solid var(--hairline);
+}
 
-.cta-band__inner { --flow-space: var(--space-24); }
+.touch__head {
+  margin-block-end: var(--space-48);
+  text-align: center;
+}
 
-.cta-band__title { max-width: 20ch; }
+.touch .eyebrow { color: var(--blue-600); }
 
-.cta-band__sub {
-  color: var(--navy-300);
+.touch__title {
+  max-width: 22ch;
+  margin-inline: auto;
+  margin-block-start: var(--space-8);
+}
+
+.touch__grid {
+  display: grid;
+  gap: var(--space-48);
+  align-items: start;
+}
+
+.touch__intro {
   font-size: var(--step-1);
+  color: var(--text);
   max-width: var(--measure-lead);
 }
 
-.cta-band p { max-width: none; }
+.touch__cards {
+  display: grid;
+  gap: var(--space-16);
+  margin: var(--space-32) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.touch-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-16);
+  margin-block-start: 0;
+  max-width: none;
+  padding: var(--space-24);
+  background-color: var(--white);
+  border: var(--border-width) solid var(--hairline);
+  border-radius: var(--r-md);
+  transition: border-color var(--dur-hover) linear, box-shadow var(--dur-hover) linear;
+}
+
+.touch-card__icon {
+  flex: none;
+  width: var(--icon-tile);
+  height: var(--icon-tile);
+  padding: calc((var(--icon-tile) - var(--icon-size)) / 2);
+  border-radius: 50%;
+  background-color: var(--blue-100);
+  color: var(--blue-600);
+  stroke-width: var(--icon-stroke-tile);
+  transition: background-color var(--dur-hover) linear, color var(--dur-hover) linear;
+}
+
+.touch-card__label {
+  font-size: var(--step-0);
+  font-weight: var(--weight-display);
+  color: var(--text-strong);
+}
+
+.touch-card__value,
+.touch-card__meta {
+  margin-block-start: var(--space-4);
+  max-width: none;
+  overflow-wrap: anywhere;
+}
+
+.touch-card__meta { color: var(--text-muted); }
+
+.touch-card__value a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+}
+
+/* A placeholder must look like one: never mistaken for a real address. */
+.is-placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.touch__form {
+  padding: var(--space-32) var(--card-pad);
+  background-color: var(--white);
+  border: var(--border-width) solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lift);
+}
+
+.touch__form-title {
+  font-size: var(--step-2);
+  color: var(--text-strong);
+}
+
+.touch__form .btn .icon { margin-inline-start: var(--space-8); }
+
+@media (min-width: 1024px) {   /* --bp-lg */
+  .touch__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--space-64); }
+  .touch__form { padding: var(--space-48); }
+}
 
 /* --- Photo band — DESIGN.md §7 ---------------------------------------------
    The one photograph on a solution or service page: 21:9, container width,
@@ -523,11 +702,19 @@
     color: var(--white);
   }
 
-  .why__item {
-    transition: border-color var(--dur-hover) linear;
+  .orbit__item:hover { border-color: var(--ovi-blue); }
+
+  .touch-card:hover { border-color: var(--ovi-blue); }
+
+  .touch-card:hover .touch-card__icon {
+    background-color: var(--ovi-blue);
+    color: var(--white);
   }
 
-  .why__item:hover { border-block-start-color: var(--blue-600); }
+  .orbit__item:hover .orbit__icon {
+    background-color: var(--ovi-blue);
+    color: var(--white);
+  }
 
   .site-nav__link:hover:not([aria-current]) { border-block-end-color: var(--blue-200); }
 
@@ -556,11 +743,11 @@
   .fab:hover,
   .back-to-top:hover { transform: translateY(var(--lift-btn)); }
 
-  .site-footer__enquiry .icon {
+  .touch__form .btn .icon {
     transition: transform var(--dur-hover) var(--ease-out-expo);
   }
 
-  .site-footer__enquiry a:hover .icon { transform: translateX(var(--space-4)); }
+  .touch__form .btn:hover .icon { transform: translateX(var(--space-4)); }
 
   .media-band__img {
     transition: transform var(--dur-menu) var(--ease-out-expo), box-shadow var(--dur-menu) linear;

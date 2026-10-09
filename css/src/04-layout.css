@@ -50,8 +50,9 @@
    rhythm; this only stops it being applied twice to the same seam. A section
    following a dark band keeps its full padding, because that seam is a real
    change of surface — .page-head counts as dark here even though it does not
-   carry .section--dark, since every inner page opens with one. */
-.section:not(.section--dark):not(.page-head) + .section:not(.section--dark):not(.page-head) {
+   carry .section--dark, since every inner page opens with one. .touch keeps
+   its padding: it is the closing block, separated by its own rule. */
+.section:not(.section--dark):not(.page-head) + .section:not(.section--dark):not(.page-head):not(.touch) {
   padding-block-start: 0;
 }
 

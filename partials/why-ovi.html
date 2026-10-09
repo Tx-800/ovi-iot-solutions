@@ -1,6 +1,10 @@
 <!-- partials/why-ovi.html — the four reasons (PRD.md §4.8). Used on Home, About and Services.
      Edit here, then run: node tools/sync-partials.js
-     Unboxed on purpose, so it does not read as a second card grid — DESIGN.md §10 Q3. -->
+
+     An orbit: on wide screens the four cards sit on a circle around a soft
+     signal glow (06-sections.css); below that they stack as a numbered grid.
+     The numbers are decoration — these are reasons, not steps — so they are
+     aria-hidden and the list stays a plain <ul>. -->
 
   <section class="section" aria-labelledby="why-title">
     <div class="container">
@@ -9,22 +13,30 @@
         <p class="section-head__sub">One team from feasibility study to a network you can operate.</p>
       </header>
 
-      <ul class="why" role="list">
-        <li class="why__item">
-          <h3 class="why__title">End-to-end expertise</h3>
-          <p class="why__text">From consultancy and RF planning to deployment and support.</p>
+      <ul class="orbit" role="list">
+        <li class="orbit__item">
+          <span class="orbit__num" aria-hidden="true">1</span>
+          <svg class="icon orbit__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-layers"></use></svg>
+          <h3 class="orbit__title">End&#8209;to&#8209;end expertise</h3>
+          <p class="orbit__text">From consultancy and RF planning to deployment and support.</p>
         </li>
-        <li class="why__item">
-          <h3 class="why__title">Multi-technology</h3>
-          <p class="why__text">LoRaWAN and NB-IoT connectivity matched to each use case.</p>
+        <li class="orbit__item">
+          <span class="orbit__num" aria-hidden="true">2</span>
+          <svg class="icon orbit__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-radio"></use></svg>
+          <h3 class="orbit__title">Multi-technology</h3>
+          <p class="orbit__text">LoRaWAN and NB-IoT connectivity matched to each use case.</p>
         </li>
-        <li class="why__item">
-          <h3 class="why__title">Industrial grade</h3>
-          <p class="why__text">ATEX-rated sensing for hazardous, safety-critical environments.</p>
+        <li class="orbit__item">
+          <span class="orbit__num" aria-hidden="true">3</span>
+          <svg class="icon orbit__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-shield-check"></use></svg>
+          <h3 class="orbit__title">Industrial grade</h3>
+          <p class="orbit__text">ATEX-rated sensing for hazardous, safety-critical environments.</p>
         </li>
-        <li class="why__item">
-          <h3 class="why__title">Advisory partner</h3>
-          <p class="why__text">Trusted support from tender preparation through to go-live.</p>
+        <li class="orbit__item">
+          <span class="orbit__num" aria-hidden="true">4</span>
+          <svg class="icon orbit__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-handshake"></use></svg>
+          <h3 class="orbit__title">Advisory partner</h3>
+          <p class="orbit__text">Trusted support from tender preparation through to go-live.</p>
         </li>
       </ul>
     </div>

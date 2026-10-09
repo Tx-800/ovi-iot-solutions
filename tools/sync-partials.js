@@ -421,6 +421,10 @@ function buildPage(file) {
   html = removeElements(html, 'data-requires-any', (value) =>
     value.split(/\s+/).filter(Boolean).every(isUnsetKey));
   html = removeElements(html, 'data-requires', (value) => isUnsetKey(value.trim()));
+  /* The reverse: a visible placeholder that exists only while the value is
+     unset, and disappears the moment the real value is filled in. Release is
+     still blocked by tools/check-release.js while any placeholder remains. */
+  html = removeElements(html, 'data-unless', (value) => !isUnsetKey(value.trim()));
 
   /* 3. Bake {{token}} values. */
   html = html.replace(/\{\{([\w.]+)\}\}/g, (match, key) => {

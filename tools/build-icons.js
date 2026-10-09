@@ -77,6 +77,11 @@ const ICONS = {
   'mail':               'footer email',
   'clock':              'footer opening hours',
   'arrow-right':        'footer enquiry link',
+  /* Why choose OVI orbit + get-in-touch section */
+  'layers':             'why: end-to-end expertise',
+  'radio':              'why: multi-technology',
+  'shield-check':       'why: industrial grade',
+  'send':               'get-in-touch submit button',
 };
 
 const missing = [];

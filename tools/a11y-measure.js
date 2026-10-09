@@ -131,6 +131,10 @@
     return o;
   }
 
+  function* ancestorsOf(node) {
+    for (let n = node; n && n.nodeType === 1; n = n.parentElement) yield n;
+  }
+
   function within(node, root) {
     return node === root || root.contains(node);
   }
@@ -192,7 +196,17 @@
       if (start < 0) return null;
     }
     let below = stack.slice(start);
-    if (excludeRoot) below = below.filter((n) => !within(n, excludeRoot));
+    if (excludeRoot) {
+      /* Surroundings are what the component is designed to sit on. A
+         floating control — position:fixed and itself interactive, like the
+         WhatsApp and back-to-top buttons — floats over whatever
+         happens to scroll beneath it, so it is not part of any component's
+         surroundings; overlap with it is 2.4.11's job (checkObscured). Fixed
+         layers that are not controls (the open drawer panel) still count. */
+      below = below.filter((n) => !within(n, excludeRoot)
+        && ![...ancestorsOf(n)].some((a) => !within(excludeRoot, a)
+          && a.matches(INTERACTIVE) && win.getComputedStyle(a).position === 'fixed'));
+    }
 
     let candidates = [[255, 255, 255, 1]];
     for (const el of below.reverse()) {
