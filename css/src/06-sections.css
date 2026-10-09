@@ -199,7 +199,19 @@
 }
 
 @media (min-width: 1024px) {
+  .card-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .card-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* A card topped with a photograph (the sectors overview). The image runs to
+   the card's edges; it is decorative (alt=""), because the title says what
+   the sector is and the photo only illustrates it. */
+.card__media {
+  width: calc(100% + var(--card-pad) * 2);
+  max-width: none;
+  height: auto;
+  margin: calc(var(--card-pad) * -1) calc(var(--card-pad) * -1) var(--space-24);
+  border-radius: var(--r-md) var(--r-md) 0 0;
 }
 
 .card {
@@ -800,3 +812,11 @@
     box-shadow: var(--shadow-lift);
   }
 }
+
+/* --- Sector pages ----------------------------------------------------------
+   Two text columns ("The challenge" / "How OVI helps") start level with
+   each other rather than centring, and the list keeps a gap under its
+   heading (.key-points zeroes its own margin). */
+.split-7-5--top { align-items: start; }
+
+.sector__help-title + .key-points { margin-block-start: var(--space-24); }

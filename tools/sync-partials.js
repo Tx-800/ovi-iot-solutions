@@ -245,6 +245,7 @@ function sitePath(file) {
 const SECTIONS = {
   solutions: { path: '/solutions.html', name: 'Our solutions' },
   services:  { path: '/services.html', name: 'Consultancy & RF planning' },
+  sectors:   { path: '/sectors.html', name: 'Sectors' },
 };
 
 function breadcrumbFor(file, h1) {

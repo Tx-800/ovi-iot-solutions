@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Municipalities | OVI IoT Solutions</title>
+  <meta name="description" content="Remote meter reading and leak detection that reduce non-revenue water and put billing on measured consumption.">
+
+  <!-- @include head -->
+  <link rel="icon" href="/assets/brand/favicon.ico" sizes="any">
+  <link rel="icon" href="/assets/brand/favicon-32.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#111B2E">
+
+  <link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/main.css">
+  <!-- Synchronous on purpose: decides before first paint whether the logo intro
+       plays (once per session, never under reduced motion). ~0.5 KB. -->
+  <script src="/js/intro-gate.js"></script>
+
+  <!-- The no-JavaScript nav. The drawer is the default layout, so without a
+       script to open it the nav would be unreachable; these rules put the
+       list back in the flow and remove the control that could not work.
+       Parsed only when scripting is off, so it costs enabled browsers
+       nothing, and tools/check-nav.js tests this path on every run. -->
+  <noscript>
+    <style>
+      .site-header__toggle { display: none; }
+      .site-nav {
+        position: static;
+        width: auto;
+        padding: 0;
+        background: none;
+        box-shadow: none;
+        visibility: visible;
+        transform: none;
+        overflow: visible;
+      }
+      .mega {
+        position: static;
+        display: block;
+        opacity: 1;
+        visibility: visible;
+        min-width: 0;
+        padding: 0 0 0 var(--space-12);
+        background: none;
+        border: 0;
+        box-shadow: none;
+      }
+      .site-nav__disclosure { display: none; }
+    </style>
+  </noscript>
+  <!-- /@include head -->
+
+  <!-- @generated meta -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="OVI IoT Solutions">
+  <meta property="og:title" content="Municipalities | OVI IoT Solutions">
+  <meta property="og:description" content="Remote meter reading and leak detection that reduce non-revenue water and put billing on measured consumption.">
+  <meta name="twitter:card" content="summary_large_image">
+    <!-- /@generated meta -->
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <!-- @include header -->
+  <!-- Logo intro: shown only when js/intro-gate.js sets data-intro on <html>
+       (first page of a session, motion allowed). Pure CSS animation, 1.5s, and
+       it hides itself at the end. aria-hidden: it is decoration, and the page
+       underneath is already there for assistive technology. The logo pixels are
+       the supplied file, untouched: only position, scale and opacity move. -->
+  <div class="intro" aria-hidden="true">
+    <div class="intro__stage">
+      <svg class="intro__rings" viewBox="0 0 200 200" focusable="false">
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+        <circle class="intro__ring" cx="100" cy="100" r="66"/>
+      </svg>
+      <img class="intro__logo" src="/assets/brand/ovi-logo-320.png" width="320" height="139" alt="" decoding="async">
+    </div>
+  </div>
+
+  <header class="site-header" data-header>
+    <div class="site-header__inner container">
+      <a class="site-header__brand" href="/">
+        <img src="/assets/brand/ovi-logo-320.png"
+             srcset="/assets/brand/ovi-logo-160.png 160w, /assets/brand/ovi-logo-320.png 320w, /assets/brand/ovi-logo-600.png 600w"
+             sizes="132px" width="320" height="139" alt="OVI IoT Solutions">
+      </a>
+
+      <button class="site-header__toggle" type="button"
+              data-drawer-toggle aria-expanded="false" aria-controls="site-nav">
+        <svg class="icon site-header__toggle-icon site-header__toggle-icon--open" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-menu"></use></svg>
+        <svg class="icon site-header__toggle-icon site-header__toggle-icon--close" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-x"></use></svg>
+        <span class="site-header__toggle-label">Menu</span>
+      </button>
+
+      <div class="site-nav" id="site-nav" data-drawer>
+        <nav aria-label="Primary">
+          <ul class="site-nav__list" role="list">
+            <li class="site-nav__item site-nav__item--has-menu">
+              <a class="site-nav__link" href="/solutions.html">Solutions</a>
+              <button class="site-nav__disclosure" type="button"
+                      data-disclosure aria-expanded="false" aria-controls="menu-solutions">
+                <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-chevron-down"></use></svg>
+                <span class="visually-hidden">Show solutions</span>
+              </button>
+
+              <div class="mega" id="menu-solutions" data-mega>
+                <ul class="mega__list" role="list">
+                  <li><a href="/solutions/smart-water-metering.html">Smart water metering</a></li>
+                  <li><a href="/solutions/smart-street-lighting.html">Smart street lighting</a></li>
+                  <li><a href="/solutions/water-leak-detection.html">Water leak detection</a></li>
+                  <li><a href="/solutions/water-quality-monitoring.html">Water quality monitoring</a></li>
+                  <li><a href="/solutions/water-level-monitoring.html">Water level monitoring</a></li>
+                  <li><a href="/solutions/people-asset-tracking.html">People &amp; asset tracking</a></li>
+                  <li><a href="/solutions/atex-zone-sensors.html">ATEX zone sensors</a></li>
+                </ul>
+                <p class="mega__all"><a href="/solutions.html">All solutions</a></p>
+              </div>
+            </li>
+
+            <li class="site-nav__item"><a class="site-nav__link" href="/sectors.html">Sectors</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/services.html">Services</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/technology.html">Technology</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/about.html">About</a></li>
+            <li class="site-nav__item"><a class="site-nav__link" href="/contact.html">Contact</a></li>
+          </ul>
+        </nav>
+
+        <a class="btn btn--primary site-nav__cta" href="/contact.html">Request a consultation</a>
+      </div>
+    </div>
+  </header>
+  <!-- /@include header -->
+
+  <main id="main">
+    <section class="section section--tight page-head" aria-labelledby="page-title">
+      <div class="container">
+        <div class="flow">
+          <!-- @breadcrumbs -->
+    <nav class="breadcrumbs" aria-label="Breadcrumb">
+      <ol class="breadcrumbs__list" role="list">
+      <li class="breadcrumbs__item"><a href="/">Home</a></li>
+      <li class="breadcrumbs__item"><a href="/sectors.html">Sectors</a></li>
+      <li class="breadcrumbs__item" aria-current="page">Municipalities</li>
+      </ol>
+    </nav>
+  <!-- /@breadcrumbs -->
+          <p class="eyebrow">Sectors</p>
+          <h1 id="page-title">Municipalities</h1>
+          <p class="page-head__family">Urban local bodies and municipal water departments.</p>
+          <p class="lead">Remote meter reading and leak detection that reduce non-revenue water and put billing on measured consumption.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- @photo -->
+    <div class="section section--tight media-band">
+      <div class="container">
+        <img class="media-band__img" src="/assets/img/sector-municipality.webp"
+             srcset="/assets/img/sector-municipality-800w.webp 800w, /assets/img/sector-municipality.webp 1240w, /assets/img/sector-municipality@2x.webp 2400w"
+             sizes="(min-width: 1240px) 1176px, (min-width: 800px) calc(100vw - 4rem), calc(100vw - 2rem)"
+             width="1240" height="531" alt="Workers laying a water pipe in an open trench beside a city pavement" decoding="async">
+      </div>
+    </div>
+    <!-- /@photo -->
+
+    <section class="section" aria-labelledby="challenge-title">
+      <div class="container">
+        <div class="split-7-5 split-7-5--top">
+          <div class="flow">
+            <h2 id="challenge-title">The challenge</h2>
+            <p>For a municipal water department, every litre lost to leaks, theft or unbilled connections is treated water that earned nothing: non-revenue water. Manual meter reading makes billing slow and error-prone, and leaks are often found only when a road surface gives way or residents complain.</p>
+            <p>Supply schedules, overhead reservoirs and pumping stations are often still monitored by phone calls and site visits.</p>
+          </div>
+          <div class="flow">
+            <h2 id="help-title" class="sector__help-title">How OVI helps</h2>
+            <ul class="key-points flow" role="list" aria-labelledby="help-title">
+            <li class="key-points__item">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-check"></use></svg>
+              <span>Automated meter reading across residential, commercial and bulk connections</span>
+            </li>
+            <li class="key-points__item">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-check"></use></svg>
+              <span>Billing on measured, timely consumption</span>
+            </li>
+            <li class="key-points__item">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-check"></use></svg>
+              <span>Leak and tamper alerts from abnormal usage patterns</span>
+            </li>
+            <li class="key-points__item">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-check"></use></svg>
+              <span>Reservoir and tank levels reported in real time</span>
+            </li>
+            <li class="key-points__item">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-check"></use></svg>
+              <span>Network coverage planned and surveyed before rollout</span>
+            </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="related-title">
+      <div class="container">
+        <h2 class="related__title" id="related-title">Solutions for this sector</h2>
+        <ul class="card-grid card-grid--3" role="list">
+          <li class="card">
+            <span class="card__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-gauge"></use></svg></span>
+            <h3 class="card__title"><a class="card__link" href="/solutions/smart-water-metering.html">Smart water metering</a></h3>
+            <p class="card__text">LoRaWAN and NB-IoT connected smart water meters for residential, commercial and bulk supply points.</p>
+          </li>
+          <li class="card">
+            <span class="card__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-droplets"></use></svg></span>
+            <h3 class="card__title"><a class="card__link" href="/solutions/water-leak-detection.html">Water leak detection</a></h3>
+            <p class="card__text">Acoustic and pressure-based sensors identify leaks early, reducing water loss and repair costs.</p>
+          </li>
+          <li class="card">
+            <span class="card__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-waves"></use></svg></span>
+            <h3 class="card__title"><a class="card__link" href="/solutions/water-level-monitoring.html">Water level monitoring</a></h3>
+            <p class="card__text">Real-time level monitoring in tanks, reservoirs and channels supports optimized management and flood alerts.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- @include cta-band -->
+  <section class="section touch" aria-labelledby="cta-band-title">
+    <div class="container">
+      <header class="touch__head">
+        <p class="eyebrow">Get in touch</p>
+        <h2 class="touch__title" id="cta-band-title">Let&rsquo;s build smarter infrastructure together</h2>
+      </header>
+
+      <div class="touch__grid">
+        <div class="touch__info">
+          <p class="touch__intro">Tell us about your network, site or tender and we&rsquo;ll come back with a technical response — LoRaWAN &amp; NB-IoT solutions, consultancy and RF planning.</p>
+
+          <ul class="touch__cards" role="list">
+            <li class="touch-card">
+              <svg class="icon touch-card__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-map-pin"></use></svg>
+              <div>
+                <h3 class="touch-card__label">Office address</h3>
+                <p class="touch-card__value is-placeholder">Office address, city and postcode</p>
+              </div>
+            </li>
+            <li class="touch-card">
+              <svg class="icon touch-card__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-mail"></use></svg>
+              <div>
+                <h3 class="touch-card__label">Email</h3>
+                <p class="touch-card__value is-placeholder">name@company-domain.com</p>
+              </div>
+            </li>
+            <li class="touch-card">
+              <svg class="icon touch-card__icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-phone"></use></svg>
+              <div>
+                <h3 class="touch-card__label">Phone</h3>
+                <p class="touch-card__value is-placeholder">+00 00000 00000</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="touch__form">
+          <div class="form-sent" id="sent" tabindex="-1">
+            <h2 class="form-sent__title">Thanks — your enquiry has been sent</h2>
+            <p>We&rsquo;ll come back to you with a technical response.</p>
+          </div>
+
+          <form class="form" action="https://api.web3forms.com/submit" method="POST" data-contact-form
+                aria-labelledby="touch-form-title">
+            <h3 id="touch-form-title" class="touch__form-title">Send us a message</h3>
+
+            
+            <input type="hidden" name="subject" value="New enquiry from the OVI IoT Solutions website">
+            <input type="hidden" name="from_name" value="OVI IoT Solutions website">
+            
+            <input class="form__hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off">
+
+            <div class="form__status" role="status" aria-live="polite" data-form-status></div>
+
+            <div class="form__grid">
+              <div class="field">
+                <label class="field__label" for="t-name">Name <span class="field__req" aria-hidden="true">(required)</span></label>
+                <input class="field__input" id="t-name" name="name" type="text" autocomplete="name" required>
+                <p class="field__error" id="t-name-error" hidden></p>
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="t-email">Work email <span class="field__req" aria-hidden="true">(required)</span></label>
+                <input class="field__input" id="t-email" name="email" type="email" autocomplete="email"
+                       inputmode="email" spellcheck="false" required>
+                <p class="field__error" id="t-email-error" hidden></p>
+              </div>
+
+              <div class="field field--full">
+                <label class="field__label" for="t-interest">Area of interest</label>
+                <select class="field__input field__select" id="t-interest" name="interest">
+                  <option value="">Select one</option>
+                  <option>Smart water metering</option>
+                  <option>Smart street lighting</option>
+                  <option>Water leak detection</option>
+                  <option>Water quality monitoring</option>
+                  <option>Water level monitoring</option>
+                  <option>People &amp; asset tracking</option>
+                  <option>ATEX zone sensors</option>
+                  <option>Consultancy &amp; tender preparation</option>
+                  <option>RF planning &amp; site survey</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="field field--full">
+                <label class="field__label" for="t-message">Message <span class="field__req" aria-hidden="true">(required)</span></label>
+                <textarea class="field__input field__textarea" id="t-message" name="message" rows="4" required></textarea>
+                <p class="field__error" id="t-message-error" hidden></p>
+              </div>
+            </div>
+
+            <p class="form__actions">
+              <button class="btn btn--primary" type="submit" data-form-submit>Send message
+                <svg class="icon icon--sm" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-send"></use></svg></button>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /@include cta-band -->
+
+  <!-- @include footer -->
+  <footer class="site-footer on-dark">
+    <div class="site-footer__contour" aria-hidden="true">
+      <svg viewBox="0 0 900 900" width="900" height="900" focusable="false">
+        <circle cx="450" cy="450" r="449" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="2 6"/>
+      </svg>
+    </div>
+
+    <div class="container site-footer__inner">
+      <div class="site-footer__brand">
+        <a class="site-footer__logo logo-panel" href="/">
+          <img src="/assets/brand/ovi-logo-320.png"
+               srcset="/assets/brand/ovi-logo-160.png 160w, /assets/brand/ovi-logo-320.png 320w"
+               sizes="148px" width="320" height="139" alt="OVI IoT Solutions" loading="lazy" decoding="async">
+        </a>
+        <p class="site-footer__tagline">Smart IoT solutions for connected infrastructure.</p>
+      </div>
+
+      <nav class="site-footer__nav" aria-label="Footer">
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Solutions</h2>
+          <ul role="list">
+            <li><a href="/solutions/smart-water-metering.html">Smart water metering</a></li>
+            <li><a href="/solutions/smart-street-lighting.html">Smart street lighting</a></li>
+            <li><a href="/solutions/water-leak-detection.html">Water leak detection</a></li>
+            <li><a href="/solutions/water-quality-monitoring.html">Water quality monitoring</a></li>
+            <li><a href="/solutions/water-level-monitoring.html">Water level monitoring</a></li>
+            <li><a href="/solutions/people-asset-tracking.html">People &amp; asset tracking</a></li>
+            <li><a href="/solutions/atex-zone-sensors.html">ATEX zone sensors</a></li>
+          </ul>
+        </div>
+
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Sectors</h2>
+          <ul role="list">
+            <li><a href="/sectors/apartments.html">Apartments</a></li>
+            <li><a href="/sectors/gated-communities.html">Gated communities</a></li>
+            <li><a href="/sectors/commercial-buildings.html">Commercial buildings</a></li>
+            <li><a href="/sectors/industries.html">Industries</a></li>
+            <li><a href="/sectors/municipality.html" aria-current="page">Municipalities</a></li>
+            <li><a href="/sectors/smart-cities.html">Smart cities</a></li>
+            <li><a href="/sectors/utility-companies.html">Utility companies</a></li>
+            <li><a href="/sectors/irrigation-agriculture.html">Irrigation &amp; agriculture</a></li>
+          </ul>
+        </div>
+
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Services</h2>
+          <ul role="list">
+            <li><a href="/services/consultancy-tender-preparation.html">Consultancy &amp; tender preparation</a></li>
+            <li><a href="/services/rf-planning-site-survey.html">RF planning &amp; site survey</a></li>
+            <li><a href="/services.html">All services</a></li>
+          </ul>
+        </div>
+
+        <div class="site-footer__col">
+          <h2 class="site-footer__heading">Company</h2>
+          <ul role="list">
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/technology.html">Technology</a></li>
+            <li><a href="/solutions.html">Solutions</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="site-footer__legal">
+      <div class="container">
+        <p>&copy; 2026 OVI IoT Solutions</p>
+      </div>
+    </div>
+
+    <!-- The floating controls are position:fixed, so where they sit in the
+         DOM does not move them on screen — but it decides their landmark.
+         Outside <footer> they belonged to none, which axe flags (`region`).
+         That stayed invisible until Phase 5, because the FAB only exists once
+         SITE.whatsapp is real and every earlier run used placeholders. The
+         footer has no transform, so it does not trap the fixed positioning. -->
+
+    <button class="back-to-top" type="button" data-back-to-top hidden>
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="/assets/icons/sprite.svg#i-arrow-up"></use></svg>
+      <span class="visually-hidden">Back to top</span>
+    </button>
+
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+  </footer>
+  <!-- /@include footer -->
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>

@@ -97,7 +97,7 @@
       const noJsToggle = nd.querySelector('[data-drawer-toggle]');
       const noJsHeader = nd.querySelector('[data-header]');
 
-      check('no-JS: nav links are present', noJsLinks.length === 5, `${noJsLinks.length} links`);
+      check('no-JS: nav links are present', noJsLinks.length === 6, /* Solutions, Sectors, Services, Technology, About, Contact */ `${noJsLinks.length} links`);
       check('no-JS: every nav link is visible', [...noJsLinks].every(visible));
       check('no-JS: the noscript fallback puts the nav back in the flow',
         noJs.contentWindow.getComputedStyle(nd.querySelector('.site-nav')).position === 'static');

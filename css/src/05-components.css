@@ -566,7 +566,11 @@
 }
 
 @media (min-width: 768px) {   /* --bp-md */
-  .site-footer__nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .site-footer__nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {   /* --bp-lg */
+  .site-footer__nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 /* --- Floating controls ---------------------------------------------------- */
@@ -1103,4 +1107,12 @@ body:not(:has(.fab)) .back-to-top {
 
 @media (prefers-reduced-motion: reduce) {
   [data-intro] .intro { display: none; }
+}
+
+/* Six nav items plus the CTA only just fit one row at the low end of the
+   horizontal header. Between the drawer breakpoint and 1280px, tighten the
+   gaps so the CTA never wraps under the links. */
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .site-nav { gap: var(--space-12); }
+  .site-nav__list { column-gap: var(--space-16); }
 }
