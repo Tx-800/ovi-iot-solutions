@@ -36,8 +36,8 @@ if (!PREVIEW) {
 
 /* What ships. Directories are copied recursively, minus EXCLUDE. */
 const SHIP = [
-  'index.html', 'about.html', 'technology.html', 'solutions.html', 'services.html', 'contact.html', '404.html',
-  'solutions', 'services',
+  'index.html', 'about.html', 'technology.html', 'solutions.html', 'services.html', 'sectors.html', 'contact.html', '404.html',
+  'solutions', 'services', 'sectors',
   'css/main.css',
   'js',
   'assets',
