@@ -735,51 +735,47 @@
 
 /* --- Hover, sitewide -------------------------------------------------------
    One place for hover across the site, so it reads as one system.
-   - (hover: hover) only: a touch screen has no hover, and a tap must not
-     leave a card stuck half-lifted.
-   - Colour changes for everyone; movement (lift, nudge, zoom) only when the
-     visitor has not asked for reduced motion.
+   - Colour and shadow changes apply on hover; movement (lift, nudge, zoom)
+     applies when the visitor has not asked for reduced motion.
    - Blocks that are not links (pillars, the "why" list, diagram stages) only
      light their icon or rule; they never lift, because lifting says "click
      me" and they are not clickable. */
 
-@media (hover: hover) {
-  .card:hover {
-    border-color: var(--ovi-blue);
-    box-shadow: var(--shadow-lift);
-  }
-
-  .card:hover .card__icon,
-  .pillar:hover .icon,
-  .arch__stage:hover .icon {
-    background-color: var(--ovi-blue);
-    color: var(--white);
-  }
-
-  .orbit__item:hover { border-color: var(--ovi-blue); }
-
-  .touch-card:hover { border-color: var(--ovi-blue); }
-
-  .touch-card:hover .touch-card__icon {
-    background-color: var(--ovi-blue);
-    color: var(--white);
-  }
-
-  .orbit__item:hover .orbit__icon {
-    background-color: var(--ovi-blue);
-    color: var(--white);
-  }
-
-  .site-nav__link:hover:not([aria-current]) { border-block-end-color: var(--blue-200); }
-
-  .btn--primary:hover,
-  .btn--on-dark:hover { box-shadow: var(--shadow-btn); }
-
-  .fab:hover,
-  .back-to-top:hover { box-shadow: var(--shadow-btn); }
+.card:hover {
+  border-color: var(--ovi-blue);
+  box-shadow: var(--shadow-lift);
 }
 
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+.card:hover .card__icon,
+.pillar:hover .icon,
+.arch__stage:hover .icon {
+  background-color: var(--ovi-blue);
+  color: var(--white);
+}
+
+.orbit__item:hover { border-color: var(--ovi-blue); }
+
+.touch-card:hover { border-color: var(--ovi-blue); }
+
+.touch-card:hover .touch-card__icon {
+  background-color: var(--ovi-blue);
+  color: var(--white);
+}
+
+.orbit__item:hover .orbit__icon {
+  background-color: var(--ovi-blue);
+  color: var(--white);
+}
+
+.site-nav__link:hover:not([aria-current]) { border-block-end-color: var(--blue-200); }
+
+.btn--primary:hover,
+.btn--on-dark:hover { box-shadow: var(--shadow-btn); }
+
+.fab:hover,
+.back-to-top:hover { box-shadow: var(--shadow-btn); }
+
+@media (prefers-reduced-motion: no-preference) {
   .card:hover { transform: translateY(var(--lift-card)); }
 
   .btn:hover { transform: translateY(var(--lift-btn)); }
@@ -810,6 +806,18 @@
   .media-band__img:hover {
     transform: scale(1.015);
     box-shadow: var(--shadow-lift);
+  }
+
+  .card--media {
+    overflow: hidden;
+  }
+
+  .card__media {
+    transition: transform var(--dur-menu) var(--ease-out-expo);
+  }
+
+  .card:hover .card__media {
+    transform: scale(1.03);
   }
 }
 
