@@ -98,7 +98,6 @@ const files = {
   ].join('\n'),
 
   'vercel.json': `${JSON.stringify({
-    $comment: `${GENERATED} 404: Vercel serves dist/404.html for any missing path, with status 404.`,
     framework: null,
     buildCommand: BUILD,
     outputDirectory: 'dist',
