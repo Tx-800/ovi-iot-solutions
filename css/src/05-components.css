@@ -69,6 +69,7 @@
 
 .btn--primary:hover {
   background-color: var(--blue-700);
+  box-shadow: 0 8px 24px -4px rgba(2, 105, 196, 0.5);
 }
 
 .btn--secondary {
@@ -79,6 +80,7 @@
 .btn--secondary:hover {
   background-color: var(--navy-700);
   color: var(--white);
+  box-shadow: 0 8px 20px -4px rgba(28, 44, 69, 0.35);
 }
 
 .btn--on-dark {
@@ -87,7 +89,9 @@
 }
 
 .btn--on-dark:hover {
-  background-color: var(--blue-100);
+  background-color: var(--white);
+  color: var(--blue-600);
+  box-shadow: 0 8px 24px -4px rgba(255, 255, 255, 0.4);
 }
 
 /* The secondary partner to .btn--on-dark. DESIGN.md §5 lists a Secondary in
@@ -99,8 +103,10 @@
 }
 
 .btn--outline-on-dark:hover {
-  background-color: var(--white);
-  color: var(--navy-900);
+  border-color: var(--ovi-blue);
+  background-color: rgba(3, 135, 246, 0.15);
+  color: var(--white);
+  box-shadow: 0 8px 22px -4px rgba(3, 135, 246, 0.35);
 }
 
 .btn--ghost-on-dark {

@@ -62,21 +62,4 @@ export async function init() {
       { duration: DURATION, delay: start + i * STAGGER, ease: EASE },
     );
   });
-
-  if (!pulse) return;
-
-  /* One continuous element, deliberately slow: a single contour leaving the
-     gateway every four seconds. It starts after the entrance has finished. */
-  const entranceEnd = start + DURATION + (rings.length - 1) * STAGGER;
-
-  animate(
-    pulse,
-    { scale: [1, 4.5], opacity: [0.5, 0] },
-    {
-      duration: PULSE_PERIOD,
-      delay: entranceEnd,
-      ease: 'linear',
-      repeat: Infinity,
-    },
-  );
 }

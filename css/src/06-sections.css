@@ -101,26 +101,73 @@
 .plot__ring--4 { stroke-opacity: 0.26; }
 .plot__ring--5 { stroke-opacity: 0.15; }
 
-/* The one continuous element: a slow pulse every 4s, started by hero-plot.js
-   and never started at all under prefers-reduced-motion. */
+/* Continuous radio coverage pulse radiating outward from the gateway */
 .plot__pulse {
   fill: none;
   stroke: var(--ovi-blue);
-  stroke-width: 1;
-  opacity: 0;
-  transform-box: view-box;
-  transform-origin: center;
+  stroke-width: 1.5;
+  transform-origin: 280px 280px;
+  animation: hero-plot-pulse 3.8s cubic-bezier(0.16, 0.8, 0.35, 1) infinite;
+  pointer-events: none;
 }
 
-.plot__device { fill: var(--blue-200); }
+@keyframes hero-plot-pulse {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(4.5);
+    opacity: 0;
+  }
+}
+
+.plot__device {
+  fill: var(--blue-200);
+  transition: fill var(--dur-hover) ease, transform var(--dur-hover) ease;
+  transform-origin: center;
+}
 
 .plot__gateway-ring {
   fill: none;
   stroke: var(--white);
-  stroke-width: 1;
+  stroke-width: 1.5;
+  transform-origin: 280px 280px;
+  animation: gateway-beacon-ping 2.4s cubic-bezier(0.1, 0.7, 0.4, 1) infinite;
 }
 
-.plot__gateway { fill: var(--ovi-blue); }
+@keyframes gateway-beacon-ping {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.95;
+    stroke: var(--white);
+  }
+  60% {
+    opacity: 0.4;
+    stroke: var(--ovi-blue);
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+.plot__gateway {
+  fill: var(--ovi-blue);
+  filter: drop-shadow(0 0 8px rgba(3, 135, 246, 0.85));
+}
+
+.hero__plot:hover .plot__ring {
+  stroke: var(--blue-500);
+  filter: drop-shadow(0 0 4px rgba(3, 135, 246, 0.35));
+}
+
+.hero__plot:hover .plot__device {
+  fill: var(--white);
+}
 
 /* --- 2. Pillars -----------------------------------------------------------
    Deliberately not cards: three columns split by vertical hairlines, no
@@ -734,51 +781,148 @@
 }
 
 /* --- Hover, sitewide -------------------------------------------------------
-   One place for hover across the site, so it reads as one system.
-   - Colour and shadow changes apply on hover; movement (lift, nudge, zoom)
-     applies when the visitor has not asked for reduced motion.
-   - Blocks that are not links (pillars, the "why" list, diagram stages) only
-     light their icon or rule; they never lift, because lifting says "click
-     me" and they are not clickable. */
+   Creative, interactive hover system across the entire site. */
+
+.card {
+  transition:
+    border-color var(--dur-hover) ease,
+    box-shadow var(--dur-hover) ease,
+    transform var(--dur-hover) var(--ease-out-expo);
+}
 
 .card:hover {
   border-color: var(--ovi-blue);
-  box-shadow: var(--shadow-lift);
+  box-shadow: 0 16px 36px -10px rgba(3, 135, 246, 0.22), 0 4px 12px rgba(17, 27, 46, 0.06);
 }
 
-.card:hover .card__icon,
-.pillar:hover .icon,
+.card:hover .card__title {
+  color: var(--blue-600);
+}
+
+.card:hover .card__icon {
+  background: linear-gradient(135deg, var(--ovi-blue), var(--blue-600));
+  color: var(--white);
+  box-shadow: 0 6px 16px -4px rgba(3, 135, 246, 0.5);
+  transform: translateY(-2px) scale(1.08);
+}
+
+.pillar {
+  transition: transform var(--dur-hover) var(--ease-out-expo);
+}
+
+.pillar:hover {
+  transform: translateY(-4px);
+}
+
+.pillar:hover .icon {
+  background: linear-gradient(135deg, var(--ovi-blue), var(--blue-600));
+  color: var(--white);
+  box-shadow: 0 8px 20px -4px rgba(3, 135, 246, 0.45);
+  transform: scale(1.08);
+}
+
+.pillar:hover .pillar__title {
+  color: var(--blue-600);
+}
+
+.arch__stage {
+  padding: var(--space-8);
+  border-radius: var(--r-md);
+  transition: background-color var(--dur-hover) ease, transform var(--dur-hover) var(--ease-out-expo);
+}
+
+.arch__stage:hover {
+  background-color: rgba(28, 44, 69, 0.55);
+  transform: translateY(-4px);
+}
+
 .arch__stage:hover .icon {
-  background-color: var(--ovi-blue);
+  background: linear-gradient(135deg, var(--ovi-blue), var(--blue-600));
+  color: var(--white);
+  box-shadow: 0 0 20px rgba(3, 135, 246, 0.6);
+  transform: scale(1.1);
+}
+
+.arch__stage:hover .arch__title {
   color: var(--white);
 }
 
-.orbit__item:hover { border-color: var(--ovi-blue); }
+.arch__stage:hover .arch__step {
+  color: var(--ovi-blue);
+}
 
-.touch-card:hover { border-color: var(--ovi-blue); }
+.orbit__item {
+  transition:
+    border-color var(--dur-hover) ease,
+    box-shadow var(--dur-hover) ease,
+    transform var(--dur-hover) var(--ease-out-expo);
+}
 
-.touch-card:hover .touch-card__icon {
-  background-color: var(--ovi-blue);
-  color: var(--white);
+.orbit__item:hover {
+  border-color: var(--ovi-blue);
+  box-shadow: 0 14px 32px -8px rgba(3, 135, 246, 0.28);
 }
 
 .orbit__item:hover .orbit__icon {
-  background-color: var(--ovi-blue);
+  background: linear-gradient(135deg, var(--ovi-blue), var(--blue-600));
   color: var(--white);
+  box-shadow: 0 6px 16px -4px rgba(3, 135, 246, 0.45);
+  transform: scale(1.08);
 }
 
-.site-nav__link:hover:not([aria-current]) { border-block-end-color: var(--blue-200); }
+.orbit__item:hover .orbit__title {
+  color: var(--blue-600);
+}
 
-.btn--primary:hover,
-.btn--on-dark:hover { box-shadow: var(--shadow-btn); }
+.orbit__item:hover .orbit__num {
+  background-color: var(--ovi-blue);
+  color: var(--white);
+  transform: scale(1.1);
+}
+
+.touch-card {
+  transition:
+    border-color var(--dur-hover) ease,
+    box-shadow var(--dur-hover) ease,
+    transform var(--dur-hover) var(--ease-out-expo);
+}
+
+.touch-card:hover {
+  border-color: var(--ovi-blue);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -8px rgba(3, 135, 246, 0.25);
+}
+
+.touch-card:hover .touch-card__icon {
+  background: linear-gradient(135deg, var(--ovi-blue), var(--blue-600));
+  color: var(--white);
+  box-shadow: 0 6px 16px -4px rgba(3, 135, 246, 0.45);
+  transform: scale(1.08);
+}
+
+.site-nav__link:hover:not([aria-current]) {
+  border-block-end-color: var(--blue-200);
+}
+
+.btn--primary:hover {
+  box-shadow: 0 8px 24px -4px rgba(2, 105, 196, 0.55);
+}
+
+.btn--on-dark:hover {
+  box-shadow: 0 8px 24px -4px rgba(255, 255, 255, 0.35);
+}
 
 .fab:hover,
-.back-to-top:hover { box-shadow: var(--shadow-btn); }
+.back-to-top:hover {
+  box-shadow: 0 10px 24px -6px rgba(3, 135, 246, 0.5);
+}
 
 @media (prefers-reduced-motion: no-preference) {
-  .card:hover { transform: translateY(var(--lift-card)); }
+  .card:hover { transform: translateY(-6px); }
 
   .btn:hover { transform: translateY(var(--lift-btn)); }
+
+  .btn:active { transform: translateY(0); }
 
   .fab,
   .back-to-top {
@@ -791,21 +935,21 @@
   }
 
   .fab:hover,
-  .back-to-top:hover { transform: translateY(var(--lift-btn)); }
+  .back-to-top:hover { transform: translateY(var(--lift-btn)) scale(1.06); }
 
   .touch__form .btn .icon {
     transition: transform var(--dur-hover) var(--ease-out-expo);
   }
 
-  .touch__form .btn:hover .icon { transform: translateX(var(--space-4)); }
+  .touch__form .btn:hover .icon { transform: translateX(var(--space-8)); }
 
   .media-band__img {
-    transition: transform var(--dur-menu) var(--ease-out-expo), box-shadow var(--dur-menu) linear;
+    transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
   }
 
   .media-band__img:hover {
-    transform: scale(1.015);
-    box-shadow: var(--shadow-lift);
+    transform: scale(1.02);
+    box-shadow: 0 20px 40px -16px rgba(17, 27, 46, 0.35);
   }
 
   .card--media {
@@ -813,11 +957,12 @@
   }
 
   .card__media {
-    transition: transform var(--dur-menu) var(--ease-out-expo);
+    transition: transform 0.45s var(--ease-out-expo), filter 0.45s ease;
   }
 
   .card:hover .card__media {
-    transform: scale(1.03);
+    transform: scale(1.05);
+    filter: brightness(1.03);
   }
 }
 

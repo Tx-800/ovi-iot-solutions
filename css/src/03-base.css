@@ -7,8 +7,7 @@
    ========================================================================== */
 
 html {
-  /* No smooth scrolling: the motion budget is one orchestrated moment per
-     page (DESIGN.md §8), and scroll-behaviour is not one of them. */
+  scroll-behavior: smooth;
   background-color: var(--paper);
 }
 
