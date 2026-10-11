@@ -101,28 +101,19 @@
 .plot__ring--4 { stroke-opacity: 0.26; }
 .plot__ring--5 { stroke-opacity: 0.15; }
 
-/* Continuous radio coverage pulse radiating outward from the gateway */
-.plot__pulse {
-  fill: none;
-  stroke: var(--ovi-blue);
-  stroke-width: 1.5;
-  transform-origin: 280px 280px;
-  animation: hero-plot-pulse 3.8s cubic-bezier(0.16, 0.8, 0.35, 1) infinite;
+/* Continuous radio coverage waves radiating outward from the gateway */
+.plot__waves {
   pointer-events: none;
 }
 
-@keyframes hero-plot-pulse {
-  0% {
-    transform: scale(0.65);
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 0.45;
-  }
-  100% {
-    transform: scale(4.5);
-    opacity: 0;
-  }
+.plot__wave {
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(3, 135, 246, 0.8));
+}
+
+.plot__gateway-ping {
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(3, 135, 246, 0.9));
 }
 
 .plot__device {
@@ -135,38 +126,29 @@
   fill: none;
   stroke: var(--white);
   stroke-width: 1.5;
-  transform-origin: 280px 280px;
-  animation: gateway-beacon-ping 2.4s cubic-bezier(0.1, 0.7, 0.4, 1) infinite;
-}
-
-@keyframes gateway-beacon-ping {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.95;
-    stroke: var(--white);
-  }
-  60% {
-    opacity: 0.4;
-    stroke: var(--ovi-blue);
-  }
-  100% {
-    transform: scale(2.6);
-    opacity: 0;
-  }
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
 }
 
 .plot__gateway {
   fill: var(--ovi-blue);
-  filter: drop-shadow(0 0 8px rgba(3, 135, 246, 0.85));
+  filter: drop-shadow(0 0 10px rgba(3, 135, 246, 0.95));
 }
 
 .hero__plot:hover .plot__ring {
   stroke: var(--blue-500);
-  filter: drop-shadow(0 0 4px rgba(3, 135, 246, 0.35));
+  filter: drop-shadow(0 0 6px rgba(3, 135, 246, 0.5));
 }
 
 .hero__plot:hover .plot__device {
   fill: var(--white);
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plot__waves,
+  .plot__gateway-ping {
+    display: none;
+  }
 }
 
 /* --- 2. Pillars -----------------------------------------------------------
@@ -774,10 +756,34 @@
    The photo sits wholly on the light section below the belt, never across
    it: a picture half on navy and half on white read as a mistake. */
 
+.media-band {
+  overflow: hidden;
+}
+
+.media-band .container {
+  overflow: hidden;
+  border-radius: var(--r-md);
+}
+
 .media-band__img {
   width: 100%;
   height: auto;
   border-radius: var(--r-md);
+  border: 1px solid var(--hairline);
+  box-shadow: 0 4px 16px -4px rgba(17, 27, 46, 0.08);
+  transition:
+    transform 0.5s var(--ease-out-expo),
+    box-shadow 0.5s ease,
+    filter 0.5s ease,
+    border-color 0.5s ease;
+  cursor: pointer;
+}
+
+.media-band__img:hover {
+  transform: scale(1.03) translateY(-4px);
+  box-shadow: 0 24px 48px -12px rgba(3, 135, 246, 0.28), 0 8px 24px -4px rgba(17, 27, 46, 0.15);
+  border-color: var(--ovi-blue);
+  filter: brightness(1.05) contrast(1.03);
 }
 
 /* --- Hover, sitewide -------------------------------------------------------
@@ -947,22 +953,29 @@
     transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
   }
 
-  .media-band__img:hover {
-    transform: scale(1.02);
-    box-shadow: 0 20px 40px -16px rgba(17, 27, 46, 0.35);
-  }
-
   .card--media {
     overflow: hidden;
   }
 
   .card__media {
-    transition: transform 0.45s var(--ease-out-expo), filter 0.45s ease;
+    transition: transform 0.5s var(--ease-out-expo), filter 0.5s ease;
   }
 
-  .card:hover .card__media {
+  .card:hover .card__media,
+  .card__media:hover {
+    transform: scale(1.07);
+    filter: brightness(1.05) contrast(1.02);
+  }
+
+  .site-header__brand img,
+  .site-footer__brand img {
+    transition: transform 0.35s var(--ease-out-expo), filter 0.35s ease;
+  }
+
+  .site-header__brand:hover img,
+  .site-footer__brand:hover img {
     transform: scale(1.05);
-    filter: brightness(1.03);
+    filter: drop-shadow(0 2px 10px rgba(3, 135, 246, 0.45));
   }
 }
 

@@ -182,7 +182,24 @@
               <circle class="plot__ring plot__ring--4" data-ring cx="280" cy="280" r="220"/>
               <circle class="plot__ring plot__ring--5" data-ring cx="280" cy="280" r="272"/>
 
-              <circle class="plot__pulse" data-pulse cx="280" cy="280" r="60"/>
+              <!-- Continuous expanding radio waves radiating from the central gateway outward -->
+              <g class="plot__waves" aria-hidden="true">
+                <circle class="plot__wave" cx="280" cy="280" r="12" fill="none" stroke="#0387F6" stroke-width="2">
+                  <animate attributeName="r" from="12" to="272" dur="4.2s" begin="0s" repeatCount="indefinite" calcMode="spline" keyTimes="0; 1" keySplines="0.1 0.7 0.3 1"/>
+                  <animate attributeName="opacity" from="0.9" to="0" dur="4.2s" begin="0s" repeatCount="indefinite" calcMode="spline" keyTimes="0; 1" keySplines="0.2 0.8 0.4 1"/>
+                  <animate attributeName="stroke-width" from="2.5" to="0.8" dur="4.2s" begin="0s" repeatCount="indefinite"/>
+                </circle>
+                <circle class="plot__wave" cx="280" cy="280" r="12" fill="none" stroke="#0387F6" stroke-width="2">
+                  <animate attributeName="r" from="12" to="272" dur="4.2s" begin="1.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0; 1" keySplines="0.1 0.7 0.3 1"/>
+                  <animate attributeName="opacity" from="0.9" to="0" dur="4.2s" begin="1.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0; 1" keySplines="0.2 0.8 0.4 1"/>
+                  <animate attributeName="stroke-width" from="2.5" to="0.8" dur="4.2s" begin="1.4s" repeatCount="indefinite"/>
+                </circle>
+                <circle class="plot__wave" cx="280" cy="280" r="12" fill="none" stroke="#0387F6" stroke-width="2">
+                  <animate attributeName="r" from="12" to="272" dur="4.2s" begin="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0; 1" keySplines="0.1 0.7 0.3 1"/>
+                  <animate attributeName="opacity" from="0.9" to="0" dur="4.2s" begin="2.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0; 1" keySplines="0.2 0.8 0.4 1"/>
+                  <animate attributeName="stroke-width" from="2.5" to="0.8" dur="4.2s" begin="2.8s" repeatCount="indefinite"/>
+                </circle>
+              </g>
 
               <!-- Devices, dimmer the further out they sit. -->
               <circle class="plot__device" cx="200" cy="251" r="3" opacity="0.85"/>
@@ -193,7 +210,11 @@
               <circle class="plot__device" cx="198" cy="54" r="3" opacity="0.30"/>
               <circle class="plot__device" cx="520" cy="193" r="3" opacity="0.22"/>
 
-              <!-- The gateway everything reaches back to. -->
+              <!-- The gateway everything reaches back to with central beacon pulse -->
+              <circle class="plot__gateway-ping" cx="280" cy="280" r="8" fill="none" stroke="#0387F6" stroke-width="1.5">
+                <animate attributeName="r" from="8" to="24" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" from="0.9" to="0" dur="2s" repeatCount="indefinite"/>
+              </circle>
               <circle class="plot__gateway-ring" cx="280" cy="280" r="11"/>
               <circle class="plot__gateway" cx="280" cy="280" r="7"/>
             </svg>
